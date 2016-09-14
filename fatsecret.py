@@ -482,7 +482,7 @@ class Fatsecret:
         """ Records a change to a user's saved meal item.
 
         Note that the serving_id of the saved meal item may not be adjusted, however one or more of the other
-        remaining properties – saved_meal_item_name or number_of_units may be altered. In order to adjust a
+        remaining properties - saved_meal_item_name or number_of_units may be altered. In order to adjust a
         serving_id for which a saved_meal_item was recorded the original item must be deleted and a new item recorded.
 
         :param meal_item_id: The ID of the saved meal item to edit.
@@ -693,7 +693,7 @@ class Fatsecret:
         """ Adjusts the recorded values for a food diary entry.
 
         Note that the date of the entry may not be adjusted, however one or more of the other remaining
-        properties – food_entry_name, serving_id, number_of_units, or meal may be altered. In order to shift
+        properties - food_entry_name, serving_id, number_of_units, or meal may be altered. In order to shift
         the date for which a food diary entry was recorded the original entry must be deleted and a new entry recorded.
 
         :param food_entry_id: The ID of the food entry to edit.
