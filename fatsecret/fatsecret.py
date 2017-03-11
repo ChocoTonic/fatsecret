@@ -725,14 +725,14 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def exercises_entries_commit_day(self, date=None):
+    def exercise_entries_commit_day(self, date=None):
         """ Saves the default exercise entries for the user on a nominated date.
 
         :param date: Date to save default exercises on (default value is the current day).
         :type date: datetime.datetime
         """
 
-        params = {'method': 'exercises_entries.commit_day', 'format': 'json'}
+        params = {'method': 'exercise_entries.commit_day', 'format': 'json'}
 
         if date:
             params['date'] = self.unix_time(date)
@@ -740,7 +740,7 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def exercises_entries_get(self, date=None):
+    def exercise_entries_get(self, date=None):
         """ Returns the daily exercise entries for the user on a nominated date.
 
         The API will always return 24 hours worth of exercise entries for a given user on a given date.
@@ -751,7 +751,7 @@ class Fatsecret:
         :type date: datetime.datetime
         """
 
-        params = {'method': 'exercises_entries.get', 'format': 'json'}
+        params = {'method': 'exercise_entries.get', 'format': 'json'}
 
         if date:
             params['date'] = self.unix_time(date)
@@ -768,7 +768,7 @@ class Fatsecret:
         :type date: datetime.datetime
         """
 
-        params = {'method': 'exercises_entries.get_month', 'format': 'json'}
+        params = {'method': 'exercise_entries.get_month', 'format': 'json'}
 
         if date:
             params['date'] = self.unix_time(date)
@@ -787,7 +787,7 @@ class Fatsecret:
         :param date: Day of exercises to use as the template (default value is the current day).
         :type date: datetime.datetime
         """
-        params = {'method': 'exercises_entries.get_month', 'format': 'json', 'days': int(days)}
+        params = {'method': 'exercise_entries.get_month', 'format': 'json', 'days': int(days)}
 
         if date:
             params['date'] = self.unix_time(date)
