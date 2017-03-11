@@ -17,7 +17,7 @@ setup(
     author='Alex Nelson',
     author_email='w.alexnelson@gmail.com',
     install_requires=requires,
-    py_modules=("fatsecret",),
+    packages=["fatsecret"],
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
