@@ -164,7 +164,13 @@ class Fatsecret:
                     return response.json()[key]['exercise']
 
                 elif key == 'food_entries':
-                    return response.json()[key]['food_entry']
+                    if response.json()[key] is None:
+                        return []
+                    entries = response.json()[key]['food_entry']
+                    if type(entries) == dict:
+                        return [entries]
+                    elif type(entries) == list:
+                        return entries
 
                 elif key == 'month':
                     return response.json()[key]['day']
