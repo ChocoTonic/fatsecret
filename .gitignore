@@ -4,3 +4,4 @@
 docs/_build/*
 *.tar.gz
 fatsecret.egg*
+dist/

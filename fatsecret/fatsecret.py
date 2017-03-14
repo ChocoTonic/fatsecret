@@ -108,7 +108,7 @@ class Fatsecret:
         """Convert the provided datetime into number of days since the Epoch
 
         :param dt: Date to convert
-        :type dt: datetime
+        :type dt: datetime.datetime
         """
         epoch = datetime.datetime.utcfromtimestamp(0)
         delta = dt - epoch
@@ -119,7 +119,7 @@ class Fatsecret:
         """Helper function to check JSON response for errors and to strip headers
 
         :param response: JSON response from API call
-        :type response: dict
+        :type response: requests.Response
         """
         if response.json():
 
@@ -164,7 +164,13 @@ class Fatsecret:
                     return response.json()[key]['exercise']
 
                 elif key == 'food_entries':
-                    return response.json()[key]['food_entry']
+                    if response.json()[key] is None:
+                        return []
+                    entries = response.json()[key]['food_entry']
+                    if type(entries) == dict:
+                        return [entries]
+                    elif type(entries) == list:
+                        return entries
 
                 elif key == 'month':
                     return response.json()[key]['day']
@@ -570,9 +576,9 @@ class Fatsecret:
         """ Copies the food entries for a specified meal from a nominated date to a nominated date.
 
         :param from_date: The date to copy food entries from
-        :type from_date: datetime
+        :type from_date: datetime.datetime
         :param to_date: The date to copy food entries to (default value is the current day).
-        :type to_date: datetime
+        :type to_date: datetime.datetime
         :param meal: The type of meal to copy. Valid meal types are "breakfast", "lunch", "dinner" and "other"
             (default value is all).
         :type meal: str
@@ -595,7 +601,7 @@ class Fatsecret:
         :param meal: The type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other".
         :type meal: str
         :param date: Day to copy meal to. (default value is the current day).
-        :type date: datetime
+        :type date: datetime.datetime
         """
 
         params = {'method': 'food_entries.copy_saved_meal', 'format': 'json',
@@ -618,7 +624,7 @@ class Fatsecret:
         :param food_entry_id: The ID of the food entry to retrieve. You must specify either date or food_entry_id.
         :type food_entry_id: str
         :param date: Day to filter food entries by (default value is the current day).
-        :type date: datetime
+        :type date: datetime.datetmie
         """
 
         params = {'method': 'food_entries.get', 'format': 'json'}
@@ -639,7 +645,7 @@ class Fatsecret:
         Use this call to display nutritional information to users about their food intake for a nominated month.
 
         :param date: Day in the month to return (default value is the current day to get current month).
-        :type date: datetime
+        :type date: datetime.datetime
         """
 
         params = {'method': 'food_entries.get_month', 'format': 'json'}
@@ -664,7 +670,7 @@ class Fatsecret:
         :param meal: The type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other".
         :type meal: str
         :param date: Day to create food entry on (default value is the current day).
-        :type date: datetime
+        :type date: datetime.datetime
         """
 
         params = {'method': 'food_entry.create', 'format': 'json', 'food_id': food_id,
@@ -725,14 +731,14 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def exercises_entries_commit_day(self, date=None):
+    def exercise_entries_commit_day(self, date=None):
         """ Saves the default exercise entries for the user on a nominated date.
 
         :param date: Date to save default exercises on (default value is the current day).
-        :type date: datetime
+        :type date: datetime.datetime
         """
 
-        params = {'method': 'exercises_entries.commit_day', 'format': 'json'}
+        params = {'method': 'exercise_entries.commit_day', 'format': 'json'}
 
         if date:
             params['date'] = self.unix_time(date)
@@ -740,7 +746,7 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def exercises_entries_get(self, date=None):
+    def exercise_entries_get(self, date=None):
         """ Returns the daily exercise entries for the user on a nominated date.
 
         The API will always return 24 hours worth of exercise entries for a given user on a given date.
@@ -748,10 +754,10 @@ class Fatsecret:
         or saved exercise entry values.
 
         :param date: Day of exercises to retrieve (default value is the current day).
-        :type date: datetime
+        :type date: datetime.datetime
         """
 
-        params = {'method': 'exercises_entries.get', 'format': 'json'}
+        params = {'method': 'exercise_entries.get', 'format': 'json'}
 
         if date:
             params['date'] = self.unix_time(date)
@@ -765,10 +771,10 @@ class Fatsecret:
         exercise and activities for a nominated month.
 
         :param date: Day within month to retrieve (default value is the current day for the current month).
-        :type date: datetime
+        :type date: datetime.datetime
         """
 
-        params = {'method': 'exercises_entries.get_month', 'format': 'json'}
+        params = {'method': 'exercise_entries.get_month', 'format': 'json'}
 
         if date:
             params['date'] = self.unix_time(date)
@@ -785,9 +791,9 @@ class Fatsecret:
             bit from the right and Thursday being the 5th.
         :type days: str
         :param date: Day of exercises to use as the template (default value is the current day).
-        :type date: datetime
+        :type date: datetime.datetime
         """
-        params = {'method': 'exercises_entries.get_month', 'format': 'json', 'days': int(days)}
+        params = {'method': 'exercise_entries.get_month', 'format': 'json', 'days': int(days)}
 
         if date:
             params['date'] = self.unix_time(date)
@@ -813,13 +819,15 @@ class Fatsecret:
         :param minutes: The number of minutes to shift.
         :type minutes: int
         :param date: Day to edit (default value is the current day).
-        :type date: datetime
+        :type date: datetime.datetime
         :param shift_to_name: Only required if shift_to_id is 0 (exercise type "Other").
             This is the name of the new custom exercise type to shift to.
         :type shift_to_name: str
         :param shift_from_name: Only required if shift_from_id is 0 (exercise type "Other").
             This is the name of the custom exercise type to shift from.
         :type shift_from_name: str
+        :param kcals: Number of calories burned
+        :type kcals: int
         """
 
         params = {'method': 'exercise_entry.edit', 'format': 'json', 'shift_to_id': shift_to_id,
@@ -853,7 +861,7 @@ class Fatsecret:
         :param current_weight_kg: The current weight of the user in kilograms.
         :type current_weight_kg: float
         :param date: Day to for weight record (default value is the current day).
-        :type date: datetime
+        :type date: datetime.datetime
         :param weight_type: The weight measurement type for this user profile. Valid types are "kg" and "lb"
         :type weight_type: str
         :param height_type: The height measurement type for this user profile. Valid types are "cm" and "inch"
@@ -887,7 +895,7 @@ class Fatsecret:
         weight chart or log of weight changes for a nominated month.
 
         :param date: Day within month to return (default value is the current day for the current month).
-        :type date: datetime
+        :type date: datetime.datetime
         """
 
         params = {'method': 'weights.get_month', 'format': 'json'}
