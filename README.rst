@@ -2,11 +2,7 @@ pyfatsecret
 ===========
 
 .. image:: https://badge.fury.io/py/fatsecret.svg
-    :target: http://badge.fury.io/py/fatsecret
-
-.. image:: https://pypip.in/download/fatsecret/badge.svg
-    :target: https://pypi.python.org/pypi//fatsecret/
-    :alt: Downloads
+    :target: https://badge.fury.io/py/fatsecret
 
 This library provides a lightweight python wrapper for the Fatsecret API with the goal of making it easier to visualize
 the data retrieved from the API. To that end, this library will usually return lists of identical elements for ease of
