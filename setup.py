@@ -10,7 +10,7 @@ requires = [
 
 setup(
     name='fatsecret',
-    version='0.2.1',
+    version='0.2.3',
     description='Python wrapper for FatSecret REST API',
     url='github.com/walexnelson/pyfatsecret',
     license='MIT',
