@@ -10,14 +10,14 @@ requires = [
 
 setup(
     name='fatsecret',
-    version='0.2.1',
+    packages=['fatsecret'],
+    version='0.2.3',
     description='Python wrapper for FatSecret REST API',
-    url='github.com/walexnelson/pyfatsecret',
-    license='MIT',
     author='Alex Nelson',
     author_email='w.alexnelson@gmail.com',
+    url='https://github.com/walexnelson/pyfatsecret',
+    license='MIT',
     install_requires=requires,
-    packages=["fatsecret"],
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
