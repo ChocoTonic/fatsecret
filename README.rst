@@ -1,3 +1,8 @@
+Looking for new maintainer
+--------------------------
+
+Life and career has taken me in a different direction and I no longer have time to keep this updated. I've attempted to get this merged back into the original with no success. If you're interested in continuing this then let me know.
+
 pyfatsecret
 ===========
 
@@ -49,3 +54,8 @@ Once you have created a session then you can start reading from Fatsecret's publ
 Refer to the `documentation`_ for further examples and detail
 
 .. _documentation: http://pyfatsecret.readthedocs.org/en/latest/
+
+Contributing
+------------
+
+All contributions are welcome! I'm not actively maintaining this library, so there's a good chance that any API changes have not been implemented in this wrapper.
