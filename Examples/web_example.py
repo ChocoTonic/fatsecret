@@ -33,14 +33,14 @@ def authenticate():
 
 @app.route("/search/<search_term>")
 def search(search_term):
-    search_results = fs.foods_search(search_term, page_number=1, max_results=10)
+    search_results = fs.foods_search(search_term, page_number=1, max_results=10, region="US", language="en")
 
     return "<h1>Search Results: {0}</h1><div>{1}</div>".format(search_term, search_results)
 
 
 @app.route("/food/<item>")
 def food(item):
-    food_item = fs.food_get(item)
+    food_item = fs.food_get(item, region="US", language="en")
 
     return "<h1>Food Item</h1><div>{}</div>".format(food_item)
 
