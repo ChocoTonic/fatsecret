@@ -24,7 +24,7 @@ $ easy_install fatsecret
 
 ## Config
 
-Register for a developer account at [Fatsecret](https://platform.fatsecret.com/api/). You will need your Consumer Key and Consumer Secret key for your application. 
+Register for a developer account at [Fatsecret](https://platform.fatsecret.com/api/). You will need your Consumer Key and Consumer Secret key for your application.
 
 ## Usage
 

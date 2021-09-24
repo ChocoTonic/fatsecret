@@ -1,2 +1,8 @@
-from .fatsecret import Fatsecret, BaseFatsecretError, GeneralError, AuthenticationError, ParameterError,\
-    ApplicationError
+from .fatsecret import (
+    Fatsecret,
+    BaseFatsecretError,
+    GeneralError,
+    AuthenticationError,
+    ParameterError,
+    ApplicationError,
+)
