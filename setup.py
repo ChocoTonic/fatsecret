@@ -11,7 +11,7 @@ requires = [
 setup(
     name='fatsecret',
     packages=['fatsecret'],
-    version='0.2.3',
+    version='0.3.0',
     description='Python wrapper for FatSecret REST API',
     author='Alex Nelson',
     author_email='w.alexnelson@gmail.com',
