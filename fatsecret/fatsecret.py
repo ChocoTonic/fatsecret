@@ -259,6 +259,20 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
+    def food_get_v2(self, food_id):
+        """Returns detailed nutritional information for the specified food.
+
+        Use this call to display nutrition values for a food to users.
+
+        :param food_id: Fatsecret food identifier
+        :type food_id: str
+        """
+
+        params = {"method": "food.get.v2", "food_id": food_id, "format": "json"}
+
+        response = self.session.get(self.api_url, params=params)
+        return self.valid_response(response)
+
     def foods_get_favorites(self):
         """Returns the favorite foods for the authenticated user."""
 
