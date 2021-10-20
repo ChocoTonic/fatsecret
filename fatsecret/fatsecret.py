@@ -273,6 +273,31 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
+    def food_find_id_for_barcode(self, barcode):
+        """Returns the food_id matching the barcode specified.
+
+        Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with
+        zeros for the spaces to the left.
+
+        UPC-A, EAN-13 and EAN-8 barcodes may be specified.
+
+        UPC-E barcodes should be converted to their UPC-A equivalent (and then specified
+        as GTIN-13 numbers).
+
+        :param barcode: The 13-digit GTIN-13 formated sequence of digits representing
+        the barcode to search against.
+        :type food_id: str
+        """
+
+        params = {
+            "method": "food.find_id_for_barcode",
+            "barcode": barcode,
+            "format": "json",
+        }
+
+        response = self.session.get(self.api_url, params=params)
+        return self.valid_response(response)
+
     def foods_get_favorites(self):
         """Returns the favorite foods for the authenticated user."""
 
