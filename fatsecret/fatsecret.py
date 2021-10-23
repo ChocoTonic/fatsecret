@@ -158,6 +158,9 @@ class Fatsecret:
                 elif key == "foods":
                     return response.json()[key]["food"]
 
+                elif key == "suggestions":
+                    return response.json()[key]
+
                 elif key == "recipes":
                     return response.json()[key]["recipe"]
 
@@ -368,6 +371,34 @@ class Fatsecret:
 
         if page_number and max_results:
             params["page_number"] = page_number
+            params["max_results"] = max_results
+
+        if region:
+            params["region"] = region
+
+        if language:
+            params["language"] = language
+
+        response = self.session.get(self.api_url, params=params)
+        return self.valid_response(response)
+
+    def foods_autocomplete(self, expression, max_results=None, region=None, language=None):
+        """Returns a list of suggestions for the expression specified.
+
+        :param expression:
+            Suggestions for the given expression is returned. E.G.: "chic" will return
+            up to four of the best suggestions that contains "chic".
+        :type expression: str
+        :param page_number: page set to return (default 0)
+        :type max_results: int
+        """
+        params = {
+            "method": "foods.autocomplete",
+            "expression": expression,
+            "format": "json",
+        }
+
+        if max_results:
             params["max_results"] = max_results
 
         if region:
