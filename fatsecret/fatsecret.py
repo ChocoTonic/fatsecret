@@ -259,7 +259,7 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def food_get_v2(self, food_id):
+    def food_get_v2(self, food_id, region=None, language=None):
         """Returns detailed nutritional information for the specified food.
 
         Use this call to display nutrition values for a food to users.
@@ -270,10 +270,16 @@ class Fatsecret:
 
         params = {"method": "food.get.v2", "food_id": food_id, "format": "json"}
 
+        if region:
+            params["region"] = region
+
+        if language:
+            params["language"] = language
+
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def food_find_id_for_barcode(self, barcode):
+    def food_find_id_for_barcode(self, barcode, region=None, language=None):
         """Returns the food_id matching the barcode specified.
 
         Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with
@@ -294,6 +300,12 @@ class Fatsecret:
             "barcode": barcode,
             "format": "json",
         }
+
+        if region:
+            params["region"] = region
+
+        if language:
+            params["language"] = language
 
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
@@ -334,7 +346,7 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def foods_search(self, search_expression, page_number=None, max_results=None):
+    def foods_search(self, search_expression, page_number=None, max_results=None, region=None, language=None):
         """Conducts a search of the food database using the search expression specified.
 
         The results are paginated according to a zero-based "page" offset. Successive pages of results
@@ -357,6 +369,12 @@ class Fatsecret:
         if page_number and max_results:
             params["page_number"] = page_number
             params["max_results"] = max_results
+
+        if region:
+            params["region"] = region
+
+        if language:
+            params["language"] = language
 
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
