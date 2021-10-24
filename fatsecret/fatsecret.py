@@ -158,6 +158,9 @@ class Fatsecret:
                 elif key == "foods":
                     return response.json()[key]["food"]
 
+                elif key == "suggestions":
+                    return response.json()[key]
+
                 elif key == "recipes":
                     return response.json()[key]["recipe"]
 
@@ -259,6 +262,57 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
+    def food_get_v2(self, food_id, region=None, language=None):
+        """Returns detailed nutritional information for the specified food.
+
+        Use this call to display nutrition values for a food to users.
+
+        :param food_id: Fatsecret food identifier
+        :type food_id: str
+        """
+
+        params = {"method": "food.get.v2", "food_id": food_id, "format": "json"}
+
+        if region:
+            params["region"] = region
+
+        if language:
+            params["language"] = language
+
+        response = self.session.get(self.api_url, params=params)
+        return self.valid_response(response)
+
+    def food_find_id_for_barcode(self, barcode, region=None, language=None):
+        """Returns the food_id matching the barcode specified.
+
+        Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with
+        zeros for the spaces to the left.
+
+        UPC-A, EAN-13 and EAN-8 barcodes may be specified.
+
+        UPC-E barcodes should be converted to their UPC-A equivalent (and then specified
+        as GTIN-13 numbers).
+
+        :param barcode: The 13-digit GTIN-13 formated sequence of digits representing
+        the barcode to search against.
+        :type food_id: str
+        """
+
+        params = {
+            "method": "food.find_id_for_barcode",
+            "barcode": barcode,
+            "format": "json",
+        }
+
+        if region:
+            params["region"] = region
+
+        if language:
+            params["language"] = language
+
+        response = self.session.get(self.api_url, params=params)
+        return self.valid_response(response)
+
     def foods_get_favorites(self):
         """Returns the favorite foods for the authenticated user."""
 
@@ -295,7 +349,7 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def foods_search(self, search_expression, page_number=None, max_results=None):
+    def foods_search(self, search_expression, page_number=None, max_results=None, region=None, language=None):
         """Conducts a search of the food database using the search expression specified.
 
         The results are paginated according to a zero-based "page" offset. Successive pages of results
@@ -318,6 +372,40 @@ class Fatsecret:
         if page_number and max_results:
             params["page_number"] = page_number
             params["max_results"] = max_results
+
+        if region:
+            params["region"] = region
+
+        if language:
+            params["language"] = language
+
+        response = self.session.get(self.api_url, params=params)
+        return self.valid_response(response)
+
+    def foods_autocomplete(self, expression, max_results=None, region=None, language=None):
+        """Returns a list of suggestions for the expression specified.
+
+        :param expression:
+            Suggestions for the given expression is returned. E.G.: "chic" will return
+            up to four of the best suggestions that contains "chic".
+        :type expression: str
+        :param page_number: page set to return (default 0)
+        :type max_results: int
+        """
+        params = {
+            "method": "foods.autocomplete",
+            "expression": expression,
+            "format": "json",
+        }
+
+        if max_results:
+            params["max_results"] = max_results
+
+        if region:
+            params["region"] = region
+
+        if language:
+            params["language"] = language
 
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
