@@ -349,7 +349,14 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def foods_search(self, search_expression, page_number=None, max_results=None, region=None, language=None):
+    def foods_search(
+        self,
+        search_expression,
+        page_number=None,
+        max_results=None,
+        region=None,
+        language=None,
+    ):
         """Conducts a search of the food database using the search expression specified.
 
         The results are paginated according to a zero-based "page" offset. Successive pages of results
@@ -382,7 +389,9 @@ class Fatsecret:
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
 
-    def foods_autocomplete(self, expression, max_results=None, region=None, language=None):
+    def foods_autocomplete(
+        self, expression, max_results=None, region=None, language=None
+    ):
         """Returns a list of suggestions for the expression specified.
 
         :param expression:
