@@ -1,13 +1,19 @@
 """
-    fatsecret
-    ---------
+fatsecret
+---------
 
-    Simple python wrapper of the Fatsecret API
+Simple python wrapper of the Fatsecret API
 
 """
 
 import datetime
-
+import time
+import uuid
+import urllib
+import hmac
+import hashlib
+import base64
+import requests
 from rauth.service import OAuth1Service
 
 
@@ -49,9 +55,9 @@ class Fatsecret:
             name="fatsecret",
             consumer_key=consumer_key,
             consumer_secret=consumer_secret,
-            request_token_url="https://www.fatsecret.com/oauth/request_token",
-            access_token_url="https://www.fatsecret.com/oauth/access_token",
-            authorize_url="https://www.fatsecret.com/oauth/authorize",
+            request_token_url="https://authentication.fatsecret.com/oauth/request_token",
+            authorize_url="https://authentication.fatsecret.com/oauth/authorize",
+            access_token_url="https://authentication.fatsecret.com/oauth/access_token",
             base_url="https://platform.fatsecret.com/rest/server.api",
         )
 
@@ -70,19 +76,87 @@ class Fatsecret:
         return "https://platform.fatsecret.com/rest/server.api"
 
     def get_authorize_url(self, callback_url="oob"):
-        """URL used to authenticate app to access Fatsecret User data
-
-        If no callback url is provided then you'll need to allow the user to enter in a PIN that Fatsecret
-        displays once access was allowed by the user
+        """
+        New implementation using manual OAuth 1.0 flow to /oauth/request_token on the new endpoint.
 
         :param callback_url: An absolute URL to redirect the User to when they have completed authentication
         :type callback_url: str
         """
-        self.request_token, self.request_token_secret = self.oauth.get_request_token(
-            method="GET", params={"oauth_callback": callback_url}
+        print("Generating request token...")
+
+        oauth_consumer_key = self.consumer_key
+        oauth_consumer_secret = self.consumer_secret
+        oauth_signature_method = "HMAC-SHA1"
+        oauth_timestamp = str(int(time.time()))
+        oauth_nonce = str(uuid.uuid4().hex)
+        oauth_version = "1.0"
+        oauth_callback = callback_url
+
+        # Collect parameters for the base string
+        params = {
+            "oauth_consumer_key": oauth_consumer_key,
+            "oauth_signature_method": oauth_signature_method,
+            "oauth_timestamp": oauth_timestamp,
+            "oauth_nonce": oauth_nonce,
+            "oauth_version": oauth_version,
+            "oauth_callback": oauth_callback,
+        }
+
+        # Create the signature base string
+        base_params = "&".join(
+            [
+                "{}={}".format(
+                    urllib.parse.quote(k, safe=""), urllib.parse.quote(v, safe="")
+                )
+                for k, v in sorted(params.items())
+            ]
+        )
+        method = "POST"
+        base_url = self.oauth.request_token_url
+        signature_base_string = "&".join(
+            [
+                method,
+                urllib.parse.quote(base_url, safe=""),
+                urllib.parse.quote(base_params, safe=""),
+            ]
         )
 
-        return self.oauth.get_authorize_url(self.request_token)
+        # Create the signing key
+        signing_key = f"{urllib.parse.quote(oauth_consumer_secret, safe='')}&"
+
+        # Create the signature
+        hashed = hmac.new(
+            signing_key.encode("utf-8"),
+            signature_base_string.encode("utf-8"),
+            hashlib.sha1,
+        )
+        oauth_signature = base64.b64encode(hashed.digest()).decode()
+
+        # Add signature to parameters
+        params["oauth_signature"] = oauth_signature
+
+        # Build request
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
+
+        full_request_url = f"{base_url}?{urllib.parse.urlencode(params)}"
+        print("Full request URL:", full_request_url)
+
+        # POST request to fetch request_token
+        response = requests.post(base_url, data=params, headers=headers)
+        response.raise_for_status()
+        result = dict(urllib.parse.parse_qsl(response.text))
+        print("Response:", result)
+
+        self.request_token = result["oauth_token"]
+        self.request_token_secret = result["oauth_token_secret"]
+
+        print("Request Token:", self.request_token)
+        print("Request Token Secret:", self.request_token_secret)
+
+        authorize_url = f"{self.oauth.authorize_url}?oauth_token={self.request_token}"
+        return authorize_url
 
     def authenticate(self, verifier):
         """Retrieve access tokens once user has approved access to authenticate session
