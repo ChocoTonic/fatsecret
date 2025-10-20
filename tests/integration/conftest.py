@@ -18,15 +18,14 @@ def fatsecret_client():
     username = os.getenv("FATSECRET_USERNAME")
     password = os.getenv("FATSECRET_PASSWORD")
 
-    print(f"consumer_key length: {len(consumer_key) if consumer_key else 'None'}")
-    print(
-        f"consumer_secret length: {len(consumer_secret) if consumer_secret else 'None'}"
-    )
-    print(f"username length: {len(username) if username else 'None'}")
-    print(f"password length: {len(password) if password else 'None'}")
-
-    if not consumer_key or not consumer_secret or not username or not password:
-        pytest.fail("❌ Missing Fatsecret credentials in environment variables")
+    if not consumer_key:
+        pytest.fail("❌ Missing FATSECRET_CONSUMER_KEY in environment variables")
+    if not consumer_secret:
+        pytest.fail("❌ Missing FATSECRET_CONSUMER_SECRET in environment variables")
+    if not username:
+        pytest.fail("❌ Missing FATSECRET_USERNAME in environment variables")
+    if not password:
+        pytest.fail("❌ Missing FATSECRET_PASSWORD in environment variables")
 
     fs = fatsecret_authenticate(username, password, consumer_key, consumer_secret)
     yield fs
