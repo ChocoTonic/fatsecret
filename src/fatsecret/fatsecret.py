@@ -189,6 +189,30 @@ class Fatsecret:
         return delta.days
 
     @staticmethod
+    def unix_time_v2(dt):
+        """Convert the provided datetime, date, or timestamp into number of days since the Epoch (Jan 1, 1970).
+
+        :param dt: Date to convert (datetime, date, or timestamp)
+        :type dt: datetime.datetime | datetime.date | int | float
+        """
+        epoch = datetime.datetime(1970, 1, 1)
+        if isinstance(dt, datetime.datetime):
+            delta = dt - epoch
+            return delta.days
+        elif isinstance(dt, datetime.date):
+            delta = datetime.datetime(dt.year, dt.month, dt.day) - epoch
+            return delta.days
+        elif isinstance(dt, (int, float)):
+            # treat as unix timestamp, use timezone-aware UTC
+            dt_utc = datetime.datetime.fromtimestamp(
+                dt, tz=datetime.timezone.utc
+            ).replace(tzinfo=None)
+            delta = dt_utc - epoch
+            return delta.days
+        else:
+            raise TypeError("dt must be datetime, date, int, or float")
+
+    @staticmethod
     def valid_response(response):
         """Helper function to check JSON response for errors and to strip headers
 
