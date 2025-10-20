@@ -45,7 +45,8 @@ test-int:  ## Run only integration tests
 	@$(PYTEST) -v -m integration
 
 coverage:  ## Run tests with coverage
-	@uv run pytest --cov=$(SRC_DIR) --cov-report=term-missing
+	@uv run pytest --cov=$(SRC_DIR) --cov-report=term-missing --cov-report=xml:coverage.xml
+	@rm -f .coverage
 
 # -----------------------------
 # Linting / Formatting
