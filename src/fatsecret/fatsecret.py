@@ -92,7 +92,7 @@ class Fatsecret:
         oauth_version = "1.0"
         oauth_callback = callback_url
 
-        # Collect parameters for the base string
+        # Collect parameters for base string
         params = {
             "oauth_consumer_key": oauth_consumer_key,
             "oauth_signature_method": oauth_signature_method,
@@ -102,7 +102,6 @@ class Fatsecret:
             "oauth_callback": oauth_callback,
         }
 
-        # Create the signature base string
         base_params = "&".join(
             [
                 "{}={}".format(
@@ -121,10 +120,8 @@ class Fatsecret:
             ]
         )
 
-        # Create the signing key
         signing_key = f"{urllib.parse.quote(oauth_consumer_secret, safe='')}&"
 
-        # Create the signature
         hashed = hmac.new(
             signing_key.encode("utf-8"),
             signature_base_string.encode("utf-8"),
@@ -132,10 +129,8 @@ class Fatsecret:
         )
         oauth_signature = base64.b64encode(hashed.digest()).decode()
 
-        # Add signature to parameters
         params["oauth_signature"] = oauth_signature
 
-        # Build request
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
@@ -155,8 +150,7 @@ class Fatsecret:
         print("Request Token:", self.request_token)
         print("Request Token Secret:", self.request_token_secret)
 
-        authorize_url = f"{self.oauth.authorize_url}?oauth_token={self.request_token}"
-        return authorize_url
+        return f"{self.oauth.authorize_url}?oauth_token={self.request_token}"
 
     def authenticate(self, verifier):
         """Retrieve access tokens once user has approved access to authenticate session
