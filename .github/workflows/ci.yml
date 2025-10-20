@@ -2,7 +2,9 @@ name: Tests
 
 on:
     push:
+        branches: ["**"]
     pull_request:
+        branches: ["**"]
 
 concurrency:
     group: fatsecret-tests
