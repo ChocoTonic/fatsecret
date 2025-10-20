@@ -15,3 +15,7 @@ docs/_build/*
 
 # Coverage reports
 coverage.xml
+
+# Environment files
+.env
+
