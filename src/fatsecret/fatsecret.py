@@ -1,8 +1,8 @@
 """
-    fatsecret
-    ---------
+fatsecret
+---------
 
-    Simple python wrapper of the Fatsecret API
+Simple python wrapper of the Fatsecret API
 
 """
 

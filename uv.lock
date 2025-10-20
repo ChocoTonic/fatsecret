@@ -363,8 +363,8 @@ requires-dist = [
     { name = "black" },
     { name = "isort" },
     { name = "pytest" },
-    { name = "rauth" },
-    { name = "requests" },
+    { name = "rauth", specifier = "==0.7.3" },
+    { name = "requests", specifier = "==2.32.5" },
     { name = "ruff" },
 ]
 
