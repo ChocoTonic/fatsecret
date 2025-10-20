@@ -1,6 +1,18 @@
-[build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
+[project]
+name = "pyfatsecret-chocotonic"
+version = "0.1.0"
+description = "Python wrapper for the Fatsecret API"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "black",
+    "isort",
+    "pytest-cov",
+    "pytest",
+    "rauth==0.7.3",
+    "requests==2.32.5",
+    "ruff",
 ]
-build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
