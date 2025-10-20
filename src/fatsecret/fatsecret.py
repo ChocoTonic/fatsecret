@@ -182,7 +182,9 @@ class Fatsecret:
         :param dt: Date to convert
         :type dt: datetime.datetime
         """
-        epoch = datetime.datetime.fromtimestamp(0, datetime.timezone.utc).replace(tzinfo=None)
+        epoch = datetime.datetime.fromtimestamp(0, datetime.timezone.utc).replace(
+            tzinfo=None
+        )
         delta = dt - epoch
         return delta.days
 
