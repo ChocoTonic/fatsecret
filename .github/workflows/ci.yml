@@ -1,28 +1,34 @@
-name: CI
+name: Tests
 
 on:
     push:
-        branches: [main, master]
+        branches: ["**"]
     pull_request:
-        branches: [main, master]
+        branches: ["**"]
+
+concurrency:
+    group: fatsecret-tests
+    cancel-in-progress: false # ensures one workflow at a time, no cancellation
 
 jobs:
     test:
         runs-on: ubuntu-latest
+
+        env:
+            FATSECRET_CONSUMER_KEY: ${{ secrets.FATSECRET_CONSUMER_KEY }}
+            FATSECRET_CONSUMER_SECRET: ${{ secrets.FATSECRET_CONSUMER_SECRET }}
+
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+            - uses: actions/checkout@v4
 
-            - name: Set up Python
-              uses: actions/setup-python@v5
+            - uses: actions/setup-python@v5
               with:
-                  python-version: "3.11"
+                  python-version: "3.14"
 
-            - name: Install uv
-              run: pip install uv
-
-            - name: Install dependencies
-              run: uv sync --all-extras
+            - name: Install uv and dependencies
+              run: |
+                  pip install uv
+                  uv sync --all-extras
 
             # - name: Run lint
             #   run: make lint

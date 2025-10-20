@@ -9,6 +9,7 @@ dependencies = [
     "isort",
     "pytest-cov",
     "pytest",
+    "python-dotenv",
     "rauth==0.7.3",
     "requests==2.32.5",
     "ruff",
@@ -16,3 +17,6 @@ dependencies = [
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+markers = [
+    "integration: mark a test as an integration test"
+]
