@@ -10,3 +10,7 @@ def test_unix_time_epoch():
 def test_api_url_constant():
     fs = Fatsecret("key", "secret")
     assert fs.api_url == "https://platform.fatsecret.com/rest/server.api"
+
+
+def test_unix_time_failure():
+    assert Fatsecret.unix_time(datetime.datetime(1970, 1, 2)) == 2
