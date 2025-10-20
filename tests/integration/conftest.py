@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from fatsecret.auth import fatsecret_authenticate
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def fatsecret_client():
     """Fixture to initialize authenticated Fatsecret client for integration tests."""
 
