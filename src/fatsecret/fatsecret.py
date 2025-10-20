@@ -137,19 +137,17 @@ class Fatsecret:
         }
 
         full_request_url = f"{base_url}?{urllib.parse.urlencode(params)}"
-        print("Full request URL:", full_request_url)
+        print("Full request URL ends with:", full_request_url[-4:])
 
         # POST request to fetch request_token
         response = requests.post(base_url, data=params, headers=headers)
         response.raise_for_status()
         result = dict(urllib.parse.parse_qsl(response.text))
-        print("Response:", result)
 
         self.request_token = result["oauth_token"]
         self.request_token_secret = result["oauth_token_secret"]
-
-        print("Request Token:", self.request_token)
-        print("Request Token Secret:", self.request_token_secret)
+        print(f"Request token ends with: {self.request_token[-4:]}")
+        print(f"secret ends with: {self.request_token_secret[-4:]}")
 
         return f"{self.oauth.authorize_url}?oauth_token={self.request_token}"
 
