@@ -1,6 +1,8 @@
+import json
 import os
 
 import pytest
+import requests
 from dotenv import load_dotenv
 
 from fatsecret.auth import fatsecret_authenticate
@@ -30,3 +32,14 @@ def fatsecret_client():
     fs = fatsecret_authenticate(username, password, consumer_key, consumer_secret)
     yield fs
     fs.close()
+
+
+@pytest.fixture
+def make_response():
+    def _make_response(json_data):
+        resp = requests.Response()
+        resp.status_code = 200
+        resp._content = json.dumps(json_data).encode("utf-8")
+        return resp
+
+    return _make_response
