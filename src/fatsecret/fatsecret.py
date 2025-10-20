@@ -6,13 +6,14 @@ Simple python wrapper of the Fatsecret API
 
 """
 
-import datetime
-import time
-import uuid
-import urllib
-import hmac
-import hashlib
 import base64
+import datetime
+import hashlib
+import hmac
+import time
+import urllib
+import uuid
+
 import requests
 from rauth.service import OAuth1Service
 
