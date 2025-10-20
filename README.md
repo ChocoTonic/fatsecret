@@ -1,7 +1,3 @@
-> # Looking for new maintainer
->
-> Life and career have taken me in a different direction and I no longer have time to keep this updated. I've attempted to get this merged back into the original with no success. If you're interested in continuing this then let me know.
-
 # pyfatsecret
 
 ![status](https://badge.fury.io/py/fatsecret.svg)
