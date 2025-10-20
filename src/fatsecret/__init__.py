@@ -1,3 +1,3 @@
 from .fatsecret import (ApplicationError, AuthenticationError,
                         BaseFatsecretError, Fatsecret, GeneralError,
-                        ParameterError)
+                        ParameterError, fatsecret_authenticate)
