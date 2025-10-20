@@ -39,15 +39,15 @@ clean:  ## Remove build artifacts and caches
 COV_OPTS := --cov=$(SRC_DIR) --cov-report=term-missing --cov-report=xml:coverage.xml
 
 test:  ## Run all tests with coverage
-	@uv run pytest $(COV_OPTS)
+	@uv run pytest -s -vv $(COV_OPTS)
 	@rm -f .coverage
 
 test-unit:  ## Run only unit tests with coverage
-	@uv run pytest $(COV_OPTS) $(TEST_DIR)/unit
+	@uv run pytest -s -vv $(COV_OPTS) $(TEST_DIR)/unit
 	@rm -f .coverage
 
 test-int:  ## Run only integration tests with coverage
-	@uv run pytest $(COV_OPTS) -m integration
+	@uv run pytest -s -vv $(COV_OPTS) -m integration
 	@rm -f .coverage
 
 # -----------------------------
