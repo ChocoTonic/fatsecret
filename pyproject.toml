@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "black",
+    "bs4",
     "isort",
+    "lxml",
     "pytest-cov",
     "pytest",
     "python-dotenv",
