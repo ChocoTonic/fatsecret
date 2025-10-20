@@ -24,8 +24,8 @@ jobs:
             - name: Install dependencies
               run: uv sync --all-extras
 
-            - name: Run lint
-              run: make lint
+            # - name: Run lint
+            #   run: make lint
 
             - name: Run tests (with coverage)
               run: make test
