@@ -17,6 +17,8 @@ jobs:
         env:
             FATSECRET_CONSUMER_KEY: ${{ secrets.FATSECRET_CONSUMER_KEY }}
             FATSECRET_CONSUMER_SECRET: ${{ secrets.FATSECRET_CONSUMER_SECRET }}
+            FATSECRET_USERNAME: ${{ secrets.FATSECRET_USERNAME }}
+            FATSECRET_PASSWORD: ${{ secrets.FATSECRET_PASSWORD }}
 
         steps:
             - uses: actions/checkout@v4
@@ -30,8 +32,8 @@ jobs:
                   pip install uv
                   uv sync --all-extras
 
-            # - name: Run lint
-            #   run: make lint
+            - name: Run lint
+              run: make lint
 
             - name: Run tests (with coverage)
               run: make test
