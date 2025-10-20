@@ -244,9 +244,9 @@ class Fatsecret:
                     if response.json()[key] is None:
                         return []
                     entries = response.json()[key]["food_entry"]
-                    if type(entries) == dict:
+                    if isinstance(entries, dict):
                         return [entries]
-                    elif type(entries) == list:
+                    elif isinstance(entries, list):
                         return entries
 
                 elif key == "month":
