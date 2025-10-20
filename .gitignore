@@ -1,8 +1,17 @@
+# Bytecode
 *.pyc
-.idea
-.idea/*
-docs/_build/*
+
+# IDE files
+.idea/
+.vscode/settings.json
+
+# Build artifacts
+dist/
 *.tar.gz
 fatsecret.egg*
-dist/
-.vscode/settings.json
+
+# Docs build
+docs/_build/*
+
+# Coverage reports
+coverage.xml
