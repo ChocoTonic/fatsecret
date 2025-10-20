@@ -9,8 +9,6 @@ def test_food_get_basic(fatsecret_client):
     food_id = "4380"
 
     result = fatsecret_client.food_get(food_id)
-    pprint("result")
-    pprint(result)
 
     # Basic sanity checks
     assert isinstance(result, dict)
