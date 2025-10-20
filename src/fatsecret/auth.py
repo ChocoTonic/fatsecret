@@ -45,9 +45,9 @@ def fatsecret_authenticate(
         if not verifier_tag:
             raise RuntimeError("Failed to find PIN in response. Login may have failed.")
         verifier_pin = verifier_tag.text.strip()
-        print(f"Obtained verifier PIN: {verifier_pin}")
+        print(f"Obtained verifier PIN. {len(verifier_pin) = }")
         fatsecret_client.authenticate(verifier_pin)
-        print(f"Authenticated as {username}!")
+        print("Authentication successful.")
         return fatsecret_client
     except Exception as error:
         message = f"Failed to authenticate:\n{error}"
