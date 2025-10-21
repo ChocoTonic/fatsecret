@@ -5,6 +5,7 @@ import pytest
 import requests
 from dotenv import load_dotenv
 
+from fatsecret import Fatsecret
 from fatsecret.auth import fatsecret_authenticate
 
 
@@ -30,8 +31,19 @@ def fatsecret_client():
         pytest.fail("❌ Missing FATSECRET_PASSWORD in environment variables")
 
     fs = fatsecret_authenticate(username, password, consumer_key, consumer_secret)
+    if fs is None:
+        # If programmatic login fails, fall back to a consumer-only signed
+        # client so tests that do not require user-specific data can still run.
+        print(
+            "Failed to authenticate with username/password; using consumer-only client."
+        )
+        fs = Fatsecret(consumer_key, consumer_secret)
+
     yield fs
-    fs.close()
+    # Be defensive in teardown: only call close if the client exists and
+    # provides a close method.
+    if fs and hasattr(fs, "close"):
+        fs.close()
 
 
 @pytest.fixture

@@ -1,14 +1,8 @@
-import base64
 import datetime
-import hashlib
-import hmac
-import time
-import urllib
-import uuid
 from typing import Optional, Tuple, Union
 
 import requests
-from rauth.service import OAuth1Service
+from requests_oauthlib import OAuth1Session
 
 from .errors import (ApplicationError, AuthenticationError, GeneralError,
                      ParameterError)
@@ -46,28 +40,26 @@ class FatsecretCore:
         self.access_token = None
         self.access_token_secret = None
 
-        self.oauth = OAuth1Service(
-            name="fatsecret",
-            consumer_key=consumer_key,
-            consumer_secret=consumer_secret,
-            request_token_url=self.REQUEST_TOKEN_URL,
-            authorize_url=self.AUTHORIZE_URL,
-            access_token_url=self.ACCESS_TOKEN_URL,
-            base_url=self.BASE_URL,
-        )
-
-        # Open prior session or default to unauthorized session
+        # Create an OAuth1Session for request signing. If a session_token is
+        # provided we initialize a user-authenticated session; otherwise the
+        # session will sign requests using only the consumer key/secret.
         if session_token:
             self.access_token = session_token[0]
             self.access_token_secret = session_token[1]
-            self.session = self.oauth.get_session(token=session_token)
+            self.session = OAuth1Session(
+                self.consumer_key,
+                client_secret=self.consumer_secret,
+                resource_owner_key=self.access_token,
+                resource_owner_secret=self.access_token_secret,
+            )
         else:
-            # Default to unauthorized session
-            self.session = self.oauth.get_session()
+            self.session = OAuth1Session(
+                self.consumer_key, client_secret=self.consumer_secret
+            )
 
     @property
     def api_url(self) -> str:
-        return self.oauth.base_url
+        return self.BASE_URL
 
     def get_authorize_url(self, callback_url: str = "oob") -> str:
         """
@@ -78,71 +70,24 @@ class FatsecretCore:
         """
         print("Generating request token...")
 
-        oauth_consumer_key = self.consumer_key
-        oauth_consumer_secret = self.consumer_secret
-        oauth_signature_method = "HMAC-SHA1"
-        oauth_timestamp = str(int(time.time()))
-        oauth_nonce = str(uuid.uuid4().hex)
-        oauth_version = "1.0"
-        oauth_callback = callback_url
-
-        # Collect parameters for base string
-        params = {
-            "oauth_consumer_key": oauth_consumer_key,
-            "oauth_signature_method": oauth_signature_method,
-            "oauth_timestamp": oauth_timestamp,
-            "oauth_nonce": oauth_nonce,
-            "oauth_version": oauth_version,
-            "oauth_callback": oauth_callback,
-        }
-
-        base_params = "&".join(
-            [
-                "{}={}".format(
-                    urllib.parse.quote(k, safe=""), urllib.parse.quote(v, safe="")
-                )
-                for k, v in sorted(params.items())
-            ]
-        )
-        method = "POST"
-        base_url = self.oauth.request_token_url
-        signature_base_string = "&".join(
-            [
-                method,
-                urllib.parse.quote(base_url, safe=""),
-                urllib.parse.quote(base_params, safe=""),
-            ]
+        oauth = OAuth1Session(
+            self.consumer_key,
+            client_secret=self.consumer_secret,
+            callback_uri=callback_url,
         )
 
-        signing_key = f"{urllib.parse.quote(oauth_consumer_secret, safe='')}&"
+        fetch_response = oauth.fetch_request_token(self.REQUEST_TOKEN_URL)
 
-        hashed = hmac.new(
-            signing_key.encode("utf-8"),
-            signature_base_string.encode("utf-8"),
-            hashlib.sha1,
-        )
-        oauth_signature = base64.b64encode(hashed.digest()).decode()
+        # fetch_response is a dict with oauth_token and oauth_token_secret
+        self.request_token = fetch_response.get("oauth_token")
+        self.request_token_secret = fetch_response.get("oauth_token_secret")
+        if self.request_token:
+            print(f"Request token ends with: {self.request_token[-4:]}")
+        if self.request_token_secret:
+            print(f"secret ends with: {self.request_token_secret[-4:]}")
 
-        params["oauth_signature"] = oauth_signature
-
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded",
-        }
-
-        full_request_url = f"{base_url}?{urllib.parse.urlencode(params)}"
-        print("Full request URL ends with:", full_request_url[-4:])
-
-        # POST request to fetch request_token
-        response = requests.post(base_url, data=params, headers=headers)
-        response.raise_for_status()
-        result = dict(urllib.parse.parse_qsl(response.text))
-
-        self.request_token = result["oauth_token"]
-        self.request_token_secret = result["oauth_token_secret"]
-        print(f"Request token ends with: {self.request_token[-4:]}")
-        print(f"secret ends with: {self.request_token_secret[-4:]}")
-
-        return f"{self.oauth.authorize_url}?oauth_token={self.request_token}"
+        # authorization_url will append oauth_token for us
+        return oauth.authorization_url(self.AUTHORIZE_URL)
 
     def authenticate(self, verifier: Union[str, int]) -> Tuple[str, str]:
         """Exchange the verifier (PIN or callback code) for permanent access tokens.
@@ -152,22 +97,49 @@ class FatsecretCore:
         Returns:
             (access_token, access_secret)
         """
-        session_token = self.oauth.get_access_token(
-            self.request_token,
-            self.request_token_secret,
-            params={"oauth_verifier": verifier},
+        oauth = OAuth1Session(
+            self.consumer_key,
+            client_secret=self.consumer_secret,
+            resource_owner_key=self.request_token,
+            resource_owner_secret=self.request_token_secret,
+            verifier=str(verifier),
         )
 
-        self.access_token = session_token[0]
-        self.access_token_secret = session_token[1]
-        self.session = self.oauth.get_session(session_token)
+        token_response = oauth.fetch_access_token(self.ACCESS_TOKEN_URL)
+
+        # token_response contains oauth_token and oauth_token_secret
+        self.access_token = token_response.get("oauth_token")
+        self.access_token_secret = token_response.get("oauth_token_secret")
+
+        # Create a session signed with the new access token for subsequent
+        # authenticated requests.
+        self.session = OAuth1Session(
+            self.consumer_key,
+            client_secret=self.consumer_secret,
+            resource_owner_key=self.access_token,
+            resource_owner_secret=self.access_token_secret,
+        )
 
         # Return session token for app specific caching
-        return session_token
+        return (self.access_token, self.access_token_secret)
 
     def close(self) -> None:
-        """Close the current HTTP session."""
-        self.session.close()
+        """Close the current HTTP session if present.
+
+        Defensive: do not raise if session is None or doesn't support close().
+        """
+        session = getattr(self, "session", None)
+        if session is None:
+            return
+        # Some session objects may not implement close() or may already be
+        # closed; guard against exceptions.
+        try:
+            close_fn = getattr(session, "close", None)
+            if callable(close_fn):
+                close_fn()
+        except Exception:
+            # Swallow exceptions during close to keep tear-down robust.
+            pass
 
     @staticmethod
     def unix_time(dt: datetime.datetime) -> int:
@@ -200,81 +172,87 @@ class FatsecretCore:
 
     @staticmethod
     def valid_response(response: requests.Response):
-        """Validate a JSON API response and extract its data or raise an error."""
-        if response.json():
+        """Validate a JSON API response and extract its data or raise an error.
 
-            for key in response.json():
+        This method parses the JSON payload once and uses explicit key checks
+        so the behavior is clearer and avoids repeated .json() calls.
+        """
+        try:
+            data = response.json()
+        except ValueError:
+            # If the response is not JSON raise for status so the caller gets
+            # an informative HTTP error.
+            response.raise_for_status()
+            return None
 
-                # Error Code Handling
-                if key == "error":
-                    code = response.json()[key]["code"]
-                    message = response.json()[key]["message"]
-                    if code == 2:
-                        raise AuthenticationError(
-                            2, "This api call requires an authenticated session"
-                        )
+        if not data:
+            return None
 
-                    elif code in [1, 10, 11, 12, 20, 21]:
-                        raise GeneralError(code, message)
+        # Error handling
+        if "error" in data:
+            err = data["error"]
+            code = err.get("code")
+            message = err.get("message")
+            if code == 2:
+                raise AuthenticationError(
+                    2, "This api call requires an authenticated session"
+                )
+            elif code in [1, 10, 11, 12, 20, 21]:
+                raise GeneralError(code, message)
+            elif 3 <= code <= 9:
+                raise AuthenticationError(code, message)
+            elif 101 <= code <= 108:
+                raise ParameterError(code, message)
+            elif 201 <= code <= 207:
+                raise ApplicationError(code, message)
 
-                    elif 3 <= code <= 9:
-                        raise AuthenticationError(code, message)
+        # Non-error payloads
+        if "success" in data:
+            return True
 
-                    elif 101 <= code <= 108:
-                        raise ParameterError(code, message)
+        if "foods" in data:
+            return data["foods"].get("food")
 
-                    elif 201 <= code <= 207:
-                        raise ApplicationError(code, message)
+        if "suggestions" in data:
+            return data["suggestions"]
 
-                # All other response options
-                elif key == "success":
-                    return True
+        if "recipes" in data:
+            return data["recipes"].get("recipe")
 
-                elif key == "foods":
-                    return response.json()[key]["food"]
+        if "saved_meals" in data:
+            return data["saved_meals"].get("saved_meal")
 
-                elif key == "suggestions":
-                    return response.json()[key]
+        if "saved_meal_items" in data:
+            return data["saved_meal_items"].get("saved_meal_item")
 
-                elif key == "recipes":
-                    return response.json()[key]["recipe"]
+        if "exercise_types" in data:
+            return data["exercise_types"].get("exercise")
 
-                elif key == "saved_meals":
-                    return response.json()[key]["saved_meal"]
+        if "food_entries" in data:
+            if data["food_entries"] is None:
+                return []
+            entries = data["food_entries"].get("food_entry")
+            if isinstance(entries, dict):
+                return [entries]
+            return entries
 
-                elif key == "saved_meal_items":
-                    return response.json()[key]["saved_meal_item"]
+        if "month" in data:
+            return data["month"].get("day")
 
-                elif key == "exercise_types":
-                    return response.json()[key]["exercise"]
+        if "profile" in data:
+            profile = data["profile"]
+            if "auth_token" in profile:
+                return (profile.get("auth_token"), profile.get("auth_secret"))
+            return profile
 
-                elif key == "food_entries":
-                    if response.json()[key] is None:
-                        return []
-                    entries = response.json()[key]["food_entry"]
-                    if isinstance(entries, dict):
-                        return [entries]
-                    elif isinstance(entries, list):
-                        return entries
-
-                elif key == "month":
-                    return response.json()[key]["day"]
-
-                elif key == "profile":
-                    if "auth_token" in response.json()[key]:
-                        return (
-                            response.json()[key]["auth_token"],
-                            response.json()[key]["auth_secret"],
-                        )
-                    else:
-                        return response.json()[key]
-
-                elif key in (
-                    "food",
-                    "recipe",
-                    "recipe_types",
-                    "saved_meal_id",
-                    "saved_meal_item_id",
-                    "food_entry_id",
-                ):
-                    return response.json()[key]
+        for single_key in (
+            "food",
+            "recipe",
+            "recipe_types",
+            "saved_meal_id",
+            "saved_meal_item_id",
+            "food_entry_id",
+        ):
+            if single_key in data:
+                return data[single_key]
+        return None

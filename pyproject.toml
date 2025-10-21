@@ -12,8 +12,8 @@ dependencies = [
     "pytest-cov",
     "pytest",
     "python-dotenv",
-    "rauth==0.7.3",
-    "requests==2.32.5",
+    "requests-oauthlib",
+    "requests",
     "ruff",
 ]
 
