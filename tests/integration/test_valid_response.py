@@ -1,11 +1,12 @@
 import pytest
 import requests
 
+from fatsecret import (ApplicationError, AuthenticationError, Fatsecret,
+                       GeneralError, ParameterError)
+
 
 @pytest.mark.integration
 def test_valid_response_error_code_2():
-
-    from fatsecret.fatsecret import AuthenticationError, Fatsecret
 
     response = requests.Response()
     response._content = b'{"error": {"code": 2, "message": "Authentication required"}}'
@@ -17,8 +18,6 @@ def test_valid_response_error_code_2():
 @pytest.mark.integration
 def test_valid_response_error_code_1():
 
-    from fatsecret.fatsecret import Fatsecret, GeneralError
-
     response = requests.Response()
     response._content = b'{"error": {"code": 1, "message": "General error 1"}}'
     response.status_code = 200
@@ -28,8 +27,6 @@ def test_valid_response_error_code_1():
 
 @pytest.mark.integration
 def test_valid_response_error_code_10():
-
-    from fatsecret.fatsecret import Fatsecret, GeneralError
 
     response = requests.Response()
     response._content = b'{"error": {"code": 10, "message": "General error 10"}}'
@@ -41,8 +38,6 @@ def test_valid_response_error_code_10():
 @pytest.mark.integration
 def test_valid_response_error_code_11():
 
-    from fatsecret.fatsecret import Fatsecret, GeneralError
-
     response = requests.Response()
     response._content = b'{"error": {"code": 11, "message": "General error 11"}}'
     response.status_code = 200
@@ -52,8 +47,6 @@ def test_valid_response_error_code_11():
 
 @pytest.mark.integration
 def test_valid_response_error_code_12():
-
-    from fatsecret.fatsecret import Fatsecret, GeneralError
 
     response = requests.Response()
     response._content = b'{"error": {"code": 12, "message": "General error 12"}}'
@@ -65,8 +58,6 @@ def test_valid_response_error_code_12():
 @pytest.mark.integration
 def test_valid_response_error_code_20():
 
-    from fatsecret.fatsecret import Fatsecret, GeneralError
-
     response = requests.Response()
     response._content = b'{"error": {"code": 20, "message": "General error 20"}}'
     response.status_code = 200
@@ -77,8 +68,6 @@ def test_valid_response_error_code_20():
 @pytest.mark.integration
 def test_valid_response_error_code_21():
 
-    from fatsecret.fatsecret import Fatsecret, GeneralError
-
     response = requests.Response()
     response._content = b'{"error": {"code": 21, "message": "General error 21"}}'
     response.status_code = 200
@@ -87,10 +76,7 @@ def test_valid_response_error_code_21():
 
 
 @pytest.mark.integration
-def test_valid_response_error_code_3_to_9(fatsecret_client):
-    import requests
-
-    from fatsecret.fatsecret import AuthenticationError, Fatsecret
+def test_valid_response_error_code_3_to_9():
 
     for code in range(3, 10):
         response = requests.Response()
@@ -103,10 +89,7 @@ def test_valid_response_error_code_3_to_9(fatsecret_client):
 
 
 @pytest.mark.integration
-def test_valid_response_error_code_101_to_108(fatsecret_client):
-    import requests
-
-    from fatsecret.fatsecret import Fatsecret, ParameterError
+def test_valid_response_error_code_101_to_108():
 
     for code in range(101, 109):
         response = requests.Response()
@@ -119,10 +102,7 @@ def test_valid_response_error_code_101_to_108(fatsecret_client):
 
 
 @pytest.mark.integration
-def test_valid_response_error_code_201_to_207(fatsecret_client):
-    import requests
-
-    from fatsecret.fatsecret import ApplicationError, Fatsecret
+def test_valid_response_error_code_201_to_207():
 
     for code in range(201, 208):
         response = requests.Response()
