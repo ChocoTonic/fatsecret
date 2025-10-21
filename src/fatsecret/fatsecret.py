@@ -17,6 +17,9 @@ import uuid
 import requests
 from rauth.service import OAuth1Service
 
+from .errors import (ApplicationError, AuthenticationError, GeneralError,
+                     ParameterError)
+
 
 # FIXME add method to set default units and make it an optional argument to the constructor
 class Fatsecret:
@@ -1226,28 +1229,3 @@ class Fatsecret:
 
         response = self.session.get(self.api_url, params=params)
         return self.valid_response(response)
-
-
-class BaseFatsecretError(Exception):
-    def __init__(self, code, message):
-        Exception.__init__(self, "Error {0}: {1}".format(code, message))
-
-
-class GeneralError(BaseFatsecretError):
-    def __init__(self, code, message):
-        BaseFatsecretError.__init__(self, code, message)
-
-
-class AuthenticationError(BaseFatsecretError):
-    def __init__(self, code, message):
-        BaseFatsecretError.__init__(self, code, message)
-
-
-class ParameterError(BaseFatsecretError):
-    def __init__(self, code, message):
-        BaseFatsecretError.__init__(self, code, message)
-
-
-class ApplicationError(BaseFatsecretError):
-    def __init__(self, code, message):
-        BaseFatsecretError.__init__(self, code, message)
