@@ -20,6 +20,11 @@ from rauth.service import OAuth1Service
 
 # FIXME add method to set default units and make it an optional argument to the constructor
 class Fatsecret:
+    REQUEST_TOKEN_URL = "https://authentication.fatsecret.com/oauth/request_token"
+    AUTHORIZE_URL = "https://authentication.fatsecret.com/oauth/authorize"
+    ACCESS_TOKEN_URL = "https://authentication.fatsecret.com/oauth/access_token"
+    BASE_URL = "https://platform.fatsecret.com/rest/server.api"
+
     """
     Session for API interaction
 
@@ -56,10 +61,10 @@ class Fatsecret:
             name="fatsecret",
             consumer_key=consumer_key,
             consumer_secret=consumer_secret,
-            request_token_url="https://authentication.fatsecret.com/oauth/request_token",
-            authorize_url="https://authentication.fatsecret.com/oauth/authorize",
-            access_token_url="https://authentication.fatsecret.com/oauth/access_token",
-            base_url="https://platform.fatsecret.com/rest/server.api",
+            request_token_url=self.REQUEST_TOKEN_URL,
+            authorize_url=self.AUTHORIZE_URL,
+            access_token_url=self.ACCESS_TOKEN_URL,
+            base_url=self.BASE_URL,
         )
 
         # Open prior session or default to unauthorized session
@@ -73,8 +78,7 @@ class Fatsecret:
 
     @property
     def api_url(self):
-
-        return "https://platform.fatsecret.com/rest/server.api"
+        return self.oauth.base_url
 
     def get_authorize_url(self, callback_url="oob"):
         """
