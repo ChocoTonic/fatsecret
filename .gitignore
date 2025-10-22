@@ -8,7 +8,7 @@
 # Build artifacts
 dist/
 *.tar.gz
-fatsecret.egg*
+*.egg*
 
 # Docs build
 docs/_build/*
@@ -18,4 +18,3 @@ coverage.xml
 
 # Environment files
 .env
-
