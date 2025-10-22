@@ -59,8 +59,8 @@ lint:  ## Run code style and lint checks
 	@uv run ruff check $(SRC_DIR) $(TEST_DIR)
 
 fmt:  ## Auto-format code (black + isort)
-	@uv run black $(SRC_DIR) $(TEST_DIR)
-	@uv run isort $(SRC_DIR) $(TEST_DIR)
+	@uv run black .
+	@uv run isort .
 	@echo "✨ Code formatted."
 
 check: lint test  ## Run lint and tests
