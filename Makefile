@@ -80,7 +80,10 @@ release: build  ## Publish to PyPI using uv
 # -----------------------------
 # Misc
 # -----------------------------
-.PHONY: help all
+.PHONY: help all example
+
+example: fmt lint  ## Run the CLI example with API credentials from environment
+	@PYTHONPATH=src uv run python examples/cli_example.py
 
 help:  ## Show available make targets
 	@echo "Available commands:"
