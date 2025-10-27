@@ -1,4 +1,3 @@
-from .core import FatsecretCore
 from .errors import (ApplicationError, AuthenticationError, BaseFatsecretError,
                      GeneralError, ParameterError)
 from .exercises import ExercisesMixin
