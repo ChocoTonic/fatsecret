@@ -80,10 +80,13 @@ release: build  ## Publish to PyPI using uv
 # -----------------------------
 # Misc
 # -----------------------------
-.PHONY: help all example
+.PHONY: help all example docs
 
 example: fmt lint  ## Run the CLI example with API credentials from environment
 	@PYTHONPATH=src uv run python examples/cli_example.py
+
+docs:  ## Build Sphinx documentation (clean then html)
+	@cd docs && make clean && make html
 
 help:  ## Show available make targets
 	@echo "Available commands:"
