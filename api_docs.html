@@ -1,0 +1,793 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Documentation &mdash; pyfatsecret 0.4.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=6c02275b"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="OAuth Examples" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyfatsecret
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">OAuth Examples</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fatsecret.Fatsecret"><code class="docutils literal notranslate"><span class="pre">Fatsecret</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.authenticate"><code class="docutils literal notranslate"><span class="pre">Fatsecret.authenticate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.close"><code class="docutils literal notranslate"><span class="pre">Fatsecret.close()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.exercise_entries_commit_day"><code class="docutils literal notranslate"><span class="pre">Fatsecret.exercise_entries_commit_day()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.exercise_entries_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.exercise_entries_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.exercise_entries_get_month"><code class="docutils literal notranslate"><span class="pre">Fatsecret.exercise_entries_get_month()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.exercise_entries_save_template"><code class="docutils literal notranslate"><span class="pre">Fatsecret.exercise_entries_save_template()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.exercise_entry_edit"><code class="docutils literal notranslate"><span class="pre">Fatsecret.exercise_entry_edit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.exercises_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.exercises_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.fatsecret_authenticate"><code class="docutils literal notranslate"><span class="pre">Fatsecret.fatsecret_authenticate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_add_favorite"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_add_favorite()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_delete_favorite"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_delete_favorite()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_entries_copy"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_entries_copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_entries_copy_saved_meal"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_entries_copy_saved_meal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_entries_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_entries_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_entries_get_month"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_entries_get_month()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_entry_create"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_entry_create()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_entry_delete"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_entry_delete()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_entry_edit"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_entry_edit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_find_id_for_barcode"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_find_id_for_barcode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.food_get_v2"><code class="docutils literal notranslate"><span class="pre">Fatsecret.food_get_v2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.foods_autocomplete"><code class="docutils literal notranslate"><span class="pre">Fatsecret.foods_autocomplete()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.foods_get_favorites"><code class="docutils literal notranslate"><span class="pre">Fatsecret.foods_get_favorites()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.foods_get_most_eaten"><code class="docutils literal notranslate"><span class="pre">Fatsecret.foods_get_most_eaten()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.foods_get_recently_eaten"><code class="docutils literal notranslate"><span class="pre">Fatsecret.foods_get_recently_eaten()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.foods_search"><code class="docutils literal notranslate"><span class="pre">Fatsecret.foods_search()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.get_authorize_url"><code class="docutils literal notranslate"><span class="pre">Fatsecret.get_authorize_url()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.profile_create"><code class="docutils literal notranslate"><span class="pre">Fatsecret.profile_create()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.profile_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.profile_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.profile_get_auth"><code class="docutils literal notranslate"><span class="pre">Fatsecret.profile_get_auth()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.recipe_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.recipe_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.recipe_types_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.recipe_types_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.recipes_add_favorite"><code class="docutils literal notranslate"><span class="pre">Fatsecret.recipes_add_favorite()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.recipes_delete_favorite"><code class="docutils literal notranslate"><span class="pre">Fatsecret.recipes_delete_favorite()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.recipes_get_favorites"><code class="docutils literal notranslate"><span class="pre">Fatsecret.recipes_get_favorites()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.recipes_search"><code class="docutils literal notranslate"><span class="pre">Fatsecret.recipes_search()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.saved_meal_create"><code class="docutils literal notranslate"><span class="pre">Fatsecret.saved_meal_create()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.saved_meal_delete"><code class="docutils literal notranslate"><span class="pre">Fatsecret.saved_meal_delete()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.saved_meal_edit"><code class="docutils literal notranslate"><span class="pre">Fatsecret.saved_meal_edit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.saved_meal_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.saved_meal_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.saved_meal_item_add"><code class="docutils literal notranslate"><span class="pre">Fatsecret.saved_meal_item_add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.saved_meal_item_delete"><code class="docutils literal notranslate"><span class="pre">Fatsecret.saved_meal_item_delete()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.saved_meal_item_edit"><code class="docutils literal notranslate"><span class="pre">Fatsecret.saved_meal_item_edit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.saved_meal_items_get"><code class="docutils literal notranslate"><span class="pre">Fatsecret.saved_meal_items_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.unix_time"><code class="docutils literal notranslate"><span class="pre">Fatsecret.unix_time()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.unix_time_v2"><code class="docutils literal notranslate"><span class="pre">Fatsecret.unix_time_v2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.valid_response"><code class="docutils literal notranslate"><span class="pre">Fatsecret.valid_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.weight_update"><code class="docutils literal notranslate"><span class="pre">Fatsecret.weight_update()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fatsecret.Fatsecret.weights_get_month"><code class="docutils literal notranslate"><span class="pre">Fatsecret.weights_get_month()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyfatsecret</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api_docs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-documentation">
+<span id="api-docs"></span><h1>API Documentation<a class="headerlink" href="#api-documentation" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fatsecret.</span></span><span class="sig-name descname"><span class="pre">Fatsecret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumer_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret" title="Link to this definition"></a></dt>
+<dd><p>Core FatSecret API client logic (auth, request handling, utilities).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.authenticate">
+<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.authenticate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.authenticate" title="Link to this definition"></a></dt>
+<dd><p>Exchange the verifier (PIN or callback code) for permanent access tokens.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>verifier: PIN displayed to user or returned via callback.</p>
+</dd>
+<dt>Returns:</dt><dd><p>(access_token, access_secret)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.close" title="Link to this definition"></a></dt>
+<dd><p>Close the current HTTP session.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.exercise_entries_commit_day">
+<span class="sig-name descname"><span class="pre">exercise_entries_commit_day</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.exercise_entries_commit_day"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.exercise_entries_commit_day" title="Link to this definition"></a></dt>
+<dd><p>Saves the default exercise entries for the user on a nominated date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>date</strong> (<em>datetime.datetime</em>) – Date to save default exercises on (default value is the current day).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.exercise_entries_get">
+<span class="sig-name descname"><span class="pre">exercise_entries_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.exercise_entries_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.exercise_entries_get" title="Link to this definition"></a></dt>
+<dd><p>Returns the daily exercise entries for the user on a nominated date.
+The API will always return 24 hours worth of exercise entries for a given user on a given date.
+These entries will either be “template” entries (which a user may override for any given day of the week)
+or saved exercise entry values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>date</strong> (<em>datetime.datetime</em>) – Day of exercises to retrieve (default value is the current day).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.exercise_entries_get_month">
+<span class="sig-name descname"><span class="pre">exercise_entries_get_month</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.exercise_entries_get_month"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.exercise_entries_get_month" title="Link to this definition"></a></dt>
+<dd><p>Returns the summary estimated daily calories expended for a user’s exercise diary entries for
+the month specified. Use this call to display total energy expenditure information to users about their
+exercise and activities for a nominated month.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>date</strong> (<em>datetime.datetime</em>) – Day within month to retrieve (default value is the current day for the current month).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.exercise_entries_save_template">
+<span class="sig-name descname"><span class="pre">exercise_entries_save_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.exercise_entries_save_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.exercise_entries_save_template" title="Link to this definition"></a></dt>
+<dd><p>Takes the set of exercise entries on a nominated date and saves these entries as “template”
+entries for nominated days of the week.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>days</strong> (<em>str</em>) – The days of the week specified as bits with Sunday being the 1st bit and Saturday being the last.
+For example, Tuesday and Thursday would be represented as 00010100 in bits where Tuesday is the 3rd
+bit from the right and Thursday being the 5th.</p></li>
+<li><p><strong>date</strong> (<em>datetime.datetime</em>) – Day of exercises to use as the template (default value is the current day).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.exercise_entry_edit">
+<span class="sig-name descname"><span class="pre">exercise_entry_edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift_to_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift_from_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minutes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift_to_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift_from_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kcals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.exercise_entry_edit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.exercise_entry_edit" title="Link to this definition"></a></dt>
+<dd><p>Records a change to a user’s exercise diary entry for a nominated date.
+All changes to an exercise diary involve either increasing the duration of an existing activity or
+introducing a new activity for a nominated duration. Because there are always 24 hours worth of exercise
+entries on any given date, the user must nominate the exercise or activity from which the time was taken
+to balance out the total duration of activities and exercises for the 24 hour period. As such, each change
+to the exercise entries on a given day is a “shifting” operation where time is moved from one activity to
+another. An exercise is removed from the day when all of the time allocated to it is shifted to other exercises.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shift_to_id</strong> (<em>str</em>) – The ID of the exercise type to shift to.</p></li>
+<li><p><strong>shift_from_id</strong> (<em>str</em>) – The ID of the exercise type to shift from.</p></li>
+<li><p><strong>minutes</strong> (<em>int</em>) – The number of minutes to shift.</p></li>
+<li><p><strong>date</strong> (<em>datetime.datetime</em>) – Day to edit (default value is the current day).</p></li>
+<li><p><strong>shift_to_name</strong> (<em>str</em>) – Only required if shift_to_id is 0 (exercise type “Other”).
+This is the name of the new custom exercise type to shift to.</p></li>
+<li><p><strong>shift_from_name</strong> (<em>str</em>) – Only required if shift_from_id is 0 (exercise type “Other”).
+This is the name of the custom exercise type to shift from.</p></li>
+<li><p><strong>kcals</strong> (<em>int</em>) – Number of calories burned</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.exercises_get">
+<span class="sig-name descname"><span class="pre">exercises_get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.exercises_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.exercises_get" title="Link to this definition"></a></dt>
+<dd><p>This is a utility method, returning the full list of all supported exercise type names and
+their associated unique identifiers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.fatsecret_authenticate">
+<span class="sig-name descname"><span class="pre">fatsecret_authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumer_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumer_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.fatsecret_authenticate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.fatsecret_authenticate" title="Link to this definition"></a></dt>
+<dd><p>Authenticate a user programmatically using credentials and return an authorized Fatsecret instance.</p>
+<p>Note:
+This uses HTML form emulation against FatSecret’s login flow and may break if the website changes.
+It is provided for convenience and developer testing, not production OAuth flows.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_add_favorite">
+<span class="sig-name descname"><span class="pre">food_add_favorite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">food_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serving_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_add_favorite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_add_favorite" title="Link to this definition"></a></dt>
+<dd><p>Add a food to a user’s favorite according to the parameters specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>food_id</strong> (<em>str</em>) – The ID of the favorite food to add.</p></li>
+<li><p><strong>serving_id</strong> (<em>str</em>) – Only required if number_of_units is present. This is the ID of the favorite serving.</p></li>
+<li><p><strong>number_of_units</strong> (<em>float</em>) – Only required if serving_id is present. This is the favorite number of servings.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_delete_favorite">
+<span class="sig-name descname"><span class="pre">food_delete_favorite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">food_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serving_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_delete_favorite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_delete_favorite" title="Link to this definition"></a></dt>
+<dd><p>Delete the food to a user’s favorite according to the parameters specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>food_id</strong> (<em>str</em>) – The ID of the favorite food to add.</p></li>
+<li><p><strong>serving_id</strong> (<em>str</em>) – Only required if number_of_units is present. This is the ID of the favorite serving.</p></li>
+<li><p><strong>number_of_units</strong> (<em>float</em>) – Only required if serving_id is present. This is the favorite number of servings.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_entries_copy">
+<span class="sig-name descname"><span class="pre">food_entries_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_entries_copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_entries_copy" title="Link to this definition"></a></dt>
+<dd><p>Copies the food entries for a specified meal from a nominated date to a nominated date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>from_date</strong> (<em>datetime.datetime</em>) – The date to copy food entries from</p></li>
+<li><p><strong>to_date</strong> (<em>datetime.datetime</em>) – The date to copy food entries to (default value is the current day).</p></li>
+<li><p><strong>meal</strong> (<em>str</em>) – The type of meal to copy. Valid meal types are “breakfast”, “lunch”, “dinner” and “other”
+(default value is all).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_entries_copy_saved_meal">
+<span class="sig-name descname"><span class="pre">food_entries_copy_saved_meal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_entries_copy_saved_meal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_entries_copy_saved_meal" title="Link to this definition"></a></dt>
+<dd><p>Copies the food entries for a specified saved meal to a specified meal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>meal_id</strong> (<em>str</em>) – The ID of the saved meal</p></li>
+<li><p><strong>meal</strong> (<em>str</em>) – The type of meal eaten. Valid meal types are “breakfast”, “lunch”, “dinner” and “other”.</p></li>
+<li><p><strong>date</strong> (<em>datetime.datetime</em>) – Day to copy meal to. (default value is the current day).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_entries_get">
+<span class="sig-name descname"><span class="pre">food_entries_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">food_entry_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_entries_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_entries_get" title="Link to this definition"></a></dt>
+<dd><p>Returns saved food diary entries for the user according to the filter specified.
+This method can be used to return all food diary entries recorded on a nominated date or a single food
+diary entry with a nominated food_entry_id.
+:: You must specify either date or food_entry_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>food_entry_id</strong> (<em>str</em>) – The ID of the food entry to retrieve. You must specify either date or food_entry_id.</p></li>
+<li><p><strong>date</strong> (<em>datetime.datetmie</em>) – Day to filter food entries by (default value is the current day).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_entries_get_month">
+<span class="sig-name descname"><span class="pre">food_entries_get_month</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_entries_get_month"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_entries_get_month" title="Link to this definition"></a></dt>
+<dd><p>Returns summary daily nutritional information for a user’s food diary entries for the month specified.
+Use this call to display nutritional information to users about their food intake for a nominated month.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>date</strong> (<em>datetime.datetime</em>) – Day in the month to return (default value is the current day to get current month).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_entry_create">
+<span class="sig-name descname"><span class="pre">food_entry_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">food_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">food_entry_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serving_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_entry_create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_entry_create" title="Link to this definition"></a></dt>
+<dd><p>Records a food diary entry for the user according to the parameters specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>food_id</strong> (<em>str</em>) – The ID of the food eaten.</p></li>
+<li><p><strong>food_entry_name</strong> (<em>str</em>) – The name of the food entry.</p></li>
+<li><p><strong>serving_id</strong> (<em>str</em>) – The ID of the serving</p></li>
+<li><p><strong>number_of_units</strong> (<em>float</em>) – The number of servings eaten.</p></li>
+<li><p><strong>meal</strong> (<em>str</em>) – The type of meal eaten. Valid meal types are “breakfast”, “lunch”, “dinner” and “other”.</p></li>
+<li><p><strong>date</strong> (<em>datetime.datetime</em>) – Day to create food entry on (default value is the current day).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_entry_delete">
+<span class="sig-name descname"><span class="pre">food_entry_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">food_entry_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_entry_delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_entry_delete" title="Link to this definition"></a></dt>
+<dd><p>Deletes the specified food entry for the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>food_entry_id</strong> (<em>str</em>) – The ID of the food entry to delete.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_entry_edit">
+<span class="sig-name descname"><span class="pre">food_entry_edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">food_entry_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serving_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_entry_edit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_entry_edit" title="Link to this definition"></a></dt>
+<dd><p>Adjusts the recorded values for a food diary entry.
+Note that the date of the entry may not be adjusted, however one or more of the other remaining
+properties - food_entry_name, serving_id, number_of_units, or meal may be altered. In order to shift
+the date for which a food diary entry was recorded the original entry must be deleted and a new entry recorded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>food_entry_id</strong> (<em>str</em>) – The ID of the food entry to edit.</p></li>
+<li><p><strong>entry_name</strong> (<em>str</em>) – The new name of the food entry.</p></li>
+<li><p><strong>serving_id</strong> (<em>str</em>) – The new ID of the serving to change to.</p></li>
+<li><p><strong>num_units</strong> (<em>float</em>) – The new number of servings eaten.</p></li>
+<li><p><strong>meal</strong> (<em>str</em>) – The new type of meal eaten. Valid meal types are “breakfast”, “lunch”, “dinner” and “other”.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_find_id_for_barcode">
+<span class="sig-name descname"><span class="pre">food_find_id_for_barcode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barcode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_find_id_for_barcode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_find_id_for_barcode" title="Link to this definition"></a></dt>
+<dd><p>Returns the food_id matching the barcode specified.</p>
+<p>Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with
+zeros for the spaces to the left. UPC-A, EAN-13 and EAN-8 barcodes may be specified.
+UPC-E barcodes should be converted to their UPC-A equivalent (and then specified
+as GTIN-13 numbers).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>barcode</strong> (<em>str</em>) – The 13-digit GTIN-13 formatted sequence of digits representing
+the barcode to search against.</p></li>
+<li><p><strong>region</strong> (<em>str</em>) – Optional region code.</p></li>
+<li><p><strong>language</strong> (<em>str</em>) – Optional language code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_get">
+<span class="sig-name descname"><span class="pre">food_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">food_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_get" title="Link to this definition"></a></dt>
+<dd><p>Returns detailed nutritional information for the specified food.
+Use this call to display nutrition values for a food to users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>food_id</strong> (<em>str</em>) – Fatsecret food identifier</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.food_get_v2">
+<span class="sig-name descname"><span class="pre">food_get_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">food_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.food_get_v2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.food_get_v2" title="Link to this definition"></a></dt>
+<dd><p>Returns detailed nutritional information for the specified food.
+Use this call to display nutrition values for a food to users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>food_id</strong> (<em>str</em>) – Fatsecret food identifier</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.foods_autocomplete">
+<span class="sig-name descname"><span class="pre">foods_autocomplete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.foods_autocomplete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.foods_autocomplete" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of suggestions for the expression specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expression</strong> (<em>str</em>) – Suggestions for the given expression is returned. E.G.: “chic” will return
+up to four of the best suggestions that contains “chic”.</p></li>
+<li><p><strong>page_number</strong> – page set to return (default 0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.foods_get_favorites">
+<span class="sig-name descname"><span class="pre">foods_get_favorites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.foods_get_favorites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.foods_get_favorites" title="Link to this definition"></a></dt>
+<dd><p>Returns the favorite foods for the authenticated user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.foods_get_most_eaten">
+<span class="sig-name descname"><span class="pre">foods_get_most_eaten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.foods_get_most_eaten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.foods_get_most_eaten" title="Link to this definition"></a></dt>
+<dd><p>Returns the most eaten foods for the user according to the meal specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meal</strong> (<em>str</em>) – ‘breakfast’, ‘lunch’, ‘dinner’, or ‘other’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.foods_get_recently_eaten">
+<span class="sig-name descname"><span class="pre">foods_get_recently_eaten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.foods_get_recently_eaten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.foods_get_recently_eaten" title="Link to this definition"></a></dt>
+<dd><p>Returns the recently eaten foods for the user according to the meal specified
+:param meal: ‘breakfast’, ‘lunch’, ‘dinner’, or ‘other’
+:type meal: str</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.foods_search">
+<span class="sig-name descname"><span class="pre">foods_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.foods_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.foods_search" title="Link to this definition"></a></dt>
+<dd><p>Conducts a search of the food database using the search expression specified.
+The results are paginated according to a zero-based “page” offset. Successive pages of results
+may be retrieved by specifying a starting page offset value. For instance, specifying a max_results
+of 10 and page_number of 4 will return results numbered 41-50.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_expression</strong> (<em>str</em>) – term or phrase to search</p></li>
+<li><p><strong>page_number</strong> (<em>int</em>) – page set to return (default 0)</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – total results per page (default 20)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.get_authorize_url">
+<span class="sig-name descname"><span class="pre">get_authorize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'oob'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.get_authorize_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.get_authorize_url" title="Link to this definition"></a></dt>
+<dd><p>New implementation using manual OAuth 1.0 flow to /oauth/request_token on the new endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callback_url</strong> (<em>str</em>) – An absolute URL to redirect the User to when they have completed authentication</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.profile_create">
+<span class="sig-name descname"><span class="pre">profile_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.profile_create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.profile_create" title="Link to this definition"></a></dt>
+<dd><p>Creates a new profile and returns the oauth_token and oauth_secret for the new profile.</p>
+<p>The token and secret returned by this method are persisted indefinitely and may be used in order to
+provide profile-specific information storage for users including food and exercise diaries and weight tracking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>str</em>) – You can set your own ID for the newly created profile if you do not wish to store the
+auth_token and auth_secret. Particularly useful if you are only using the FatSecret JavaScript API.
+Use profile.get_auth to retrieve auth_token and auth_secret.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.profile_get">
+<span class="sig-name descname"><span class="pre">profile_get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.profile_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.profile_get" title="Link to this definition"></a></dt>
+<dd><p>Returns general status information for a nominated user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.profile_get_auth">
+<span class="sig-name descname"><span class="pre">profile_get_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.profile_get_auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.profile_get_auth" title="Link to this definition"></a></dt>
+<dd><p>Returns the authentication information for a nominated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>str</em>) – The user_id specified in profile.create.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.recipe_get">
+<span class="sig-name descname"><span class="pre">recipe_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recipe_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.recipe_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.recipe_get" title="Link to this definition"></a></dt>
+<dd><p>Returns detailed information for the specified recipe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>recipe_id</strong> (<em>str</em>) – Fatsecret ID of desired recipe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.recipe_types_get">
+<span class="sig-name descname"><span class="pre">recipe_types_get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.recipe_types_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.recipe_types_get" title="Link to this definition"></a></dt>
+<dd><p>This is a utility method, returning the full list of all supported recipe type names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.recipes_add_favorite">
+<span class="sig-name descname"><span class="pre">recipes_add_favorite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recipe_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.recipes_add_favorite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.recipes_add_favorite" title="Link to this definition"></a></dt>
+<dd><p>Add a recipe to a user’s favorite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>recipe_id</strong> (<em>str</em>) – The ID of the favorite recipe to add.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.recipes_delete_favorite">
+<span class="sig-name descname"><span class="pre">recipes_delete_favorite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recipe_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.recipes_delete_favorite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.recipes_delete_favorite" title="Link to this definition"></a></dt>
+<dd><p>Delete a recipe to a user’s favorite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>recipe_id</strong> (<em>str</em>) – The ID of the favorite recipe to delete.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.recipes_get_favorites">
+<span class="sig-name descname"><span class="pre">recipes_get_favorites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.recipes_get_favorites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.recipes_get_favorites" title="Link to this definition"></a></dt>
+<dd><p>Returns the favorite recipes for the specified user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.recipes_search">
+<span class="sig-name descname"><span class="pre">recipes_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipe_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.recipes_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.recipes_search" title="Link to this definition"></a></dt>
+<dd><p>Conducts a search of the recipe database using the search expression specified.</p>
+<p>The results are paginated according to a zero-based “page” offset. Successive pages of results may be
+retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and
+page_number of 4 will return results numbered 41-50.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_expression</strong> (<em>str</em>) – phrase to search on</p></li>
+<li><p><strong>recipe_type</strong> (<em>str</em>) – type of recipe to filter</p></li>
+<li><p><strong>page_number</strong> (<em>int</em>) – result page to return (default 0)</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – total results per page to return (default 20)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.saved_meal_create">
+<span class="sig-name descname"><span class="pre">saved_meal_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meal_desc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.saved_meal_create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.saved_meal_create" title="Link to this definition"></a></dt>
+<dd><p>Records a saved meal for the user according to the parameters specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>meal_name</strong> (<em>str</em>) – The name of the saved meal.</p></li>
+<li><p><strong>meal_desc</strong> (<em>str</em>) – A short description of the saved meal.</p></li>
+<li><p><strong>meals</strong> (<em>list</em>) – A comma separated list of the types of meal this saved meal is suitable for.
+Valid meal types are “breakfast”, “lunch”, “dinner” and “other”.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.saved_meal_delete">
+<span class="sig-name descname"><span class="pre">saved_meal_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.saved_meal_delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.saved_meal_delete" title="Link to this definition"></a></dt>
+<dd><p>Deletes the specified saved meal for the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meal_id</strong> (<em>str</em>) – The ID of the saved meal to delete.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.saved_meal_edit">
+<span class="sig-name descname"><span class="pre">saved_meal_edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meal_desc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.saved_meal_edit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.saved_meal_edit" title="Link to this definition"></a></dt>
+<dd><p>Records a change to a user’s saved meal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>meal_id</strong> (<em>str</em>) – The ID of the food entry to edit.</p></li>
+<li><p><strong>new_name</strong> (<em>str</em>) – The new name of the saved meal.</p></li>
+<li><p><strong>meal_desc</strong> (<em>str</em>) – The new description of the saved meal.</p></li>
+<li><p><strong>meals</strong> (<em>str</em>) – The new comma separated list of the types of meal this saved meal is suitable for.
+Valid meal types are “breakfast”, “lunch”, “dinner” and “other”.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.saved_meal_get">
+<span class="sig-name descname"><span class="pre">saved_meal_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.saved_meal_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.saved_meal_get" title="Link to this definition"></a></dt>
+<dd><p>Returns saved meals for the authenticated user
+:param meal: Filter result set to ‘Breakfast’, ‘Lunch’, ‘Dinner’, or ‘Other’
+:type meal: str</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.saved_meal_item_add">
+<span class="sig-name descname"><span class="pre">saved_meal_item_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">food_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">food_entry_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serving_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_units</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.saved_meal_item_add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.saved_meal_item_add" title="Link to this definition"></a></dt>
+<dd><p>Adds a food to a user’s saved meal according to the parameters specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>meal_id</strong> (<em>str</em>) – The ID of the saved meal.</p></li>
+<li><p><strong>food_id</strong> (<em>str</em>) – The ID of the food to add to the saved meal.</p></li>
+<li><p><strong>food_entry_name</strong> (<em>str</em>) – The name of the food to add to the saved meal.</p></li>
+<li><p><strong>serving_id</strong> (<em>str</em>) – The ID of the serving of the food to add to the saved meal.</p></li>
+<li><p><strong>num_units</strong> (<em>float</em>) – The number of servings of the food to add to the saved meal.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.saved_meal_item_delete">
+<span class="sig-name descname"><span class="pre">saved_meal_item_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal_item_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.saved_meal_item_delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.saved_meal_item_delete" title="Link to this definition"></a></dt>
+<dd><p>Deletes the specified saved meal item for the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meal_item_id</strong> (<em>str</em>) – The ID of the saved meal item to delete.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.saved_meal_item_edit">
+<span class="sig-name descname"><span class="pre">saved_meal_item_edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal_item_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.saved_meal_item_edit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.saved_meal_item_edit" title="Link to this definition"></a></dt>
+<dd><p>Records a change to a user’s saved meal item.
+Note that the serving_id of the saved meal item may not be adjusted, however one or more of the other
+remaining properties - saved_meal_item_name or number_of_units may be altered. In order to adjust a
+serving_id for which a saved_meal_item was recorded the original item must be deleted and a new item recorded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>meal_item_id</strong> (<em>str</em>) – The ID of the saved meal item to edit.</p></li>
+<li><p><strong>item_name</strong> (<em>str</em>) – The new name of the saved meal item.</p></li>
+<li><p><strong>num_units</strong> (<em>float</em>) – The new number of servings of the saved meal item.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.saved_meal_items_get">
+<span class="sig-name descname"><span class="pre">saved_meal_items_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meal_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.saved_meal_items_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.saved_meal_items_get" title="Link to this definition"></a></dt>
+<dd><p>Returns saved meal items for a specified saved meal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meal_id</strong> (<em>str</em>) – The ID of the saved meal to retrieve the saved_meal_items for.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.unix_time">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unix_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.unix_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.unix_time" title="Link to this definition"></a></dt>
+<dd><p>Convert a datetime to number of days since the Epoch (FatSecret style).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.unix_time_v2">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unix_time_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">date</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.unix_time_v2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.unix_time_v2" title="Link to this definition"></a></dt>
+<dd><p>Convert datetime/date/timestamp into number of days since 1970-01-01.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.valid_response">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">valid_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.valid_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.valid_response" title="Link to this definition"></a></dt>
+<dd><p>Validate a JSON API response and extract its data or raise an error.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.weight_update">
+<span class="sig-name descname"><span class="pre">weight_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_weight_kg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_weight_kg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_height_cm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.weight_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.weight_update" title="Link to this definition"></a></dt>
+<dd><p>Records a user’s weight for a nominated date.</p>
+<p>First time weigh-ins require the goal_weight_kg and current_height_cm parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_weight_kg</strong> (<em>float</em>) – The current weight of the user in kilograms.</p></li>
+<li><p><strong>date</strong> (<em>datetime.datetime</em>) – Day to for weight record (default value is the current day).</p></li>
+<li><p><strong>weight_type</strong> (<em>str</em>) – The weight measurement type for this user profile. Valid types are “kg” and “lb”</p></li>
+<li><p><strong>height_type</strong> (<em>str</em>) – The height measurement type for this user profile. Valid types are “cm” and “inch”</p></li>
+<li><p><strong>goal_weight_kg</strong> (<em>float</em>) – The goal weight of the user in kilograms. This is required for the first weigh-in.</p></li>
+<li><p><strong>current_height_cm</strong> (<em>float</em>) – The current height of the user in centimetres. This is required for the first
+weigh-in. You can only set this for the first time (subsequent updates will not change a user’s height)</p></li>
+<li><p><strong>comment</strong> (<em>str</em>) – A comment for this weigh-in.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fatsecret.Fatsecret.weights_get_month">
+<span class="sig-name descname"><span class="pre">weights_get_month</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fatsecret/fatsecret.html#Fatsecret.weights_get_month"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fatsecret.Fatsecret.weights_get_month" title="Link to this definition"></a></dt>
+<dd><p>Returns the recorded weights for a user for the month specified. Use this call to display a user’s
+weight chart or log of weight changes for a nominated month.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>date</strong> (<em>datetime.datetime</em>) – Day within month to return (default value is the current day for the current month).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-left" title="OAuth Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
