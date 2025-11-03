@@ -32,3 +32,6 @@ jobs:
             - name: Deploy to GitHub Pages
               id: deployment
               uses: actions/deploy-pages@v4
+            - name: Print deployment URL
+              run: |
+                echo "Documentation will be published at: https://$GITHUB_REPOSITORY.github.io/$(basename $GITHUB_REPOSITORY)/"
