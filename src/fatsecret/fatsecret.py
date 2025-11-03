@@ -20,16 +20,9 @@ from bs4 import BeautifulSoup
 from rauth.service import OAuth1Service
 
 from .errors import ApplicationError, AuthenticationError, GeneralError, ParameterError
-from .exercises import ExercisesMixin
-from .profile import ProfileMixin
-from .weight import WeightMixin
 
 
-class Fatsecret(
-    ExercisesMixin,
-    ProfileMixin,
-    WeightMixin,
-):
+class Fatsecret:
 
     # ========================= CORE =========================
 
