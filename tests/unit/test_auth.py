@@ -3,7 +3,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-from fatsecret.fatsecret import fatsecret_authenticate
+from fatsecret import Fatsecret
 
 # Load environment variables
 if not os.getenv("GITHUB_ACTIONS"):
@@ -40,7 +40,7 @@ class TestAuthenticationSuccess:
         if not all(valid_credentials.values()):
             pytest.skip("Missing required environment variables for authentication")
 
-        result = fatsecret_authenticate(
+        result = Fatsecret.fatsecret_authenticate(
             valid_credentials["username"],
             valid_credentials["password"],
             valid_credentials["consumer_key"],
@@ -66,7 +66,7 @@ class TestAuthenticationFailures:
         if not valid_credentials["consumer_key"]:
             pytest.skip("Missing consumer credentials")
 
-        result = fatsecret_authenticate(
+        result = Fatsecret.fatsecret_authenticate(
             "nonexistent_user_" + os.urandom(16).hex() + "@fakeemail.xyz",
             valid_credentials["password"],
             valid_credentials["consumer_key"],
@@ -80,7 +80,7 @@ class TestAuthenticationFailures:
         if not all(valid_credentials.values()):
             pytest.skip("Missing required environment variables")
 
-        result = fatsecret_authenticate(
+        result = Fatsecret.fatsecret_authenticate(
             valid_credentials["username"],
             "CompletelyWrongPassword123!@#" + os.urandom(8).hex(),
             valid_credentials["consumer_key"],
@@ -94,7 +94,7 @@ class TestAuthenticationFailures:
         if not valid_credentials["consumer_key"]:
             pytest.skip("Missing consumer credentials")
 
-        result = fatsecret_authenticate(
+        result = Fatsecret.fatsecret_authenticate(
             "",
             valid_credentials["password"],
             valid_credentials["consumer_key"],
@@ -108,7 +108,7 @@ class TestAuthenticationFailures:
         if not all([valid_credentials["username"], valid_credentials["consumer_key"]]):
             pytest.skip("Missing required credentials")
 
-        result = fatsecret_authenticate(
+        result = Fatsecret.fatsecret_authenticate(
             valid_credentials["username"],
             "",
             valid_credentials["consumer_key"],
@@ -122,7 +122,7 @@ class TestAuthenticationFailures:
         if not valid_credentials["username"]:
             pytest.skip("Missing username")
 
-        result = fatsecret_authenticate(
+        result = Fatsecret.fatsecret_authenticate(
             valid_credentials["username"],
             valid_credentials["password"],
             "invalid_consumer_key_" + os.urandom(16).hex(),
@@ -136,7 +136,7 @@ class TestAuthenticationFailures:
         if not valid_credentials["username"]:
             pytest.skip("Missing username")
 
-        result = fatsecret_authenticate(
+        result = Fatsecret.fatsecret_authenticate(
             valid_credentials["username"],
             valid_credentials["password"],
             valid_credentials["consumer_key"],
@@ -160,7 +160,7 @@ class TestAuthenticationFailures:
         ]
 
         for username in special_usernames:
-            result = fatsecret_authenticate(
+            result = Fatsecret.fatsecret_authenticate(
                 username,
                 valid_credentials["password"],
                 valid_credentials["consumer_key"],
@@ -187,7 +187,7 @@ class TestAuthenticationFailures:
         ]
 
         for password in special_passwords:
-            result = fatsecret_authenticate(
+            result = Fatsecret.fatsecret_authenticate(
                 valid_credentials["username"],
                 password,
                 valid_credentials["consumer_key"],
@@ -205,7 +205,7 @@ class TestAuthenticationFailures:
         long_username = "a" * 1000 + "@example.com"
         long_password = "P@ssw0rd" + "x" * 1000
 
-        result = fatsecret_authenticate(
+        result = Fatsecret.fatsecret_authenticate(
             long_username,
             long_password,
             valid_credentials["consumer_key"],
@@ -223,7 +223,7 @@ class TestAuthenticationFailures:
         null_values = ["null", "NULL", "None", "undefined", "nil"]
 
         for null_val in null_values:
-            result = fatsecret_authenticate(
+            result = Fatsecret.fatsecret_authenticate(
                 null_val,
                 null_val,
                 valid_credentials["consumer_key"],
@@ -245,7 +245,7 @@ class TestAuthenticationFailures:
         ]
 
         for pattern in injection_patterns:
-            result = fatsecret_authenticate(
+            result = Fatsecret.fatsecret_authenticate(
                 pattern,
                 pattern,
                 valid_credentials["consumer_key"],
@@ -266,7 +266,7 @@ class TestAuthenticationFailures:
         ]
 
         for pattern in xss_patterns:
-            result = fatsecret_authenticate(
+            result = Fatsecret.fatsecret_authenticate(
                 pattern,
                 pattern,
                 valid_credentials["consumer_key"],
@@ -288,7 +288,7 @@ class TestAuthenticationFailures:
         ]
 
         for unicode_str in unicode_strings:
-            result = fatsecret_authenticate(
+            result = Fatsecret.fatsecret_authenticate(
                 unicode_str,
                 "password",
                 valid_credentials["consumer_key"],
@@ -311,7 +311,7 @@ class TestAuthenticationFailures:
         ]
 
         for test_user in whitespace_tests:
-            result = fatsecret_authenticate(
+            result = Fatsecret.fatsecret_authenticate(
                 test_user,
                 valid_credentials["password"],
                 valid_credentials["consumer_key"],
