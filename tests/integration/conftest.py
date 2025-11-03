@@ -5,7 +5,7 @@ import pytest
 import requests
 from dotenv import load_dotenv
 
-from fatsecret.auth import fatsecret_authenticate
+from fatsecret.fatsecret import fatsecret_authenticate
 
 
 @pytest.fixture(scope="session")
