@@ -15,10 +15,10 @@ dependencies = [
     "rauth==0.7.3",
     "requests==2.32.5",
     "ruff",
+    "sphinx-rtd-theme>=3.0.2",
+    "sphinx>=7.4.7",
 ]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
-markers = [
-    "integration: mark a test as an integration test"
-]
+markers = ["integration: mark a test as an integration test"]
