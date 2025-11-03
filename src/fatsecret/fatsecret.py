@@ -556,17 +556,25 @@ class Fatsecret(
         return self.valid_response(response)
 
     def food_find_id_for_barcode(self, barcode, region=None, language=None):
-        """Returns the food_id matching the barcode specified.
+        """
+        Returns the food_id matching the barcode specified.
+
         Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with
-        zeros for the spaces to the left.
-        UPC-A, EAN-13 and EAN-8 barcodes may be specified.
+        zeros for the spaces to the left. UPC-A, EAN-13 and EAN-8 barcodes may be specified.
         UPC-E barcodes should be converted to their UPC-A equivalent (and then specified
         as GTIN-13 numbers).
 
-        :param barcode: The 13-digit GTIN-13 formated sequence of digits representing
-        the barcode to search against.
-        :type food_id: str
+        :param barcode: The 13-digit GTIN-13 formatted sequence of digits representing
+            the barcode to search against.
+        :type barcode: str
+
+        :param region: Optional region code.
+        :type region: str
+
+        :param language: Optional language code.
+        :type language: str
         """
+
         params = {
             "method": "food.find_id_for_barcode",
             "barcode": barcode,
