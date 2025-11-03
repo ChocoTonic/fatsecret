@@ -365,6 +365,7 @@ class Fatsecret(
 
     def exercise_entries_commit_day(self, date=None):
         """Saves the default exercise entries for the user on a nominated date.
+
         :param date: Date to save default exercises on (default value is the current day).
         :type date: datetime.datetime
         """
@@ -379,6 +380,7 @@ class Fatsecret(
         The API will always return 24 hours worth of exercise entries for a given user on a given date.
         These entries will either be "template" entries (which a user may override for any given day of the week)
         or saved exercise entry values.
+
         :param date: Day of exercises to retrieve (default value is the current day).
         :type date: datetime.datetime
         """
@@ -392,6 +394,7 @@ class Fatsecret(
         """Returns the summary estimated daily calories expended for a user's exercise diary entries for
         the month specified. Use this call to display total energy expenditure information to users about their
         exercise and activities for a nominated month.
+
         :param date: Day within month to retrieve (default value is the current day for the current month).
         :type date: datetime.datetime
         """
@@ -490,6 +493,7 @@ class Fatsecret(
 
     def food_add_favorite(self, food_id, serving_id=None, number_of_units=None):
         """Add a food to a user's favorite according to the parameters specified.
+
         :param food_id: The ID of the favorite food to add.
         :type food_id: str
         :param serving_id: Only required if number_of_units is present. This is the ID of the favorite serving.
@@ -506,6 +510,7 @@ class Fatsecret(
 
     def food_delete_favorite(self, food_id, serving_id=None, number_of_units=None):
         """Delete the food to a user's favorite according to the parameters specified.
+
         :param food_id: The ID of the favorite food to add.
         :type food_id: str
         :param serving_id: Only required if number_of_units is present. This is the ID of the favorite serving.
@@ -527,6 +532,7 @@ class Fatsecret(
     def food_get(self, food_id):
         """Returns detailed nutritional information for the specified food.
         Use this call to display nutrition values for a food to users.
+
         :param food_id: Fatsecret food identifier
         :type food_id: str
         """
@@ -537,6 +543,7 @@ class Fatsecret(
     def food_get_v2(self, food_id, region=None, language=None):
         """Returns detailed nutritional information for the specified food.
         Use this call to display nutrition values for a food to users.
+
         :param food_id: Fatsecret food identifier
         :type food_id: str
         """
@@ -555,6 +562,7 @@ class Fatsecret(
         UPC-A, EAN-13 and EAN-8 barcodes may be specified.
         UPC-E barcodes should be converted to their UPC-A equivalent (and then specified
         as GTIN-13 numbers).
+
         :param barcode: The 13-digit GTIN-13 formated sequence of digits representing
         the barcode to search against.
         :type food_id: str
@@ -579,6 +587,7 @@ class Fatsecret(
 
     def foods_get_most_eaten(self, meal=None):
         """Returns the most eaten foods for the user according to the meal specified.
+
         :param meal: 'breakfast', 'lunch', 'dinner', or 'other'
         :type meal: str
         """
@@ -611,6 +620,7 @@ class Fatsecret(
         The results are paginated according to a zero-based "page" offset. Successive pages of results
         may be retrieved by specifying a starting page offset value. For instance, specifying a max_results
         of 10 and page_number of 4 will return results numbered 41-50.
+
         :param search_expression: term or phrase to search
         :type search_expression: str
         :param page_number: page set to return (default 0)
@@ -686,6 +696,7 @@ class Fatsecret(
 
     def food_entries_copy_saved_meal(self, meal_id, meal, date=None):
         """Copies the food entries for a specified saved meal to a specified meal.
+
         :param meal_id: The ID of the saved meal
         :type meal_id: str
         :param meal: The type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other".
@@ -709,6 +720,7 @@ class Fatsecret(
         This method can be used to return all food diary entries recorded on a nominated date or a single food
         diary entry with a nominated food_entry_id.
         :: You must specify either date or food_entry_id.
+
         :param food_entry_id: The ID of the food entry to retrieve. You must specify either date or food_entry_id.
         :type food_entry_id: str
         :param date: Day to filter food entries by (default value is the current day).
@@ -727,6 +739,7 @@ class Fatsecret(
     def food_entries_get_month(self, date=None):
         """Returns summary daily nutritional information for a user's food diary entries for the month specified.
         Use this call to display nutritional information to users about their food intake for a nominated month.
+
         :param date: Day in the month to return (default value is the current day to get current month).
         :type date: datetime.datetime
         """
@@ -740,6 +753,7 @@ class Fatsecret(
         self, food_id, food_entry_name, serving_id, number_of_units, meal, date=None
     ):
         """Records a food diary entry for the user according to the parameters specified.
+
         :param food_id: The ID of the food eaten.
         :type food_id: str
         :param food_entry_name: The name of the food entry.
@@ -769,6 +783,7 @@ class Fatsecret(
 
     def food_entry_delete(self, food_entry_id):
         """Deletes the specified food entry for the user.
+
         :param food_entry_id: The ID of the food entry to delete.
         :type food_entry_id: str
         """
@@ -787,6 +802,7 @@ class Fatsecret(
         Note that the date of the entry may not be adjusted, however one or more of the other remaining
         properties - food_entry_name, serving_id, number_of_units, or meal may be altered. In order to shift
         the date for which a food diary entry was recorded the original entry must be deleted and a new entry recorded.
+
         :param food_entry_id: The ID of the food entry to edit.
         :type food_entry_id: str
         :param entry_name: The new name of the food entry.
@@ -899,6 +915,7 @@ class Fatsecret(
         self, meal_id, food_id, food_entry_name, serving_id, num_units
     ):
         """Adds a food to a user's saved meal according to the parameters specified.
+
         :param meal_id: The ID of the saved meal.
         :type meal_id: str
         :param food_id: The ID of the food to add to the saved meal.
@@ -924,6 +941,7 @@ class Fatsecret(
 
     def saved_meal_item_delete(self, meal_item_id):
         """Deletes the specified saved meal item for the user.
+
         :param meal_item_id: The ID of the saved meal item to delete.
         :type meal_item_id: str
         """
@@ -940,6 +958,7 @@ class Fatsecret(
         Note that the serving_id of the saved meal item may not be adjusted, however one or more of the other
         remaining properties - saved_meal_item_name or number_of_units may be altered. In order to adjust a
         serving_id for which a saved_meal_item was recorded the original item must be deleted and a new item recorded.
+
         :param meal_item_id: The ID of the saved meal item to edit.
         :type meal_item_id: str
         :param item_name: The new name of the saved meal item.
@@ -961,6 +980,7 @@ class Fatsecret(
 
     def saved_meal_items_get(self, meal_id):
         """Returns saved meal items for a specified saved meal.
+
         :param meal_id: The ID of the saved meal to retrieve the saved_meal_items for.
         :type meal_id: str
         """
