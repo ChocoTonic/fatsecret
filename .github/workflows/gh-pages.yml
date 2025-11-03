@@ -11,26 +11,24 @@ jobs:
     docs:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout code
+            - name: Checkout
               uses: actions/checkout@v4
-
             - name: Set up Python
               uses: actions/setup-python@v5
               with:
                   python-version: "3.14"
-
             - name: Install uv
               run: pip install uv
-
             - name: Install dependencies
               run: uv sync --all-extras
-
             - name: Build Sphinx docs
               run: make docs
-
-            - name: Deploy to GitHub Pages
-              uses: peaceiris/actions-gh-pages@v4
+            - name: Setup Pages
+              uses: actions/configure-pages@v5
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
               with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: docs/_build/html
-                  force_orphan: true
+                  path: "docs/_build/html"
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
