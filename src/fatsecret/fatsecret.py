@@ -402,11 +402,14 @@ class Fatsecret(
         return self.valid_response(response)
 
     def exercise_entries_save_template(self, days, date=None):
-        """Takes the set of exercise entries on a nominated date and saves these entries as "template"
+        """
+        Takes the set of exercise entries on a nominated date and saves these entries as "template"
         entries for nominated days of the week.
-        :param days: The days of the week specified as bits with Sunday being the 1st bit and Saturday being the
-            last. For example Tuesday and Thursday would be represented as 00010100 in bits where Tuesday is the 3rd
+
+        :param days: The days of the week specified as bits with Sunday being the 1st bit and Saturday being the last.
+            For example, Tuesday and Thursday would be represented as 00010100 in bits where Tuesday is the 3rd
             bit from the right and Thursday being the 5th.
+
         :type days: str
         :param date: Day of exercises to use as the template (default value is the current day).
         :type date: datetime.datetime
@@ -431,13 +434,15 @@ class Fatsecret(
         shift_from_name=None,
         kcals=None,
     ):
-        """Records a change to a user's exercise diary entry for a nominated date.
+        """
+        Records a change to a user's exercise diary entry for a nominated date.
         All changes to an exercise diary involve either increasing the duration of an existing activity or
         introducing a new activity for a nominated duration. Because there are always 24 hours worth of exercise
         entries on any given date, the user must nominate the exercise or activity from which the time was taken
         to balance out the total duration of activities and exercises for the 24 hour period. As such, each change
         to the exercise entries on a given day is a "shifting" operation where time is moved from one activity to
         another. An exercise is removed from the day when all of the time allocated to it is shifted to other exercises.
+
         :param shift_to_id: The ID of the exercise type to shift to.
         :type shift_to_id: str
         :param shift_from_id: The ID of the exercise type to shift from.
@@ -448,9 +453,11 @@ class Fatsecret(
         :type date: datetime.datetime
         :param shift_to_name: Only required if shift_to_id is 0 (exercise type "Other").
             This is the name of the new custom exercise type to shift to.
+
         :type shift_to_name: str
         :param shift_from_name: Only required if shift_from_id is 0 (exercise type "Other").
             This is the name of the custom exercise type to shift from.
+
         :type shift_from_name: str
         :param kcals: Number of calories burned
         :type kcals: int
@@ -630,9 +637,11 @@ class Fatsecret(
         self, expression, max_results=None, region=None, language=None
     ):
         """Returns a list of suggestions for the expression specified.
+
         :param expression:
             Suggestions for the given expression is returned. E.G.: "chic" will return
             up to four of the best suggestions that contains "chic".
+
         :type expression: str
         :param page_number: page set to return (default 0)
         :type max_results: int
@@ -652,13 +661,16 @@ class Fatsecret(
         return self.valid_response(response)
 
     def food_entries_copy(self, from_date, to_date, meal=None):
-        """Copies the food entries for a specified meal from a nominated date to a nominated date.
+        """
+        Copies the food entries for a specified meal from a nominated date to a nominated date.
+
         :param from_date: The date to copy food entries from
         :type from_date: datetime.datetime
         :param to_date: The date to copy food entries to (default value is the current day).
         :type to_date: datetime.datetime
         :param meal: The type of meal to copy. Valid meal types are "breakfast", "lunch", "dinner" and "other"
             (default value is all).
+
         :type meal: str
         """
         params = {
@@ -805,13 +817,16 @@ class Fatsecret(
     # ========================= MEALS =========================
 
     def saved_meal_create(self, meal_name, meal_desc=None, meals=None):
-        """Records a saved meal for the user according to the parameters specified.
+        """
+        Records a saved meal for the user according to the parameters specified.
+
         :param meal_name: The name of the saved meal.
         :type meal_name: str
         :param meal_desc: A short description of the saved meal.
         :type meal_desc: str
         :param meals: A comma separated list of the types of meal this saved meal is suitable for.
             Valid meal types are "breakfast", "lunch", "dinner" and "other".
+
         :type meals: list
         """
         params = {
@@ -827,7 +842,9 @@ class Fatsecret(
         return self.valid_response(response)
 
     def saved_meal_delete(self, meal_id):
-        """Deletes the specified saved meal for the user.
+        """
+        Deletes the specified saved meal for the user.
+
         :param meal_id: The ID of the saved meal to delete.
         :type meal_id: str
         """
@@ -840,7 +857,9 @@ class Fatsecret(
         return self.valid_response(response)
 
     def saved_meal_edit(self, meal_id, new_name=None, meal_desc=None, meals=None):
-        """Records a change to a user's saved meal.
+        """
+        Records a change to a user's saved meal.
+
         :param meal_id: The ID of the food entry to edit.
         :type meal_id: str
         :param new_name: The new name of the saved meal.
