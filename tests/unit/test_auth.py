@@ -3,7 +3,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-from fatsecret.auth import fatsecret_authenticate
+from fatsecret.fatsecret import fatsecret_authenticate
 
 # Load environment variables
 if not os.getenv("GITHUB_ACTIONS"):
