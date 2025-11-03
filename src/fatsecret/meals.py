@@ -1,2 +1,0 @@
-class MealsMixin:
-    pass
