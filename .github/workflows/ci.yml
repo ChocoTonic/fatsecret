@@ -44,3 +44,19 @@ jobs:
               with:
                   name: coverage.xml
                   path: coverage.xml
+
+    docs:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.14"
+            - name: Install uv and dependencies
+              run: |
+                  pip install uv
+                  uv sync --all-extras
+            - name: Build docs and fail on warnings/errors
+              run: |
+                  make docs > sphinx.log 2>&1
+                  grep -E "WARNING:|ERROR:" sphinx.log && exit 1 || exit 0
