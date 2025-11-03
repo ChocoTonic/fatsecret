@@ -58,6 +58,5 @@ jobs:
                   uv sync --all-extras
             - name: Build docs and fail on warnings/errors
               run: |
-                  cd docs
                   make docs > sphinx.log 2>&1
                   grep -E "WARNING:|ERROR:" sphinx.log && exit 1 || exit 0
