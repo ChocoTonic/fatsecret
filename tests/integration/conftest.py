@@ -5,7 +5,7 @@ import pytest
 import requests
 from dotenv import load_dotenv
 
-from fatsecret.fatsecret import fatsecret_authenticate
+from fatsecret import Fatsecret
 
 
 @pytest.fixture(scope="session")
@@ -29,7 +29,7 @@ def fatsecret_client():
     if not password:
         pytest.fail("❌ Missing FATSECRET_PASSWORD in environment variables")
 
-    fs = fatsecret_authenticate(username, password, consumer_key, consumer_secret)
+    fs = Fatsecret.fatsecret_authenticate(username, password, consumer_key, consumer_secret)
     yield fs
     fs.close()
 
