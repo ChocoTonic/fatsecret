@@ -1,5 +1,5 @@
 [project]
-name = "pyfatsecret-chocotonic"
+name = "fatsecret"
 version = "0.1.0"
 description = "Python wrapper for the Fatsecret API"
 readme = "README.md"
