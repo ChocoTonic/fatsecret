@@ -71,6 +71,9 @@ check: lint test  ## Run lint and tests
 .PHONY: build release
 
 build:  ## Build the project using uv
+	rm -rf build dist *.egg-info
+	find $(SRC_DIR) -type d -name "__pycache__" -exec rm -rf {} +
+	find $(TEST_DIR) -type d -name "__pycache__" -exec rm -rf {} +
 	@uv build
 	@echo "📦 Package built in dist/"
 
