@@ -89,8 +89,9 @@ release: build  ## Publish to PyPI using uv
 example: fmt lint  ## Run the CLI example with API credentials from environment
 	@PYTHONPATH=src uv run python examples/cli_example.py
 
-docs:  ## Build Sphinx documentation (clean then html)
-	@cd docs && make clean && make html
+docs:  ## Build Sphinx documentation
+	@rm -rf $(DOCS_DIR)/_build
+	@uv run sphinx-build -b html -W $(DOCS_DIR) $(DOCS_DIR)/_build/html
 
 serve: docs  ## Build then serve docs on localhost:10161 (override with DOCS_PORT=<port>)
 	@echo "Serving docs at http://localhost:$(DOCS_PORT) (Ctrl+C to stop)"
