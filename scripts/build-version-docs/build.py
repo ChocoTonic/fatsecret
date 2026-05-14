@@ -376,11 +376,37 @@ def write_top_index(
 # ---------------------------------------------------------------------------
 
 
-def build_latest(repo: Path, out_dir: Path, venv_python: Path) -> bool:
+def _next_dev_version(highest_tag: str | None) -> str:
+    """Compute the PEP 440 dev version for `latest/` from the highest tag.
+
+    e.g. v1.5.10 -> 1.5.11.dev0. Falls back to "0.0.0.dev0" if no tags.
+    """
+    if not highest_tag:
+        return "0.0.0.dev0"
+    parts = highest_tag.lstrip("v").split(".")
+    try:
+        major, minor, patch = int(parts[0]), int(parts[1]), int(parts[2])
+    except (IndexError, ValueError):
+        return f"{highest_tag.lstrip('v')}.dev0"
+    return f"{major}.{minor}.{patch + 1}.dev0"
+
+
+def build_latest(repo: Path, out_dir: Path, venv_python: Path, work_root: Path, highest_tag: str | None) -> bool:
     """Build docs from the current working tree with full autodoc enabled.
 
     Installs the project into the same venv used by the archive (editable
     install) so autodoc/viewcode can import `fatsecret`.
+
+    Master's `docs/conf.py` reads `version` from `<repo>/pyproject.toml` via
+    a regex. The release workflow ephemerally syncs that field at publish
+    time but never commits it back, so master's pyproject is essentially
+    frozen at the project's v1.0 cutover version. Building latest/ straight
+    from `<repo>/docs` would therefore label master as v1.0.0.
+
+    Workaround: mirror the tag-build pattern. Stage docs/ inside a
+    per-build dir with a stub pyproject.toml carrying a PEP 440 dev
+    version computed from the highest released tag (e.g. v1.5.10 ->
+    1.5.11.dev0). conf.py then reads the correct forward-looking version.
     """
     docs_dir = repo / "docs"
     if not (docs_dir / "conf.py").is_file():
@@ -398,6 +424,19 @@ def build_latest(repo: Path, out_dir: Path, venv_python: Path) -> bool:
         print(f"  [latest] failed to install project: {e.stderr}")
         return False
 
+    build_dir = work_root / "latest-build"
+    if build_dir.exists():
+        shutil.rmtree(build_dir)
+    build_dir.mkdir(parents=True)
+    staged_docs = build_dir / "docs"
+    shutil.copytree(docs_dir, staged_docs)
+    dev_version = _next_dev_version(highest_tag)
+    (build_dir / "pyproject.toml").write_text(f'version = "{dev_version}"\n')
+    # Empty src/ so master's `sys.path.insert(_root/src)` resolves; the
+    # actual package is reached via the editable install in the venv.
+    (build_dir / "src").mkdir()
+    print(f"  [latest] labelled as {dev_version} (next dev after {highest_tag or 'no tags'})")
+
     try:
         run(
             [
@@ -407,7 +446,7 @@ def build_latest(repo: Path, out_dir: Path, venv_python: Path) -> bool:
                 "-b",
                 "html",
                 "-q",
-                str(docs_dir),
+                str(staged_docs),
                 str(out_dir),
             ],
             check=True,
@@ -680,7 +719,8 @@ def main() -> int:
     stable_target: str | None = None
     if build_current:
         print("\n== Building latest/ from working tree ==")
-        latest_ok = build_latest(repo, staging / "latest", venv_python)
+        highest_tag = all_tags[0] if all_tags else None
+        latest_ok = build_latest(repo, staging / "latest", venv_python, work_root, highest_tag)
 
         # Pick the highest tag for stable. all_tags is sorted newest-first by
         # semver via `git tag --sort=-version:refname`.
