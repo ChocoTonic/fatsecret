@@ -479,20 +479,46 @@ def inject_version_selector(staging: Path, versions: list[str]) -> int:
   if (!m) return;
   var current = m[1];
   var base = window.location.pathname.substring(0, m.index + 1);
+
+  function buildSelect() {{
+    var sel = document.createElement('select');
+    versions.forEach(function(v) {{
+      var o = document.createElement('option');
+      o.value = v; o.text = v;
+      if (v === current) o.selected = true;
+      sel.appendChild(o);
+    }});
+    sel.onchange = function() {{ window.location.href = base + sel.value + '/'; }};
+    return sel;
+  }}
+
+  // Preferred placement: inside the RTD theme's sidebar header
+  // (`.wy-side-nav-search`), matching where the original RTD flyout
+  // showed the version dropdown for ~10 years of this library's history.
+  var rtdSidebar = document.querySelector('.wy-side-nav-search');
+  if (rtdSidebar) {{
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'padding:8px 12px;margin-top:4px;text-align:left;background:rgba(0,0,0,0.12);font:12px -apple-system,BlinkMacSystemFont,sans-serif';
+    var label = document.createElement('span');
+    label.textContent = 'Version: ';
+    label.style.cssText = 'color:#fff;margin-right:6px';
+    var sel = buildSelect();
+    sel.style.cssText = 'background:#fff;color:#222;border:none;border-radius:3px;padding:2px 6px;font:inherit;cursor:pointer';
+    wrap.appendChild(label);
+    wrap.appendChild(sel);
+    rtdSidebar.appendChild(wrap);
+    return;
+  }}
+
+  // Fallback: fixed-position dropdown top-right. Covers stub pages and
+  // any future theme without a sidebar we recognise.
   var wrap = document.createElement('div');
   wrap.style.cssText = 'position:fixed;top:0.75rem;right:0.75rem;z-index:9999;background:#fff;color:#222;border:1px solid #ccc;border-radius:6px;padding:6px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.12);font:13px -apple-system,BlinkMacSystemFont,sans-serif';
   var label = document.createElement('span');
   label.textContent = 'Version: ';
   label.style.cssText = 'color:#666;margin-right:4px';
-  var sel = document.createElement('select');
+  var sel = buildSelect();
   sel.style.cssText = 'font:inherit;background:#fff;color:#222;border:1px solid #ccc;border-radius:3px;padding:2px 4px';
-  versions.forEach(function(v) {{
-    var o = document.createElement('option');
-    o.value = v; o.text = v;
-    if (v === current) o.selected = true;
-    sel.appendChild(o);
-  }});
-  sel.onchange = function() {{ window.location.href = base + sel.value + '/'; }};
   wrap.appendChild(label);
   wrap.appendChild(sel);
   document.body.appendChild(wrap);
