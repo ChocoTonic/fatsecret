@@ -24,18 +24,24 @@ on:
 permissions:
   contents: write
 
+env:
+  # peaceiris/actions-gh-pages@v4 is still on Node 20 (no v5 yet). Opt
+  # into the Node 24 runtime to silence the deprecation warning. Drop
+  # this once peaceiris cuts a Node-24 release.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository (full history for tags)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           fetch-tags: true
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version-file: .python-version
 
