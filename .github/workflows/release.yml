@@ -4,8 +4,23 @@ on:
   push:
     branches:
       - master
+    # Glob syntax (not regex). `*` matches any chars except `/`; `.` is
+    # literal. `v*.*.*` matches v1.0.0, v1.10.3, etc. The previous pattern
+    # `v[0-9]+.[0-9]+.[0-9]+` used regex syntax in a glob filter and never
+    # matched anything.
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v*.*.*"
+
+  # Manual republish for tags whose underlying commit doesn't carry the
+  # `on: push: tags:` trigger (historical commits predating this workflow
+  # update). Run:
+  #   gh workflow run release.yml -f tag=v1.0.0
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to (re)publish, e.g. "v1.0.0".'
+        required: true
+        type: string
 
 concurrency:
   group: release
@@ -13,20 +28,21 @@ concurrency:
 
 jobs:
   test:
-    # Skip the test job on tag pushes (a tag is cut from a green-CI'd
-    # commit on master; running again burns minutes and risks flake churn).
-    if: github.ref_type != 'tag'
+    # Skip on tag pushes and manual republishes — the tag points at a
+    # green-CI'd master commit, re-running tests just burns minutes.
+    if: github.ref_type != 'tag' && github.event_name != 'workflow_dispatch'
     uses: ./.github/workflows/test.yml
     secrets: inherit
     with:
       test-type: "all"
 
   release:
-    # Branch-push releases wait on `test`. Tag pushes skip it.
     needs: [test]
     if: |
       always() &&
-      (github.ref_type == 'tag' || needs.test.result == 'success')
+      (github.ref_type == 'tag'
+       || github.event_name == 'workflow_dispatch'
+       || needs.test.result == 'success')
     runs-on: ubuntu-latest
 
     permissions:
@@ -39,9 +55,19 @@ jobs:
       FATSECRET_PASSWORD: ${{ secrets.FATSECRET_PASSWORD }}
 
     steps:
+      - name: Resolve checkout ref
+        id: ref
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "ref=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ steps.ref.outputs.ref }}
           token: ${{ secrets.RELEASE_PAT }}
 
       - uses: actions/setup-python@v6
@@ -59,10 +85,22 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Two trigger modes:
-          #   * tag push (ref_type=tag) — version IS the tag, no bump
-          #   * branch push to master   — derive bump from conventional
-          #                               commits since the latest tag
+          # Three trigger modes:
+          #   * workflow_dispatch     — use inputs.tag verbatim
+          #   * tag push (ref_type=tag) — use the tag verbatim
+          #   * branch push to master — derive bump from conventional
+          #                             commits since the latest tag
+
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            NEW="${{ inputs.tag }}"
+            NEW="${NEW#v}"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "version=${NEW}" >> "$GITHUB_OUTPUT"
+            echo "tag=v${NEW}" >> "$GITHUB_OUTPUT"
+            echo "create_tag=false" >> "$GITHUB_OUTPUT"
+            echo "workflow_dispatch: publishing v${NEW}"
+            exit 0
+          fi
 
           if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
             NEW="${GITHUB_REF_NAME#v}"
@@ -89,17 +127,17 @@ jobs:
           MINOR=$(echo "$CURRENT" | cut -d. -f2)
           PATCH=$(echo "$CURRENT" | cut -d. -f3)
 
-          # Union of all commit messages (subject + body) since the latest
-          # tag — a single breaking commit in the range forces a major bump
-          # even if everything else is a patch.
+          # Union of every commit message (subject + body) since the
+          # latest tag. One breaking commit in the range forces a major
+          # bump even if everything else is a patch.
           COMMITS=$(git log --format='%B%n---commit-boundary---' "${RANGE}")
 
           IS_DEPENDABOT=${{ github.actor == 'dependabot[bot]' }}
 
           # Conventional-commit detection (anchored prefixes; prose-safe):
-          #   * `feat!:`, `fix!:`, etc., OR `BREAKING CHANGE:` footer → major
-          #   * `feat:` / `feat(scope):` → minor
-          #   * anything else (fix, docs, test, chore, refactor, perf, …) → patch
+          #   * `feat!:` / `fix!:` / ... / `BREAKING CHANGE:` -> major
+          #   * `feat:` / `feat(scope):` -> minor
+          #   * everything else (fix, docs, test, chore, refactor, ...) -> patch
           BUMP="patch"
           if echo "$COMMITS" | grep -qE '^[a-z]+(\([^)]+\))?!:'; then
             BUMP="major"
@@ -110,8 +148,6 @@ jobs:
           fi
 
           if [ "$IS_DEPENDABOT" = "true" ]; then
-            # Dependabot: skip unless commit mentions a security keyword.
-            # When it does, force a PATCH (never minor/major from a bot).
             if echo "$COMMITS" | grep -qiE 'CVE|security|vulnerability'; then
               BUMP="patch"
             else
@@ -145,12 +181,12 @@ jobs:
           git tag "${{ steps.version.outputs.tag }}"
           git push https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }} "${{ steps.version.outputs.tag }}"
 
-      - name: Sync pyproject.toml to tag version (tag push only)
+      - name: Sync pyproject.toml to tag version (tag or dispatch)
         if: steps.version.outputs.skip == 'false' && steps.version.outputs.create_tag != 'true'
         run: |
-          # Tag pushes point at historical commits whose `pyproject.toml`
-          # may carry an older version field. Re-sync without committing so
-          # uv publishes the correct version.
+          # Tag pushes and workflow_dispatch may point at historical
+          # commits whose pyproject.toml carries an older version field.
+          # Re-sync without committing so uv publishes the correct version.
           sed -i "s/version = \"[^\"]*\"/version = \"${{ steps.version.outputs.version }}\"/" pyproject.toml
 
       - name: Create GitHub Release
