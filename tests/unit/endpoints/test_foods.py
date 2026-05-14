@@ -19,7 +19,7 @@ For each pair we assert:
      methods return ``None`` or ``{}``.
   6. Premier propagation: ``PremierRequiredError`` raised inside ``_call``
      bubbles up unchanged.
-  7. ``foods_search_v5``'s ``food_type`` enum (none|generic|brand) passes
+  7. ``foods.search_v5``'s ``food_type`` enum (none|generic|brand) passes
      through as a raw string.
 
 ``_call`` and ``_unwrap`` themselves are tested elsewhere; we always mock
@@ -70,7 +70,7 @@ def _search_payload_v2plus(items):
 
 
 def _call_search(fs, version, **kwargs):
-    return getattr(fs, f"foods_search_v{version}")("apple", **kwargs)
+    return getattr(fs.foods, f"search_v{version}")("apple", **kwargs)
 
 
 @pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
@@ -166,7 +166,7 @@ def test_foods_search_premier_propagates(fs, version):
 def test_foods_search_v5_food_type_enum_passthrough(fs, food_type):
     payload = _search_payload_v2plus([])
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.foods_search_v5("apple", food_type=food_type)
+        fs.foods.search_v5("apple", food_type=food_type)
     assert mock_call.call_args.args[0]["food_type"] == food_type
 
 
@@ -195,7 +195,7 @@ _GET_OPTIONALS = [
 ]
 
 
-# `food_get_v2` is a legacy method: it uses `session.get` + `valid_response`
+# `foods.get_v2` is a legacy method: it uses `session.get` + `valid_response`
 # directly, rather than `_call`. We test it with a session-level mock.
 
 
@@ -210,7 +210,7 @@ def test_food_get_happy_path(fs, version):
     food_obj = {"food_id": str(version), "food_name": f"Food v{version}"}
     payload = {"food": food_obj}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, f"food_get_v{version}")("abc")
+        result = getattr(fs.foods, f"get_v{version}")("abc")
     params = mock_call.call_args.args[0]
     assert params["method"] == GET_METHOD_NAMES[version]
     assert params["food_id"] == "abc"
@@ -221,7 +221,7 @@ def test_food_get_happy_path(fs, version):
 def test_food_get_v2_happy_path(fs):
     food_obj = {"food_id": "2", "food_name": "Food v2"}
     fs.session.get = MagicMock(return_value=_mock_session_response({"food": food_obj}))
-    result = fs.food_get_v2("abc")
+    result = fs.foods.get_v2("abc")
 
     fs.session.get.assert_called_once()
     params = fs.session.get.call_args.kwargs["params"]
@@ -235,7 +235,7 @@ def test_food_get_v2_happy_path(fs):
 
 def test_food_get_v2_optional_forwarding(fs):
     fs.session.get = MagicMock(return_value=_mock_session_response({"food": {}}))
-    fs.food_get_v2("x", region="US", language="en")
+    fs.foods.get_v2("x", region="US", language="en")
     params = fs.session.get.call_args.kwargs["params"]
     assert params["region"] == "US"
     assert params["language"] == "en"
@@ -247,7 +247,7 @@ def test_food_get_optional_forwarding(fs, version, kwarg, value, supported):
     if version not in supported:
         pytest.skip(f"{kwarg} not supported on v{version}")
     with patch.object(Fatsecret, "_call", return_value={"food": {}}) as mock_call:
-        getattr(fs, f"food_get_v{version}")("abc", **{kwarg: value})
+        getattr(fs.foods, f"get_v{version}")("abc", **{kwarg: value})
     params = mock_call.call_args.args[0]
     assert params[kwarg] == value
 
@@ -255,7 +255,7 @@ def test_food_get_optional_forwarding(fs, version, kwarg, value, supported):
 @pytest.mark.parametrize("version", [1, 3, 4, 5])
 def test_food_get_optionals_absent_when_none(fs, version):
     with patch.object(Fatsecret, "_call", return_value={"food": {}}) as mock_call:
-        getattr(fs, f"food_get_v{version}")("abc")
+        getattr(fs.foods, f"get_v{version}")("abc")
     params = mock_call.call_args.args[0]
     for kwarg, _value, supported in _GET_OPTIONALS:
         if version in supported:
@@ -266,7 +266,7 @@ def test_food_get_optionals_absent_when_none(fs, version):
 def test_food_get_empty_response(fs, version):
     with patch.object(Fatsecret, "_call", return_value={}):
         # `_unwrap(payload, "food")` returns None when key missing.
-        assert getattr(fs, f"food_get_v{version}")("abc") is None
+        assert getattr(fs.foods, f"get_v{version}")("abc") is None
 
 
 # ---------------------------------------------------------------------------
@@ -281,7 +281,7 @@ AUTOCOMPLETE_METHOD_NAMES = {1: "foods.autocomplete", 2: "foods.autocomplete.v2"
 def test_foods_autocomplete_happy_path(fs, version):
     payload = {"suggestions": {"suggestion": ["apple", "apricot"]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, f"foods_autocomplete_v{version}")("ap")
+        result = getattr(fs.foods, f"autocomplete_v{version}")("ap")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == AUTOCOMPLETE_METHOD_NAMES[version]
@@ -299,7 +299,7 @@ def test_foods_autocomplete_happy_path(fs, version):
 def test_foods_autocomplete_optional_forwarding(fs, version, kwarg, value):
     payload = {"suggestions": {"suggestion": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, f"foods_autocomplete_v{version}")("ap", **{kwarg: value})
+        getattr(fs.foods, f"autocomplete_v{version}")("ap", **{kwarg: value})
     assert mock_call.call_args.args[0][kwarg] == value
 
 
@@ -307,13 +307,13 @@ def test_foods_autocomplete_optional_forwarding(fs, version, kwarg, value):
 def test_foods_autocomplete_single_string_coerced_to_list(fs, version):
     payload = {"suggestions": {"suggestion": "apple"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert getattr(fs, f"foods_autocomplete_v{version}")("ap") == ["apple"]
+        assert getattr(fs.foods, f"autocomplete_v{version}")("ap") == ["apple"]
 
 
 @pytest.mark.parametrize("version", [1, 2])
 def test_foods_autocomplete_empty_response(fs, version):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert getattr(fs, f"foods_autocomplete_v{version}")("ap") == []
+        assert getattr(fs.foods, f"autocomplete_v{version}")("ap") == []
 
 
 @pytest.mark.parametrize("version", [1, 2])
@@ -324,7 +324,7 @@ def test_foods_autocomplete_premier_propagates(fs, version):
         side_effect=PremierRequiredError(207, "Premier required"),
     ):
         with pytest.raises(PremierRequiredError):
-            getattr(fs, f"foods_autocomplete_v{version}")("ap")
+            getattr(fs.foods, f"autocomplete_v{version}")("ap")
 
 
 # ---------------------------------------------------------------------------
@@ -338,7 +338,7 @@ BARCODE_METHOD_NAMES = {1: "food.find_id_for_barcode", 2: "food.find_id_for_barc
 def test_food_find_id_for_barcode_v1_happy_path(fs):
     payload = {"food_id": {"value": "12345"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_find_id_for_barcode_v1("0049000028911")
+        result = fs.foods.find_id_for_barcode_v1("0049000028911")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == BARCODE_METHOD_NAMES[1]
@@ -355,26 +355,26 @@ def test_food_find_id_for_barcode_v1_happy_path(fs):
 def test_food_find_id_for_barcode_v1_optional_forwarding(fs, kwarg, value):
     payload = {"food_id": {"value": "0"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_find_id_for_barcode_v1("0049000028911", **{kwarg: value})
+        fs.foods.find_id_for_barcode_v1("0049000028911", **{kwarg: value})
     assert mock_call.call_args.args[0][kwarg] == value
 
 
 def test_food_find_id_for_barcode_v1_no_match_returns_zero_envelope(fs):
     payload = {"food_id": {"value": "0"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.food_find_id_for_barcode_v1("0000000000000") == {"value": "0"}
+        assert fs.foods.find_id_for_barcode_v1("0000000000000") == {"value": "0"}
 
 
 def test_food_find_id_for_barcode_v1_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.food_find_id_for_barcode_v1("0000000000000") is None
+        assert fs.foods.find_id_for_barcode_v1("0000000000000") is None
 
 
 def test_food_find_id_for_barcode_v2_happy_path(fs):
     food_obj = {"food_id": "12345", "food_name": "Coke 12oz"}
     payload = {"food": food_obj}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_find_id_for_barcode_v2("0049000028911")
+        result = fs.foods.find_id_for_barcode_v2("0049000028911")
     params = mock_call.call_args.args[0]
     assert params["method"] == BARCODE_METHOD_NAMES[2]
     assert params["barcode"] == "0049000028911"
@@ -404,13 +404,13 @@ def test_food_find_id_for_barcode_v2_happy_path(fs):
 def test_food_find_id_for_barcode_v2_optional_forwarding(fs, kwarg, value):
     payload = {"food": {}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_find_id_for_barcode_v2("0049000028911", **{kwarg: value})
+        fs.foods.find_id_for_barcode_v2("0049000028911", **{kwarg: value})
     assert mock_call.call_args.args[0][kwarg] == value
 
 
 def test_food_find_id_for_barcode_v2_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.food_find_id_for_barcode_v2("0049000028911") is None
+        assert fs.foods.find_id_for_barcode_v2("0049000028911") is None
 
 
 @pytest.mark.parametrize("version", [1, 2])
@@ -421,4 +421,4 @@ def test_food_find_id_for_barcode_premier_propagates(fs, version):
         side_effect=PremierRequiredError(207, "Premier (barcode) required"),
     ):
         with pytest.raises(PremierRequiredError):
-            getattr(fs, f"food_find_id_for_barcode_v{version}")("0049000028911")
+            getattr(fs.foods, f"find_id_for_barcode_v{version}")("0049000028911")

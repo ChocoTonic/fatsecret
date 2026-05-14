@@ -20,6 +20,13 @@ import pytest
 from fatsecret import Fatsecret, PremierRequiredError
 
 
+def _resolve(obj, dotted_path):
+    """Walk a dotted attribute path (e.g. 'foods.search_v5')."""
+    for part in dotted_path.split("."):
+        obj = getattr(obj, part)
+    return obj
+
+
 @pytest.fixture
 def fs():
     with patch("fatsecret.fatsecret.OAuth1Service") as mock_oauth1:
@@ -32,8 +39,8 @@ def fs():
 # ---------------------------------------------------------------------------
 
 BRANDS_VERSIONS = [
-    ("food_brands_get_v1", "food_brands.get"),
-    ("food_brands_get_v2", "food_brands.get.v2"),
+    ("classification.brands_get_v1", "food_brands.get"),
+    ("classification.brands_get_v2", "food_brands.get.v2"),
 ]
 
 
@@ -41,7 +48,7 @@ BRANDS_VERSIONS = [
 def test_food_brands_get_happy_path(fs, method_name, api_method):
     payload = {"food_brands": {"food_brand": ["Brand A", "Brand B"]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)("A")
+        result = _resolve(fs, method_name)("A")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -57,7 +64,7 @@ def test_food_brands_get_happy_path(fs, method_name, api_method):
 def test_food_brands_get_with_all_optionals(fs, method_name, api_method):
     payload = {"food_brands": {"food_brand": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(
+        _resolve(fs, method_name)(
             "B",
             brand_type="manufacturer",
             region="US",
@@ -81,7 +88,7 @@ def test_food_brands_get_each_optional_param_individually(
 ):
     payload = {"food_brands": {"food_brand": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)("A", **{kwarg: value})
+        _resolve(fs, method_name)("A", **{kwarg: value})
     params = mock_call.call_args.args[0]
     assert params[kwarg] == value
     # Other optionals stay omitted.
@@ -94,7 +101,7 @@ def test_food_brands_get_each_optional_param_individually(
 def test_food_brands_get_omits_optionals_when_none(fs, method_name, _api):
     payload = {"food_brands": {"food_brand": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)("A", brand_type=None, region=None, language=None)
+        _resolve(fs, method_name)("A", brand_type=None, region=None, language=None)
     params = mock_call.call_args.args[0]
     assert "brand_type" not in params
     assert "region" not in params
@@ -105,7 +112,7 @@ def test_food_brands_get_omits_optionals_when_none(fs, method_name, _api):
 def test_food_brands_get_single_dict_coerced_to_list(fs, method_name, _api):
     payload = {"food_brands": {"food_brand": "Solo Brand"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)("S")
+        result = _resolve(fs, method_name)("S")
     assert result == ["Solo Brand"]
 
 
@@ -115,7 +122,7 @@ def test_food_brands_get_empty_response_returns_empty_list(
     fs, method_name, _api, payload
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)("Z")
+        result = _resolve(fs, method_name)("Z")
     assert result == []
 
 
@@ -125,7 +132,7 @@ def test_food_brands_get_propagates_premier_required_error(fs, method_name, _api
         Fatsecret, "_call", side_effect=PremierRequiredError(21, "Premier required")
     ):
         with pytest.raises(PremierRequiredError):
-            getattr(fs, method_name)("A")
+            _resolve(fs, method_name)("A")
 
 
 # ---------------------------------------------------------------------------
@@ -133,8 +140,8 @@ def test_food_brands_get_propagates_premier_required_error(fs, method_name, _api
 # ---------------------------------------------------------------------------
 
 CATEGORIES_VERSIONS = [
-    ("food_categories_get_v1", "food_categories.get"),
-    ("food_categories_get_v2", "food_categories.get.v2"),
+    ("classification.categories_get_v1", "food_categories.get"),
+    ("classification.categories_get_v2", "food_categories.get.v2"),
 ]
 
 
@@ -149,7 +156,7 @@ def test_food_categories_get_happy_path(fs, method_name, api_method):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -170,7 +177,7 @@ def test_food_categories_get_optional_present_when_supplied(
 ):
     payload = {"food_categories": {"food_category": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(**{kwarg: value})
+        _resolve(fs, method_name)(**{kwarg: value})
     params = mock_call.call_args.args[0]
     assert params[kwarg] == value
     other = "language" if kwarg == "region" else "region"
@@ -181,7 +188,7 @@ def test_food_categories_get_optional_present_when_supplied(
 def test_food_categories_get_optionals_absent_when_none(fs, method_name, _api):
     payload = {"food_categories": {"food_category": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(region=None, language=None)
+        _resolve(fs, method_name)(region=None, language=None)
     params = mock_call.call_args.args[0]
     assert "region" not in params
     assert "language" not in params
@@ -195,7 +202,7 @@ def test_food_categories_get_single_dict_coerced_to_list(fs, method_name, _api):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == [{"food_category_id": "1", "food_category_name": "Baked"}]
 
 
@@ -205,7 +212,7 @@ def test_food_categories_get_empty_response_returns_empty_list(
     fs, method_name, _api, payload
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == []
 
 
@@ -215,7 +222,7 @@ def test_food_categories_get_propagates_premier_required_error(fs, method_name, 
         Fatsecret, "_call", side_effect=PremierRequiredError(21, "Premier required")
     ):
         with pytest.raises(PremierRequiredError):
-            getattr(fs, method_name)()
+            _resolve(fs, method_name)()
 
 
 # ---------------------------------------------------------------------------
@@ -223,8 +230,8 @@ def test_food_categories_get_propagates_premier_required_error(fs, method_name, 
 # ---------------------------------------------------------------------------
 
 SUB_CATEGORIES_VERSIONS = [
-    ("food_sub_categories_get_v1", "food_sub_categories.get"),
-    ("food_sub_categories_get_v2", "food_sub_categories.get.v2"),
+    ("classification.sub_categories_get_v1", "food_sub_categories.get"),
+    ("classification.sub_categories_get_v2", "food_sub_categories.get.v2"),
 ]
 
 
@@ -236,7 +243,7 @@ def test_food_sub_categories_get_happy_path(fs, method_name, api_method):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)("1")
+        result = _resolve(fs, method_name)("1")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -255,7 +262,7 @@ def test_food_sub_categories_get_optional_present_when_supplied(
 ):
     payload = {"food_sub_categories": {"food_sub_category": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)("7", **{kwarg: value})
+        _resolve(fs, method_name)("7", **{kwarg: value})
     params = mock_call.call_args.args[0]
     assert params["food_category_id"] == "7"
     assert params[kwarg] == value
@@ -267,7 +274,7 @@ def test_food_sub_categories_get_optional_present_when_supplied(
 def test_food_sub_categories_get_optionals_absent_when_none(fs, method_name, _api):
     payload = {"food_sub_categories": {"food_sub_category": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)("7", region=None, language=None)
+        _resolve(fs, method_name)("7", region=None, language=None)
     params = mock_call.call_args.args[0]
     assert "region" not in params
     assert "language" not in params
@@ -277,7 +284,7 @@ def test_food_sub_categories_get_optionals_absent_when_none(fs, method_name, _ap
 def test_food_sub_categories_get_single_dict_coerced_to_list(fs, method_name, _api):
     payload = {"food_sub_categories": {"food_sub_category": "Breads"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)("1")
+        result = _resolve(fs, method_name)("1")
     assert result == ["Breads"]
 
 
@@ -287,7 +294,7 @@ def test_food_sub_categories_get_empty_response_returns_empty_list(
     fs, method_name, _api, payload
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)("1")
+        result = _resolve(fs, method_name)("1")
     assert result == []
 
 
@@ -299,4 +306,4 @@ def test_food_sub_categories_get_propagates_premier_required_error(
         Fatsecret, "_call", side_effect=PremierRequiredError(21, "Premier required")
     ):
         with pytest.raises(PremierRequiredError):
-            getattr(fs, method_name)("1")
+            _resolve(fs, method_name)("1")

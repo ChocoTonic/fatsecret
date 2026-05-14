@@ -1,11 +1,11 @@
 """Exhaustive unit tests for Weight + Profile resource wrappers.
 
 Covers:
-  - weight_update_v1
-  - weights_get_month_v1, _v2
-  - profile_create_v1
-  - profile_get_v1
-  - profile_get_auth_v1
+  - weight.update_v1
+  - weight.get_month_v1, _v2
+  - profile.create_v1
+  - profile.get_v1
+  - profile.get_auth_v1
 """
 
 import datetime
@@ -29,7 +29,7 @@ def fs():
 def test_weight_update_v1_minimal_required(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.weight_update_v1(70.5)
+        result = fs.weight.update_v1(70.5)
     params = mock_call.call_args.args[0]
     assert params["method"] == "weight.update"
     assert params["current_weight_kg"] == 70.5
@@ -48,18 +48,18 @@ def test_weight_update_v1_minimal_required(fs):
 def test_weight_update_v1_success_string_one(fs):
     """_mutator_success should also accept the string '1'."""
     with patch.object(Fatsecret, "_call", return_value={"success": "1"}):
-        assert fs.weight_update_v1(70.0) is True
+        assert fs.weight.update_v1(70.0) is True
 
 
 def test_weight_update_v1_success_zero_is_false(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 0}):
-        assert fs.weight_update_v1(70.0) is False
+        assert fs.weight.update_v1(70.0) is False
 
 
 def test_weight_update_v1_all_optional_params(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.weight_update_v1(
+        fs.weight.update_v1(
             72.0,
             weight_type="kg",
             height_type="cm",
@@ -81,7 +81,7 @@ def test_weight_update_v1_first_weighin_requires_goal_and_height(fs):
     Wrapper must accept and forward both.
     """
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.weight_update_v1(70.0, goal_weight_kg=65.0, current_height_cm=180.0)
+        fs.weight.update_v1(70.0, goal_weight_kg=65.0, current_height_cm=180.0)
     params = mock_call.call_args.args[0]
     assert params["goal_weight_kg"] == 65.0
     assert params["current_height_cm"] == 180.0
@@ -98,7 +98,7 @@ def test_weight_update_v1_first_weighin_requires_goal_and_height(fs):
 )
 def test_weight_update_v1_date_coercion_accepts_all_types(fs, date_in):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.weight_update_v1(70.0, date=date_in)
+        fs.weight.update_v1(70.0, date=date_in)
     params = mock_call.call_args.args[0]
     assert "date" in params
     # unix_time_v2 returns days since epoch (int)
@@ -107,7 +107,7 @@ def test_weight_update_v1_date_coercion_accepts_all_types(fs, date_in):
 
 def test_weight_update_v1_date_none_omitted(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.weight_update_v1(70.0, date=None)
+        fs.weight.update_v1(70.0, date=None)
     params = mock_call.call_args.args[0]
     assert "date" not in params
 
@@ -122,7 +122,7 @@ def _month_payload(days):
 def test_weights_get_month_v1_method_and_no_date(fs):
     payload = _month_payload([{"date_int": "20000", "weight_kg": "70"}])
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.weights_get_month_v1()
+        result = fs.weight.get_month_v1()
     params = mock_call.call_args.args[0]
     assert params["method"] == "weights.get_month"
     assert "date" not in params
@@ -134,20 +134,20 @@ def test_weights_get_month_v1_method_and_no_date(fs):
 def test_weights_get_month_v1_single_dict_coerced_to_list(fs):
     payload = _month_payload({"date_int": "20000", "weight_kg": "70"})
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.weights_get_month_v1()
+        result = fs.weight.get_month_v1()
     assert result == [{"date_int": "20000", "weight_kg": "70"}]
 
 
 def test_weights_get_month_v1_list_passthrough(fs):
     days = [{"date_int": "20000"}, {"date_int": "20001"}]
     with patch.object(Fatsecret, "_call", return_value=_month_payload(days)):
-        result = fs.weights_get_month_v1()
+        result = fs.weight.get_month_v1()
     assert result == days
 
 
 def test_weights_get_month_v1_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={"month": None}):
-        result = fs.weights_get_month_v1()
+        result = fs.weight.get_month_v1()
     assert result == []
 
 
@@ -164,7 +164,7 @@ def test_weights_get_month_v1_date_coercion(fs, date_in):
     with patch.object(
         Fatsecret, "_call", return_value=_month_payload([])
     ) as mock_call:
-        fs.weights_get_month_v1(date=date_in)
+        fs.weight.get_month_v1(date=date_in)
     params = mock_call.call_args.args[0]
     assert isinstance(params["date"], int)
 
@@ -176,7 +176,7 @@ def test_weights_get_month_v2_method_name(fs):
     with patch.object(
         Fatsecret, "_call", return_value=_month_payload([])
     ) as mock_call:
-        result = fs.weights_get_month_v2()
+        result = fs.weight.get_month_v2()
     params = mock_call.call_args.args[0]
     assert params["method"] == "weights.get_month.v2"
     assert result == []
@@ -185,20 +185,20 @@ def test_weights_get_month_v2_method_name(fs):
 def test_weights_get_month_v2_single_dict_coerced(fs):
     payload = _month_payload({"date_int": "20100", "weight_kg": "68"})
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.weights_get_month_v2()
+        result = fs.weight.get_month_v2()
     assert result == [{"date_int": "20100", "weight_kg": "68"}]
 
 
 def test_weights_get_month_v2_list_passthrough(fs):
     days = [{"date_int": "20100"}, {"date_int": "20101"}]
     with patch.object(Fatsecret, "_call", return_value=_month_payload(days)):
-        result = fs.weights_get_month_v2()
+        result = fs.weight.get_month_v2()
     assert result == days
 
 
 def test_weights_get_month_v2_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={"month": None}):
-        assert fs.weights_get_month_v2() == []
+        assert fs.weight.get_month_v2() == []
 
 
 @pytest.mark.parametrize(
@@ -214,7 +214,7 @@ def test_weights_get_month_v2_date_coercion(fs, date_in):
     with patch.object(
         Fatsecret, "_call", return_value=_month_payload([])
     ) as mock_call:
-        fs.weights_get_month_v2(date=date_in)
+        fs.weight.get_month_v2(date=date_in)
     params = mock_call.call_args.args[0]
     assert isinstance(params["date"], int)
 
@@ -222,36 +222,25 @@ def test_weights_get_month_v2_date_coercion(fs, date_in):
 # --------------------------- profile.create v1 ---------------------------
 
 
-def test_profile_create_v1_no_user_id(fs):
-    payload = {"profile": {"auth_token": "tok", "auth_secret": "sec"}}
-    with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.profile_create_v1()
-    params = mock_call.call_args.args[0]
-    assert params["method"] == "profile.create"
-    assert "user_id" not in params
-    assert mock_call.call_args.kwargs.get("method") == "POST"
-    # back-compat tuple, NOT dict
-    assert isinstance(result, tuple)
-    assert result == ("tok", "sec")
-
-
 def test_profile_create_v1_with_user_id(fs):
     payload = {"profile": {"auth_token": "t2", "auth_secret": "s2"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.profile_create_v1(user_id="user-42")
+        result = fs.profile.create_v1(user_id="user-42")
     params = mock_call.call_args.args[0]
+    assert params["method"] == "profile.create"
     assert params["user_id"] == "user-42"
-    assert result == ("t2", "s2")
-    assert isinstance(result, tuple)
+    assert mock_call.call_args.kwargs.get("method") == "POST"
+    # v2.0: returns the unwrapped profile dict (no more tuple coercion).
+    assert isinstance(result, dict)
+    assert result == {"auth_token": "t2", "auth_secret": "s2"}
 
 
-def test_profile_create_v1_without_auth_token_passes_through(fs):
-    """If the response lacks auth_token, return the profile dict as-is."""
+def test_profile_create_v1_returns_profile_dict_passthrough(fs):
+    """If the response lacks auth_token, the profile dict is returned as-is."""
     payload = {"profile": {"some_other_field": "x"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.profile_create_v1()
+        result = fs.profile.create_v1(user_id="user-42")
     assert result == {"some_other_field": "x"}
-    assert not isinstance(result, tuple)
 
 
 # --------------------------- profile.get v1 ---------------------------
@@ -266,7 +255,7 @@ def test_profile_get_v1_returns_profile_dict(fs):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.profile_get_v1()
+        result = fs.profile.get_v1()
     params = mock_call.call_args.args[0]
     assert params["method"] == "profile.get"
     # No POST kwarg => default GET path
@@ -283,7 +272,7 @@ def test_profile_get_v1_no_arguments(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"profile": {"nickname": "n"}}
     ) as mock_call:
-        fs.profile_get_v1()
+        fs.profile.get_v1()
     params = mock_call.call_args.args[0]
     # Only method key
     assert list(params.keys()) == ["method"]
@@ -292,32 +281,33 @@ def test_profile_get_v1_no_arguments(fs):
 # --------------------------- profile.get_auth v1 ---------------------------
 
 
-def test_profile_get_auth_v1_returns_tuple(fs):
+def test_profile_get_auth_v1_returns_profile_dict(fs):
     payload = {"profile": {"auth_token": "atk", "auth_secret": "ask"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.profile_get_auth_v1(user_id="user-7")
+        result = fs.profile.get_auth_v1(user_id="user-7")
     params = mock_call.call_args.args[0]
     assert params["method"] == "profile.get_auth"
     assert params["user_id"] == "user-7"
     # default verb (GET)
     assert mock_call.call_args.kwargs.get("method") in (None, "GET")
-    assert isinstance(result, tuple)
-    assert result == ("atk", "ask")
+    # v2.0: returns the unwrapped profile dict (no more tuple coercion).
+    assert isinstance(result, dict)
+    assert result == {"auth_token": "atk", "auth_secret": "ask"}
+    assert "auth_token" in result and "auth_secret" in result
 
 
 def test_profile_get_auth_v1_without_user_id(fs):
     payload = {"profile": {"auth_token": "a", "auth_secret": "b"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.profile_get_auth_v1()
+        result = fs.profile.get_auth_v1()
     params = mock_call.call_args.args[0]
     assert "user_id" not in params
-    assert result == ("a", "b")
+    assert result == {"auth_token": "a", "auth_secret": "b"}
 
 
 def test_profile_get_auth_v1_without_auth_token_passes_through(fs):
-    """If the response lacks auth_token, fall back to raw profile dict."""
+    """Profile dict without auth_token is still returned verbatim."""
     payload = {"profile": {"nickname": "noauth"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.profile_get_auth_v1(user_id="u")
+        result = fs.profile.get_auth_v1(user_id="u")
     assert result == {"nickname": "noauth"}
-    assert not isinstance(result, tuple)

@@ -6,7 +6,7 @@ Covers:
   * ``api_url`` fallback when ``self.oauth`` is None (OAuth2 mode)
   * ``_unwrap`` else branch when ``list_key`` doesn't match
   * ``get_authorize_url`` HMAC-SHA1 signing flow
-  * Legacy ``valid_response`` response dispatcher (used only by food_get_v2)
+  * Legacy ``valid_response`` response dispatcher (used only by foods.get_v2)
 """
 
 from unittest.mock import MagicMock, patch

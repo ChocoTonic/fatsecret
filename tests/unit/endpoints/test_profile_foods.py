@@ -31,6 +31,13 @@ import pytest
 from fatsecret import Fatsecret, PremierRequiredError
 
 
+def _resolve(obj, dotted_path):
+    """Walk a dotted attribute path (e.g. 'foods.search_v5')."""
+    for part in dotted_path.split("."):
+        obj = getattr(obj, part)
+    return obj
+
+
 @pytest.fixture
 def fs():
     with patch("fatsecret.fatsecret.OAuth1Service") as mock_oauth1:
@@ -43,8 +50,8 @@ def fs():
 # ---------------------------------------------------------------------------
 
 CREATE_VERSIONS = [
-    ("food_create_v1", "food.create"),
-    ("food_create_v2", "food.create.v2"),
+    ("profile_foods.create_v1", "food.create"),
+    ("profile_foods.create_v2", "food.create.v2"),
 ]
 
 REQUIRED_CREATE_KWARGS = dict(
@@ -62,7 +69,7 @@ REQUIRED_CREATE_KWARGS = dict(
 def test_food_create_happy_path(fs, method_name, api_method):
     payload = {"food_id": {"value": "12345"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)(**REQUIRED_CREATE_KWARGS)
+        result = _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS)
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -83,7 +90,7 @@ def test_food_create_happy_path(fs, method_name, api_method):
 def test_food_create_unwraps_food_id_scalar(fs, method_name, _api):
     payload = {"food_id": "9876"}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)(**REQUIRED_CREATE_KWARGS)
+        result = _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS)
     assert result == "9876"
 
 
@@ -91,7 +98,7 @@ def test_food_create_unwraps_food_id_scalar(fs, method_name, _api):
 def test_food_create_omits_all_optionals_by_default(fs, method_name, _api):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(**REQUIRED_CREATE_KWARGS)
+        _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS)
     params = mock_call.call_args.args[0]
     # Shared optional fields must NOT appear in params when not supplied.
     for key in (
@@ -149,7 +156,7 @@ def test_food_create_each_shared_optional_present_when_supplied(
 ):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(**REQUIRED_CREATE_KWARGS, **{kwarg: value})
+        _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS, **{kwarg: value})
     params = mock_call.call_args.args[0]
     assert params[kwarg] == value
 
@@ -161,7 +168,7 @@ def test_food_create_each_shared_optional_absent_when_none(
 ):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(**REQUIRED_CREATE_KWARGS, **{kwarg: None})
+        _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS, **{kwarg: None})
     params = mock_call.call_args.args[0]
     assert kwarg not in params
 
@@ -172,7 +179,7 @@ def test_food_create_each_shared_optional_absent_when_none(
 def test_food_create_v1_accepts_other_carbohydrate(fs):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_create_v1(other_carbohydrate=7.5, **REQUIRED_CREATE_KWARGS)
+        fs.profile_foods.create_v1(other_carbohydrate=7.5, **REQUIRED_CREATE_KWARGS)
     params = mock_call.call_args.args[0]
     assert params["other_carbohydrate"] == 7.5
     # v2-only fields must not appear in a v1 call.
@@ -183,7 +190,7 @@ def test_food_create_v1_accepts_other_carbohydrate(fs):
 def test_food_create_v1_omits_other_carbohydrate_when_none(fs):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_create_v1(other_carbohydrate=None, **REQUIRED_CREATE_KWARGS)
+        fs.profile_foods.create_v1(other_carbohydrate=None, **REQUIRED_CREATE_KWARGS)
     params = mock_call.call_args.args[0]
     assert "other_carbohydrate" not in params
 
@@ -193,7 +200,7 @@ def test_food_create_v2_does_not_accept_other_carbohydrate(fs):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload):
         with pytest.raises(TypeError):
-            fs.food_create_v2(other_carbohydrate=7.5, **REQUIRED_CREATE_KWARGS)
+            fs.profile_foods.create_v2(other_carbohydrate=7.5, **REQUIRED_CREATE_KWARGS)
 
 
 # --- v2-only optionals (added_sugars, vitamin_d) -----------------------------
@@ -205,7 +212,7 @@ def test_food_create_v2_does_not_accept_other_carbohydrate(fs):
 def test_food_create_v2_accepts_v2_only_optionals(fs, kwarg, value):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_create_v2(**REQUIRED_CREATE_KWARGS, **{kwarg: value})
+        fs.profile_foods.create_v2(**REQUIRED_CREATE_KWARGS, **{kwarg: value})
     params = mock_call.call_args.args[0]
     assert params[kwarg] == value
 
@@ -214,7 +221,7 @@ def test_food_create_v2_accepts_v2_only_optionals(fs, kwarg, value):
 def test_food_create_v2_omits_v2_only_optionals_when_none(fs, kwarg):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_create_v2(**REQUIRED_CREATE_KWARGS, **{kwarg: None})
+        fs.profile_foods.create_v2(**REQUIRED_CREATE_KWARGS, **{kwarg: None})
     params = mock_call.call_args.args[0]
     assert kwarg not in params
 
@@ -225,7 +232,7 @@ def test_food_create_v1_does_not_accept_v2_only_optionals(fs, kwarg):
     payload = {"food_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload):
         with pytest.raises(TypeError):
-            fs.food_create_v1(**REQUIRED_CREATE_KWARGS, **{kwarg: 1.0})
+            fs.profile_foods.create_v1(**REQUIRED_CREATE_KWARGS, **{kwarg: 1.0})
 
 
 # --- Premier propagation -----------------------------------------------------
@@ -237,7 +244,7 @@ def test_food_create_propagates_premier_required_error(fs, method_name, _api):
         Fatsecret, "_call", side_effect=PremierRequiredError(21, "Premier required")
     ):
         with pytest.raises(PremierRequiredError):
-            getattr(fs, method_name)(**REQUIRED_CREATE_KWARGS)
+            _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS)
 
 
 # ---------------------------------------------------------------------------
@@ -248,7 +255,7 @@ def test_food_create_propagates_premier_required_error(fs, method_name, _api):
 def test_food_add_favorite_v1_happy_path(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_add_favorite_v1("fid-1")
+        result = fs.profile_foods.add_favorite_v1("fid-1")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "food.add_favorite"
@@ -262,7 +269,7 @@ def test_food_add_favorite_v1_happy_path(fs):
 def test_food_add_favorite_v1_with_serving_id_only(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_add_favorite_v1("fid-1", serving_id="sid-9")
+        fs.profile_foods.add_favorite_v1("fid-1", serving_id="sid-9")
     params = mock_call.call_args.args[0]
     assert params["serving_id"] == "sid-9"
     assert "number_of_units" not in params
@@ -271,7 +278,7 @@ def test_food_add_favorite_v1_with_serving_id_only(fs):
 def test_food_add_favorite_v1_with_number_of_units_only(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_add_favorite_v1("fid-1", number_of_units=2.5)
+        fs.profile_foods.add_favorite_v1("fid-1", number_of_units=2.5)
     params = mock_call.call_args.args[0]
     assert params["number_of_units"] == 2.5
     assert "serving_id" not in params
@@ -280,7 +287,7 @@ def test_food_add_favorite_v1_with_number_of_units_only(fs):
 def test_food_add_favorite_v1_with_both_optionals(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_add_favorite_v1("fid-1", serving_id="sid-9", number_of_units=2.5)
+        fs.profile_foods.add_favorite_v1("fid-1", serving_id="sid-9", number_of_units=2.5)
     params = mock_call.call_args.args[0]
     assert params["serving_id"] == "sid-9"
     assert params["number_of_units"] == 2.5
@@ -289,7 +296,7 @@ def test_food_add_favorite_v1_with_both_optionals(fs):
 def test_food_add_favorite_v1_optionals_absent_when_none(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_add_favorite_v1("fid-1", serving_id=None, number_of_units=None)
+        fs.profile_foods.add_favorite_v1("fid-1", serving_id=None, number_of_units=None)
     params = mock_call.call_args.args[0]
     assert "serving_id" not in params
     assert "number_of_units" not in params
@@ -298,14 +305,14 @@ def test_food_add_favorite_v1_optionals_absent_when_none(fs):
 def test_food_add_favorite_v1_success_string_one_returns_true(fs):
     # `_mutator_success` accepts both int 1 and str "1".
     with patch.object(Fatsecret, "_call", return_value={"success": "1"}):
-        result = fs.food_add_favorite_v1("fid-1")
+        result = fs.profile_foods.add_favorite_v1("fid-1")
     assert result is True
 
 
 def test_food_add_favorite_v1_non_success_payload_passthrough(fs):
     # Empty / non-success payloads pass through unchanged (no True coercion).
     with patch.object(Fatsecret, "_call", return_value={}):
-        result = fs.food_add_favorite_v1("fid-1")
+        result = fs.profile_foods.add_favorite_v1("fid-1")
     assert result == {}
 
 
@@ -317,7 +324,7 @@ def test_food_add_favorite_v1_non_success_payload_passthrough(fs):
 def test_food_delete_favorite_v1_happy_path(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_delete_favorite_v1("fid-1")
+        result = fs.profile_foods.delete_favorite_v1("fid-1")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "food.delete_favorite"
@@ -331,7 +338,7 @@ def test_food_delete_favorite_v1_happy_path(fs):
 def test_food_delete_favorite_v1_with_serving_id_only(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_delete_favorite_v1("fid-1", serving_id="sid-9")
+        fs.profile_foods.delete_favorite_v1("fid-1", serving_id="sid-9")
     params = mock_call.call_args.args[0]
     assert params["serving_id"] == "sid-9"
     assert "number_of_units" not in params
@@ -340,7 +347,7 @@ def test_food_delete_favorite_v1_with_serving_id_only(fs):
 def test_food_delete_favorite_v1_with_number_of_units_only(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_delete_favorite_v1("fid-1", number_of_units=1.0)
+        fs.profile_foods.delete_favorite_v1("fid-1", number_of_units=1.0)
     params = mock_call.call_args.args[0]
     assert params["number_of_units"] == 1.0
     assert "serving_id" not in params
@@ -349,7 +356,7 @@ def test_food_delete_favorite_v1_with_number_of_units_only(fs):
 def test_food_delete_favorite_v1_with_both_optionals(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_delete_favorite_v1(
+        fs.profile_foods.delete_favorite_v1(
             "fid-1", serving_id="sid-9", number_of_units=1.0
         )
     params = mock_call.call_args.args[0]
@@ -360,7 +367,7 @@ def test_food_delete_favorite_v1_with_both_optionals(fs):
 def test_food_delete_favorite_v1_optionals_absent_when_none(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_delete_favorite_v1(
+        fs.profile_foods.delete_favorite_v1(
             "fid-1", serving_id=None, number_of_units=None
         )
     params = mock_call.call_args.args[0]
@@ -370,13 +377,13 @@ def test_food_delete_favorite_v1_optionals_absent_when_none(fs):
 
 def test_food_delete_favorite_v1_success_string_one_returns_true(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": "1"}):
-        result = fs.food_delete_favorite_v1("fid-1")
+        result = fs.profile_foods.delete_favorite_v1("fid-1")
     assert result is True
 
 
 def test_food_delete_favorite_v1_non_success_payload_passthrough(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        result = fs.food_delete_favorite_v1("fid-1")
+        result = fs.profile_foods.delete_favorite_v1("fid-1")
     assert result == {}
 
 
@@ -385,8 +392,8 @@ def test_food_delete_favorite_v1_non_success_payload_passthrough(fs):
 # ---------------------------------------------------------------------------
 
 FAVORITES_VERSIONS = [
-    ("foods_get_favorites_v1", "foods.get_favorites"),
-    ("foods_get_favorites_v2", "foods.get_favorites.v2"),
+    ("profile_foods.get_favorites_v1", "foods.get_favorites"),
+    ("profile_foods.get_favorites_v2", "foods.get_favorites.v2"),
 ]
 
 
@@ -394,7 +401,7 @@ FAVORITES_VERSIONS = [
 def test_foods_get_favorites_happy_path(fs, method_name, api_method):
     payload = {"foods": {"food": [{"food_id": "1"}, {"food_id": "2"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -407,7 +414,7 @@ def test_foods_get_favorites_happy_path(fs, method_name, api_method):
 def test_foods_get_favorites_single_dict_coerced_to_list(fs, method_name, _api):
     payload = {"foods": {"food": {"food_id": "solo"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == [{"food_id": "solo"}]
 
 
@@ -417,7 +424,7 @@ def test_foods_get_favorites_empty_response_returns_empty_list(
     fs, method_name, _api, payload
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == []
 
 
@@ -426,8 +433,8 @@ def test_foods_get_favorites_empty_response_returns_empty_list(
 # ---------------------------------------------------------------------------
 
 MOST_EATEN_VERSIONS = [
-    ("foods_get_most_eaten_v1", "foods.get_most_eaten"),
-    ("foods_get_most_eaten_v2", "foods.get_most_eaten.v2"),
+    ("profile_foods.get_most_eaten_v1", "foods.get_most_eaten"),
+    ("profile_foods.get_most_eaten_v2", "foods.get_most_eaten.v2"),
 ]
 
 
@@ -435,7 +442,7 @@ MOST_EATEN_VERSIONS = [
 def test_foods_get_most_eaten_happy_path(fs, method_name, api_method):
     payload = {"foods": {"food": [{"food_id": "1"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -448,7 +455,7 @@ def test_foods_get_most_eaten_happy_path(fs, method_name, api_method):
 def test_foods_get_most_eaten_with_meal(fs, method_name, _api):
     payload = {"foods": {"food": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(meal="breakfast")
+        _resolve(fs, method_name)(meal="breakfast")
     params = mock_call.call_args.args[0]
     assert params["meal"] == "breakfast"
 
@@ -457,7 +464,7 @@ def test_foods_get_most_eaten_with_meal(fs, method_name, _api):
 def test_foods_get_most_eaten_meal_absent_when_none(fs, method_name, _api):
     payload = {"foods": {"food": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(meal=None)
+        _resolve(fs, method_name)(meal=None)
     params = mock_call.call_args.args[0]
     assert "meal" not in params
 
@@ -466,7 +473,7 @@ def test_foods_get_most_eaten_meal_absent_when_none(fs, method_name, _api):
 def test_foods_get_most_eaten_single_dict_coerced_to_list(fs, method_name, _api):
     payload = {"foods": {"food": {"food_id": "solo"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == [{"food_id": "solo"}]
 
 
@@ -476,7 +483,7 @@ def test_foods_get_most_eaten_empty_response_returns_empty_list(
     fs, method_name, _api, payload
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == []
 
 
@@ -487,8 +494,8 @@ def test_foods_get_most_eaten_empty_response_returns_empty_list(
 # ---------------------------------------------------------------------------
 
 RECENTLY_EATEN_VERSIONS = [
-    ("foods_get_recently_eaten_v1", "foods.get_recently_eaten"),
-    ("foods_get_recently_eaten_v2", "foods.get_recently_eaten.v2"),
+    ("profile_foods.get_recently_eaten_v1", "foods.get_recently_eaten"),
+    ("profile_foods.get_recently_eaten_v2", "foods.get_recently_eaten.v2"),
 ]
 
 
@@ -496,7 +503,7 @@ RECENTLY_EATEN_VERSIONS = [
 def test_foods_get_recently_eaten_happy_path(fs, method_name, api_method):
     payload = {"foods": {"food": [{"food_id": "1"}, {"food_id": "2"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -509,7 +516,7 @@ def test_foods_get_recently_eaten_happy_path(fs, method_name, api_method):
 def test_foods_get_recently_eaten_with_meal(fs, method_name, _api):
     payload = {"foods": {"food": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(meal="dinner")
+        _resolve(fs, method_name)(meal="dinner")
     params = mock_call.call_args.args[0]
     assert params["meal"] == "dinner"
 
@@ -518,7 +525,7 @@ def test_foods_get_recently_eaten_with_meal(fs, method_name, _api):
 def test_foods_get_recently_eaten_meal_absent_when_none(fs, method_name, _api):
     payload = {"foods": {"food": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(meal=None)
+        _resolve(fs, method_name)(meal=None)
     params = mock_call.call_args.args[0]
     assert "meal" not in params
 
@@ -529,7 +536,7 @@ def test_foods_get_recently_eaten_single_dict_coerced_to_list(
 ):
     payload = {"foods": {"food": {"food_id": "solo"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == [{"food_id": "solo"}]
 
 
@@ -539,5 +546,5 @@ def test_foods_get_recently_eaten_empty_response_returns_empty_list(
     fs, method_name, _api, payload
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == []
