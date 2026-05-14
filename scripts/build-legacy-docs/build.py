@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Build a static archive of pyfatsecret docs for every released tag prior to v0.13.0.
+"""Build a static archive of fatsecret docs for every released tag that RTD
+does not auto-build (currently anything < v1.4.0).
 
 Output goes to a staging directory (default: ./legacy-staging) laid out as:
 
@@ -37,8 +38,26 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-# Tags to archive. Everything < v0.13.0 from `git tag --list --sort=-version:refname`.
+# Tags to archive. These are tags that RTD won't auto-build because their
+# checkouts either lack `.readthedocs.yaml` entirely (anything pre-PR-#97)
+# or carry the broken pre-fix version (v1.3.0 = the merge commit of PR #97
+# itself). All v1.4.0+ tags ship with the fixed RTD config and are handled
+# by RTD; everything in this list goes to the gh-pages frozen archive.
 LEGACY_TAGS: list[str] = [
+    # v1.x retroactive tags that predate the RTD config (or carry the
+    # broken first version) and therefore can't auto-build on RTD.
+    "v1.3.0",
+    "v1.2.2",
+    "v1.2.1",
+    "v1.2.0",
+    "v1.1.0",
+    "v1.0.2",
+    "v1.0.1",
+    "v1.0.0",
+    # v0.x tags from before the OAS/RTD-era doc layout.
+    "v0.15.0",
+    "v0.14.0",
+    "v0.13.0",
     "v0.12.0",
     "v0.11.0",
     "v0.10.0",
@@ -117,7 +136,7 @@ def try_sphinx_build(tag: str, worktree: Path, out_dir: Path, venv_python: Path)
 # import the package; old tags are not importable under Python 3.11).
 project = "fatsecret"
 copyright = "Historical archive"
-author = "pyfatsecret contributors"
+author = "fatsecret contributors"
 release = "{version_str}"
 version = "{short_version}"
 extensions = []
@@ -125,7 +144,7 @@ exclude_patterns = ["_build", "api-spec"]
 master_doc = "index"
 source_suffix = ".rst"
 html_theme = "sphinx_rtd_theme"
-html_title = f"pyfatsecret {{release}} (archived)"
+html_title = f"fatsecret {{release}} (archived)"
 html_show_sphinx = False
 '''
     (sanitized / "conf.py").write_text(conf_py)
@@ -168,7 +187,7 @@ STUB_TEMPLATE = """<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>pyfatsecret {tag} (archived docs)</title>
+<title>fatsecret {tag} (archived docs)</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
          max-width: 760px; margin: 3em auto; padding: 0 1em; line-height: 1.5; color: #222; }}
@@ -183,14 +202,14 @@ STUB_TEMPLATE = """<!doctype html>
 </head>
 <body>
 <header>
-  <h1>pyfatsecret {tag}</h1>
+  <h1>fatsecret {tag}</h1>
   <p class="subtitle">Archived documentation snapshot</p>
 </header>
 <div class="note">
-This is a static archive page for an older release of <code>pyfatsecret</code>.
-For current documentation see <a href="https://pyfatsecret.readthedocs.io/">pyfatsecret.readthedocs.io</a>
-(covers v0.13.0+). Documentation for tags before v0.13.0 was not preserved
-under the modern build infrastructure, so this page links you to the most
+This is a static archive page for an older release of <code>fatsecret</code>.
+For current documentation see <a href="https://fatsecret.readthedocs.io/">fatsecret.readthedocs.io</a>
+(auto-built for v1.4.0 and newer). This page is a frozen snapshot for an
+older release that RTD does not auto-build, so it links you to the most
 useful authoritative sources for this specific version.
 </div>
 
@@ -247,7 +266,7 @@ INDEX_TEMPLATE = """<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>pyfatsecret legacy documentation archive</title>
+<title>fatsecret legacy documentation archive</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
          max-width: 760px; margin: 3em auto; padding: 0 1em; line-height: 1.5; color: #222; }}
@@ -259,12 +278,12 @@ INDEX_TEMPLATE = """<!doctype html>
 </style>
 </head>
 <body>
-<h1>pyfatsecret legacy documentation</h1>
-<p class="subtitle">Frozen archive of docs for releases prior to v0.13.0</p>
+<h1>fatsecret legacy documentation</h1>
+<p class="subtitle">Frozen archive of docs for releases prior to v1.4.0</p>
 
 <div class="note">
-Modern documentation (v0.13.0 and later) lives on Read the Docs:
-<a href="https://pyfatsecret.readthedocs.io/">pyfatsecret.readthedocs.io</a>.<br>
+Modern documentation (v1.4.0 and later) lives on Read the Docs:
+<a href="https://fatsecret.readthedocs.io/">fatsecret.readthedocs.io</a>.<br>
 This archive exists so links to older versions don't 404. It is not maintained.
 </div>
 
@@ -361,7 +380,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--staging", type=Path, default=Path("legacy-staging").resolve())
-    parser.add_argument("--work-root", type=Path, default=Path(tempfile.gettempdir()) / "pyfatsecret-legacy-worktrees")
+    parser.add_argument("--work-root", type=Path, default=Path(tempfile.gettempdir()) / "fatsecret-legacy-worktrees")
     parser.add_argument("--tags", nargs="*", default=LEGACY_TAGS, help="Override tag list.")
     args = parser.parse_args()
 
