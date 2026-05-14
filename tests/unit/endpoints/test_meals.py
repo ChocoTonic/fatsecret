@@ -19,7 +19,7 @@ For each method-version we assert:
   6. Get-list endpoints: single-dict coerced, list passed through, empty → [].
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -35,8 +35,7 @@ def _resolve(obj, dotted_path):
 
 @pytest.fixture
 def fs():
-    with patch("fatsecret.fatsecret.OAuth1Service") as mock_oauth1:
-        mock_oauth1.return_value.get_session.return_value = MagicMock()
+    with patch("fatsecret.fatsecret.OAuth1Session"):
         return Fatsecret("ck", "cs")
 
 

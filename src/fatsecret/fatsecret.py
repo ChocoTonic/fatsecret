@@ -6,18 +6,16 @@ Simple python wrapper of the Fatsecret API
 
 """
 
-import base64
 import datetime
-import hashlib
-import hmac
 import time
-import urllib
-import uuid
 from typing import Any, List, Literal, Optional, Tuple, Union
+
+from urllib.parse import parse_qs
 
 import requests
 from bs4 import BeautifulSoup
-from rauth.service import OAuth1Service
+from oauthlib.oauth1 import SIGNATURE_TYPE_QUERY
+from requests_oauthlib import OAuth1Session
 
 from .errors import (
     ApplicationError,
@@ -76,23 +74,24 @@ class Fatsecret:
         self._oauth2_token_expires_at: float = 0.0
 
         if auth == "oauth1":
-            self.oauth = OAuth1Service(
-                name="fatsecret",
-                consumer_key=consumer_key,
-                consumer_secret=consumer_secret,
-                request_token_url=self.REQUEST_TOKEN_URL,
-                authorize_url=self.AUTHORIZE_URL,
-                access_token_url=self.ACCESS_TOKEN_URL,
-                base_url=self.BASE_URL,
-            )
             if session_token:
                 self.access_token = session_token[0]
                 self.access_token_secret = session_token[1]
-                self.session = self.oauth.get_session(token=session_token)
+                self.session = OAuth1Session(
+                    consumer_key,
+                    client_secret=consumer_secret,
+                    resource_owner_key=session_token[0],
+                    resource_owner_secret=session_token[1],
+                    signature_type=SIGNATURE_TYPE_QUERY,
+                )
             else:
-                self.session = self.oauth.get_session()
+                self.session = OAuth1Session(
+                    consumer_key,
+                    client_secret=consumer_secret,
+                    callback_uri="oob",
+                    signature_type=SIGNATURE_TYPE_QUERY,
+                )
         elif auth == "oauth2":
-            self.oauth = None
             self.session = requests.Session()
         else:
             raise ValueError(f"auth must be 'oauth1' or 'oauth2', got {auth!r}")
@@ -249,84 +248,42 @@ class Fatsecret:
 
     @property
     def api_url(self) -> str:
-        if self.auth_mode == "oauth1" and self.oauth is not None:
-            return self.oauth.base_url
         return self.BASE_URL
 
     def get_authorize_url(self, callback_url: str = "oob") -> str:
+        """Fetch an OAuth1 request token and return the user-facing authorize URL.
+
+        Args:
+            callback_url: Absolute URL to redirect the user to after they authorize,
+                or ``"oob"`` (out-of-band) to receive a verifier PIN.
+        Returns:
+            The authorize URL with the freshly minted ``oauth_token`` appended.
         """
-        New implementation using manual OAuth 1.0 flow to /oauth/request_token on the new endpoint.
+        # If the caller asked for a non-default callback, rebuild the session
+        # so the right callback_uri is folded into the request-token signature.
+        if callback_url != "oob":
+            self.session = OAuth1Session(
+                self.consumer_key,
+                client_secret=self.consumer_secret,
+                callback_uri=callback_url,
+                signature_type=SIGNATURE_TYPE_QUERY,
+            )
 
-        :param callback_url: An absolute URL to redirect the User to when they have completed authentication
-        :type callback_url: str
-        """
-        print("Generating request token...")
-
-        oauth_consumer_key = self.consumer_key
-        oauth_consumer_secret = self.consumer_secret
-        oauth_signature_method = "HMAC-SHA1"
-        oauth_timestamp = str(int(time.time()))
-        oauth_nonce = str(uuid.uuid4().hex)
-        oauth_version = "1.0"
-        oauth_callback = callback_url
-
-        # Collect parameters for base string
-        params = {
-            "oauth_consumer_key": oauth_consumer_key,
-            "oauth_signature_method": oauth_signature_method,
-            "oauth_timestamp": oauth_timestamp,
-            "oauth_nonce": oauth_nonce,
-            "oauth_version": oauth_version,
-            "oauth_callback": oauth_callback,
-        }
-
-        base_params = "&".join(
-            [
-                "{}={}".format(
-                    urllib.parse.quote(k, safe=""), urllib.parse.quote(v, safe="")
-                )
-                for k, v in sorted(params.items())
-            ]
-        )
-        method = "POST"
-        base_url = self.oauth.request_token_url
-        signature_base_string = "&".join(
-            [
-                method,
-                urllib.parse.quote(base_url, safe=""),
-                urllib.parse.quote(base_params, safe=""),
-            ]
-        )
-
-        signing_key = f"{urllib.parse.quote(oauth_consumer_secret, safe='')}&"
-
-        hashed = hmac.new(
-            signing_key.encode("utf-8"),
-            signature_base_string.encode("utf-8"),
-            hashlib.sha1,
-        )
-        oauth_signature = base64.b64encode(hashed.digest()).decode()
-
-        params["oauth_signature"] = oauth_signature
-
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded",
-        }
-
-        full_request_url = f"{base_url}?{urllib.parse.urlencode(params)}"
-        print("Full request URL ends with:", full_request_url[-4:])
-
-        # POST request to fetch request_token
-        response = requests.post(base_url, data=params, headers=headers)
-        response.raise_for_status()
-        result = dict(urllib.parse.parse_qsl(response.text))
-
-        self.request_token = result["oauth_token"]
-        self.request_token_secret = result["oauth_token_secret"]
-        print(f"Request token ends with: {self.request_token[-4:]}")
-        print(f"secret ends with: {self.request_token_secret[-4:]}")
-
-        return f"{self.oauth.authorize_url}?oauth_token={self.request_token}"
+        # FatSecret's request-token endpoint only accepts GET. requests-oauthlib's
+        # fetch_request_token() forces POST, so issue the signed GET ourselves.
+        resp = self.session.get(self.REQUEST_TOKEN_URL)
+        resp.raise_for_status()
+        token = {k: v[0] for k, v in parse_qs(resp.text).items()}
+        if "oauth_token" not in token:
+            raise RuntimeError(
+                f"Token request failed: {resp.status_code} {resp.text!r}"
+            )
+        self.request_token = token["oauth_token"]
+        self.request_token_secret = token["oauth_token_secret"]
+        # Promote request token onto the session so authorization_url can find it.
+        self.session._client.client.resource_owner_key = self.request_token
+        self.session._client.client.resource_owner_secret = self.request_token_secret
+        return self.session.authorization_url(self.AUTHORIZE_URL)
 
     def authenticate(self, verifier: Union[str, int]) -> Tuple[str, str]:
         """Exchange the verifier (PIN or callback code) for permanent access tokens.
@@ -336,18 +293,38 @@ class Fatsecret:
         Returns:
             (access_token, access_secret)
         """
-        session_token = self.oauth.get_access_token(
-            self.request_token,
-            self.request_token_secret,
-            params={"oauth_verifier": verifier},
+        # Re-instantiate session with request token + verifier so the GET
+        # below is signed correctly. FatSecret's access-token endpoint also
+        # only accepts GET, so we issue it directly rather than going through
+        # fetch_access_token() (which would force POST).
+        self.session = OAuth1Session(
+            self.consumer_key,
+            client_secret=self.consumer_secret,
+            resource_owner_key=self.request_token,
+            resource_owner_secret=self.request_token_secret,
+            verifier=str(verifier),
+            signature_type=SIGNATURE_TYPE_QUERY,
+        )
+        resp = self.session.get(self.ACCESS_TOKEN_URL)
+        resp.raise_for_status()
+        token = {k: v[0] for k, v in parse_qs(resp.text).items()}
+        if "oauth_token" not in token:
+            raise RuntimeError(
+                f"Access-token exchange failed: {resp.status_code} {resp.text!r}"
+            )
+        self.access_token = token["oauth_token"]
+        self.access_token_secret = token["oauth_token_secret"]
+
+        # Replace with a long-lived authed session for subsequent API calls.
+        self.session = OAuth1Session(
+            self.consumer_key,
+            client_secret=self.consumer_secret,
+            resource_owner_key=self.access_token,
+            resource_owner_secret=self.access_token_secret,
+            signature_type=SIGNATURE_TYPE_QUERY,
         )
 
-        self.access_token = session_token[0]
-        self.access_token_secret = session_token[1]
-        self.session = self.oauth.get_session(session_token)
-
-        # Return session token for app specific caching
-        return session_token
+        return (self.access_token, self.access_token_secret)
 
     def close(self) -> None:
         """Close the current HTTP session."""

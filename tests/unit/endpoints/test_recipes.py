@@ -15,7 +15,7 @@ empty-response defaults, version-exclusive params (v3 recipe_types, v2 grams_per
 favorite singular-name bug fix, and Premier propagation via kwargs.
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -24,8 +24,7 @@ from fatsecret import Fatsecret
 
 @pytest.fixture
 def fs():
-    with patch("fatsecret.fatsecret.OAuth1Service") as mock_oauth1:
-        mock_oauth1.return_value.get_session.return_value = MagicMock()
+    with patch("fatsecret.fatsecret.OAuth1Session"):
         return Fatsecret("ck", "cs")
 
 

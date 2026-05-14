@@ -5,7 +5,7 @@ and that the result is unwrapped correctly. Pattern is consistent across
 ~80 versioned methods; sampling 8-10 representative ones is sufficient.
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -14,8 +14,7 @@ from fatsecret import Fatsecret
 
 @pytest.fixture
 def fs():
-    with patch("fatsecret.fatsecret.OAuth1Service") as mock_oauth1:
-        mock_oauth1.return_value.get_session.return_value = MagicMock()
+    with patch("fatsecret.fatsecret.OAuth1Session"):
         return Fatsecret("ck", "cs")
 
 
