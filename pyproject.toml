@@ -17,7 +17,7 @@ Documentation = "https://fatsecret.readthedocs.io/"
 Source = "https://github.com/ChocoTonic/fatsecret"
 Issues = "https://github.com/ChocoTonic/fatsecret/issues"
 Changelog = "https://github.com/ChocoTonic/fatsecret/releases"
-"Historical docs (pre-v0.13)" = "https://chocotonic.github.io/fatsecret/legacy/"
+"Per-version docs archive" = "https://chocotonic.github.io/fatsecret/"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

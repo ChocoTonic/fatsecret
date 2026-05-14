@@ -7,17 +7,11 @@ This library provides a lightweight python wrapper for the Fatsecret API with th
 
 ## Installation
 
-Install the module via pip
-
 ```sh
-$ pip install fatsecret
+pip install fatsecret
 ```
 
-or easy_install::
-
-```sh
-$ easy_install fatsecret
-```
+Requires Python 3.11+.
 
 ## Config
 
@@ -27,21 +21,33 @@ Register for a developer account at [Fatsecret](https://platform.fatsecret.com/a
 
 Fatsecret supports both delegated and public calls. Only through delegated calls can you access Fatsecret user profile data.
 
-If you're only interested in the public data you only require a session to make HTTP requests:
+If you only need public data:
 
 ```py
 from fatsecret import Fatsecret
 
 fs = Fatsecret(consumer_key, consumer_secret)
+foods = fs.foods_search_v5("Tacos")          # current upstream version
+# or, to pin to a specific historical shape:
+foods = fs.foods_search_v1("Tacos")
 ```
 
-Once you have created a session then you can start reading from Fatsecret's public food and recipe database
+Every method carries an explicit `_vN` version suffix matching FatSecret's
+multi-version API. Unsuffixed names (`foods_search`, `food_get`, …) still
+exist as `DeprecationWarning`-emitting aliases and will be removed in
+v2.0. Surface the warnings during development:
+
+```sh
+python -W default::DeprecationWarning:fatsecret your_script.py
+```
+
+For OAuth2 client-credentials (required for Premier / Native endpoints):
 
 ```py
-foods = fs.foods_search("Tacos")
+fs = Fatsecret(client_id, client_secret, auth="oauth2", scopes=["basic", "premier"])
 ```
 
-Refer to the [documentation](https://fatsecret.readthedocs.io/en/latest/) for further examples and detail.
+Refer to the [documentation](https://fatsecret.readthedocs.io/) for further examples and detail.
 
 ## Documentation
 

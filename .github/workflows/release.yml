@@ -189,8 +189,28 @@ jobs:
           # Re-sync without committing so uv publishes the correct version.
           sed -i "s/version = \"[^\"]*\"/version = \"${{ steps.version.outputs.version }}\"/" pyproject.toml
 
-      - name: Create GitHub Release
+      - name: Check if version already on PyPI
+        id: pypi_check
         if: steps.version.outputs.skip == 'false'
+        run: |
+          # Idempotency: a branch-push run cuts the new tag and pushes it
+          # to origin via RELEASE_PAT. That tag push fires a SECOND workflow
+          # run (the `tags:` trigger). Both runs target the same version.
+          # First one publishes successfully; second one would 400 on PyPI
+          # ("File already exists"). Skip publish when PyPI already has it.
+          VERSION="${{ steps.version.outputs.version }}"
+          STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+            "https://pypi.org/pypi/fatsecret/${VERSION}/json" || true)
+          if [ "${STATUS}" = "200" ]; then
+            echo "PyPI already has fatsecret==${VERSION}; skipping publish."
+            echo "already=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "PyPI does not have ${VERSION} yet (HTTP ${STATUS}); will publish."
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        if: steps.version.outputs.skip == 'false' && steps.pypi_check.outputs.already != 'true'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -199,7 +219,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to PyPI
-        if: steps.version.outputs.skip == 'false'
+        if: steps.version.outputs.skip == 'false' && steps.pypi_check.outputs.already != 'true'
         run: make release
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
