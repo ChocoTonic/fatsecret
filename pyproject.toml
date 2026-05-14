@@ -25,5 +25,4 @@ dev = [
     "ruff",
     "sphinx-rtd-theme>=3.0.2",
     "sphinx>=7.4.7",
-    "sphinx-multiversion>=0.2.4",
 ]
