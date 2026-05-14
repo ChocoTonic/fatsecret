@@ -376,11 +376,37 @@ def write_top_index(
 # ---------------------------------------------------------------------------
 
 
-def build_latest(repo: Path, out_dir: Path, venv_python: Path) -> bool:
+def _next_dev_version(highest_tag: str | None) -> str:
+    """Compute the PEP 440 dev version for `latest/` from the highest tag.
+
+    e.g. v1.5.10 -> 1.5.11.dev0. Falls back to "0.0.0.dev0" if no tags.
+    """
+    if not highest_tag:
+        return "0.0.0.dev0"
+    parts = highest_tag.lstrip("v").split(".")
+    try:
+        major, minor, patch = int(parts[0]), int(parts[1]), int(parts[2])
+    except (IndexError, ValueError):
+        return f"{highest_tag.lstrip('v')}.dev0"
+    return f"{major}.{minor}.{patch + 1}.dev0"
+
+
+def build_latest(repo: Path, out_dir: Path, venv_python: Path, work_root: Path, highest_tag: str | None) -> bool:
     """Build docs from the current working tree with full autodoc enabled.
 
     Installs the project into the same venv used by the archive (editable
     install) so autodoc/viewcode can import `fatsecret`.
+
+    Master's `docs/conf.py` reads `version` from `<repo>/pyproject.toml` via
+    a regex. The release workflow ephemerally syncs that field at publish
+    time but never commits it back, so master's pyproject is essentially
+    frozen at the project's v1.0 cutover version. Building latest/ straight
+    from `<repo>/docs` would therefore label master as v1.0.0.
+
+    Workaround: mirror the tag-build pattern. Stage docs/ inside a
+    per-build dir with a stub pyproject.toml carrying a PEP 440 dev
+    version computed from the highest released tag (e.g. v1.5.10 ->
+    1.5.11.dev0). conf.py then reads the correct forward-looking version.
     """
     docs_dir = repo / "docs"
     if not (docs_dir / "conf.py").is_file():
@@ -398,6 +424,19 @@ def build_latest(repo: Path, out_dir: Path, venv_python: Path) -> bool:
         print(f"  [latest] failed to install project: {e.stderr}")
         return False
 
+    build_dir = work_root / "latest-build"
+    if build_dir.exists():
+        shutil.rmtree(build_dir)
+    build_dir.mkdir(parents=True)
+    staged_docs = build_dir / "docs"
+    shutil.copytree(docs_dir, staged_docs)
+    dev_version = _next_dev_version(highest_tag)
+    (build_dir / "pyproject.toml").write_text(f'version = "{dev_version}"\n')
+    # Empty src/ so master's `sys.path.insert(_root/src)` resolves; the
+    # actual package is reached via the editable install in the venv.
+    (build_dir / "src").mkdir()
+    print(f"  [latest] labelled as {dev_version} (next dev after {highest_tag or 'no tags'})")
+
     try:
         run(
             [
@@ -407,7 +446,7 @@ def build_latest(repo: Path, out_dir: Path, venv_python: Path) -> bool:
                 "-b",
                 "html",
                 "-q",
-                str(docs_dir),
+                str(staged_docs),
                 str(out_dir),
             ],
             check=True,
@@ -492,21 +531,19 @@ def inject_version_selector(staging: Path, versions: list[str]) -> int:
     return sel;
   }}
 
-  // Preferred placement: inside the RTD theme's sidebar header
-  // (`.wy-side-nav-search`), matching where the original RTD flyout
-  // showed the version dropdown for ~10 years of this library's history.
-  var rtdSidebar = document.querySelector('.wy-side-nav-search');
-  if (rtdSidebar) {{
-    var wrap = document.createElement('div');
-    wrap.style.cssText = 'padding:8px 12px;margin-top:4px;text-align:left;background:rgba(0,0,0,0.12);font:12px -apple-system,BlinkMacSystemFont,sans-serif';
-    var label = document.createElement('span');
-    label.textContent = 'Version: ';
-    label.style.cssText = 'color:#fff;margin-right:6px';
+  // Preferred placement: replace the RTD theme's version text under the
+  // project name (`.wy-side-nav-search .version`) with a <select> styled
+  // to look like the original text. Clicking the version number opens
+  // the dropdown — same location and look as the original RTD theme
+  // version label, just now interactive.
+  var rtdVersion = document.querySelector('.wy-side-nav-search .version');
+  if (rtdVersion) {{
     var sel = buildSelect();
-    sel.style.cssText = 'background:#fff;color:#222;border:none;border-radius:3px;padding:2px 6px;font:inherit;cursor:pointer';
-    wrap.appendChild(label);
-    wrap.appendChild(sel);
-    rtdSidebar.appendChild(wrap);
+    sel.style.cssText = 'background:transparent;color:inherit;border:none;border-radius:0;padding:0;margin:0;font:inherit;text-align:center;text-align-last:center;cursor:pointer;-webkit-appearance:none;-moz-appearance:none;appearance:none;outline:none';
+    sel.title = 'Switch documentation version';
+    rtdVersion.textContent = '';
+    rtdVersion.appendChild(sel);
+    rtdVersion.style.cursor = 'pointer';
     return;
   }}
 
@@ -680,7 +717,8 @@ def main() -> int:
     stable_target: str | None = None
     if build_current:
         print("\n== Building latest/ from working tree ==")
-        latest_ok = build_latest(repo, staging / "latest", venv_python)
+        highest_tag = all_tags[0] if all_tags else None
+        latest_ok = build_latest(repo, staging / "latest", venv_python, work_root, highest_tag)
 
         # Pick the highest tag for stable. all_tags is sorted newest-first by
         # semver via `git tag --sort=-version:refname`.
