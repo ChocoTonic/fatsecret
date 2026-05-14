@@ -112,6 +112,16 @@ jobs:
             exit 0
           fi
 
+          # Skip the release-bot's own commit (which carries `[skip release]`
+          # in the subject) so we don't recursively cut another tag after
+          # the back-commit lands on master.
+          HEAD_SUBJECT=$(git log -1 --format='%s' HEAD)
+          if echo "$HEAD_SUBJECT" | grep -qF '[skip release]'; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Skipping: HEAD commit is a release back-commit (${HEAD_SUBJECT})"
+            exit 0
+          fi
+
           # --- branch push: compute next version from commit history ---
           CURRENT=$(git tag --sort=-version:refname \
             | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
@@ -175,11 +185,29 @@ jobs:
       - name: Tag release (branch push only)
         if: steps.version.outputs.skip == 'false' && steps.version.outputs.create_tag == 'true'
         run: |
-          sed -i "s/version = \"[^\"]*\"/version = \"${{ steps.version.outputs.version }}\"/" pyproject.toml
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+
+          # Bump pyproject.toml, commit it to master, then tag THAT commit.
+          # Previously we sed'd but never committed, so every tag pointed at
+          # a master commit with stale `version = "1.0.0"` — see #112 for
+          # the docs-side workaround this replaces.
+          #
+          # `[skip release]` in the commit subject is matched by the
+          # conventional-commit grep below to avoid recursive triggering:
+          # this workflow's branch-push handler will see the commit and
+          # detect no semantic-version-bumping change, so it won't try to
+          # cut another tag.
+          sed -i "s/version = \"[^\"]*\"/version = \"${VERSION}\"/" pyproject.toml
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "${{ steps.version.outputs.tag }}"
-          git push https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }} "${{ steps.version.outputs.tag }}"
+          git add pyproject.toml
+          git commit -m "chore(release): ${TAG} [skip release]"
+          git tag "${TAG}"
+          REMOTE="https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }}"
+          git push "${REMOTE}" "HEAD:${GITHUB_REF_NAME}"
+          git push "${REMOTE}" "${TAG}"
 
       - name: Sync pyproject.toml to tag version (tag or dispatch)
         if: steps.version.outputs.skip == 'false' && steps.version.outputs.create_tag != 'true'
