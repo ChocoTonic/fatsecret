@@ -8,6 +8,7 @@ PYTEST := uv run pytest
 SRC_DIR := src/fatsecret
 TEST_DIR := tests
 DOCS_DIR := docs
+DOCS_PORT ?= 10161
 
 .DEFAULT_GOAL := help
 
@@ -83,13 +84,17 @@ release: build  ## Publish to PyPI using uv
 # -----------------------------
 # Misc
 # -----------------------------
-.PHONY: help all example docs
+.PHONY: help all example docs docs-serve
 
 example: fmt lint  ## Run the CLI example with API credentials from environment
 	@PYTHONPATH=src uv run python examples/cli_example.py
 
 docs:  ## Build Sphinx documentation (clean then html)
 	@cd docs && make clean && make html
+
+serve: docs  ## Build then serve docs on localhost:10161 (override with DOCS_PORT=<port>)
+	@echo "Serving docs at http://localhost:$(DOCS_PORT) (Ctrl+C to stop)"
+	@cd docs/_build/html && $(PYTHON) -m http.server $(DOCS_PORT)
 
 help:  ## Show available make targets
 	@echo "Available commands:"
