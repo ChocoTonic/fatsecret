@@ -45,7 +45,33 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
+      - name: Check if release should run
+        id: should_release
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+
+          if echo "$CHANGED_FILES" | grep -qvE '^(uv\.lock|pyproject\.toml)$'; then
+            IS_DEP_BUMP=false
+          else
+            IS_DEP_BUMP=true
+          fi
+
+          if echo "$COMMIT_MSG" | grep -qi "CVE\|security\|vulnerability"; then
+            HAS_CVE=true
+          else
+            HAS_CVE=false
+          fi
+
+          if [ "$IS_DEP_BUMP" = "true" ] && [ "$HAS_CVE" = "false" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Skipping: dependency bump without CVE"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Bump patch version
+        if: steps.should_release.outputs.skip == 'false'
         id: version
         run: |
           git config user.name "github-actions[bot]"
@@ -61,6 +87,7 @@ jobs:
           echo "tag=v$NEW" >> $GITHUB_OUTPUT
 
       - name: Commit and tag version bump
+        if: steps.should_release.outputs.skip == 'false'
         run: |
           git add pyproject.toml
           git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
@@ -68,6 +95,7 @@ jobs:
           git push origin master --tags
 
       - name: Create GitHub Release
+        if: steps.should_release.outputs.skip == 'false'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -75,6 +103,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to PyPI
+        if: steps.should_release.outputs.skip == 'false'
         run: make release
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
