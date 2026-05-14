@@ -85,19 +85,74 @@ def pypi_url(tag: str) -> str:
 # ---------------------------------------------------------------------------
 
 
+# Third-party modules autodoc may need to mock when importing historical
+# fatsecret source trees. Extras are harmless — Sphinx's autodoc_mock_imports
+# silently ignores entries that aren't actually imported.
+LEGACY_MOCK_IMPORTS = [
+    "rauth", "rauth.service", "rauth.session", "rauth.compat",
+    "requests", "requests.auth", "requests.exceptions",
+    "bs4", "lxml",
+    "dotenv", "python_dotenv",
+    "oauthlib", "requests_oauthlib",
+]
+
+AUTODOC_OVERRIDE = '''
+
+# --- archive override (autodoc + mocks) appended by build.py ---
+autodoc_mock_imports = {mock_imports!r}
+autodoc_default_options = {{"members": True, "undoc-members": False, "show-inheritance": True}}
+html_title = f"fatsecret {{release}} (archived)"
+html_show_sphinx = False
+exclude_patterns = list(set(list(globals().get("exclude_patterns", [])) + ["_build", "api-spec"]))
+'''
+
+STRIPPED_OVERRIDE = '''
+
+# --- archive override (autodoc stripped) appended by build.py ---
+extensions = [e for e in list(globals().get("extensions", [])) if not e.startswith("sphinx.ext.auto") and e not in ("sphinx.ext.doctest", "sphinx.ext.viewcode")]
+html_title = f"fatsecret {release} (archived)"
+html_show_sphinx = False
+exclude_patterns = list(set(list(globals().get("exclude_patterns", [])) + ["_build", "api-spec"]))
+'''
+
+
+def _find_package_dir(worktree: Path) -> Path | None:
+    """Return the directory that should go on sys.path so `import fatsecret` works.
+
+    Tags shipped with two layouts over time: flat (`<root>/fatsecret/`) and
+    src ( `<root>/src/fatsecret/`). Pick whichever exists at this tag.
+    """
+    for candidate in (worktree / "src", worktree):
+        if (candidate / "fatsecret" / "__init__.py").is_file():
+            return candidate
+    return None
+
+
+def _run_sphinx(sanitized: Path, out_dir: Path, venv_python: Path) -> tuple[bool, str]:
+    if out_dir.exists():
+        shutil.rmtree(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        proc = run(
+            [str(venv_python), "-m", "sphinx", "-b", "html", "-q", str(sanitized), str(out_dir)],
+            check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        return False, (e.stdout or "") + (e.stderr or "")
+    if not (out_dir / "index.html").is_file():
+        return False, "no index.html produced"
+    return True, proc.stdout or ""
+
+
 def try_sphinx_build(tag: str, worktree: Path, out_dir: Path, venv_python: Path, master_docs: Path) -> bool:
     docs_dir = worktree / "docs"
     if not (docs_dir / "conf.py").is_file():
         print(f"  [sphinx] {tag}: no docs/conf.py, skipping strategy A")
         return False
 
-    # Hybrid build: .rst source from the tag, theme/template from master.
-    # This keeps the version switcher visually consistent and lets us ship
-    # theme upgrades retroactively without rewriting history. Autodoc is
-    # still disabled because old tags are not importable under modern Python.
-    # Nest sanitized docs inside a per-tag build dir so master's conf.py —
-    # which reads `Path(__file__).parent.parent / "pyproject.toml"` — finds
-    # a pyproject with the tag's version (written below).
+    # Per-tag build_dir mirrors master's expected layout so master's conf.py
+    # (which does `_root = parent.parent; sys.path.insert(0, _root/src)` and
+    # reads `_root/pyproject.toml`) resolves to *this tag's* code/version.
     build_dir = worktree.parent / f"{tag}-build"
     if build_dir.exists():
         shutil.rmtree(build_dir)
@@ -106,17 +161,24 @@ def try_sphinx_build(tag: str, worktree: Path, out_dir: Path, venv_python: Path,
     shutil.copytree(docs_dir, sanitized)
     version_str = tag.lstrip("v")
     (build_dir / "pyproject.toml").write_text(f'version = "{version_str}"\n')
-    # Empty src/ so any `sys.path.insert(_root/src)` in master conf is harmless.
-    (build_dir / "src").mkdir()
 
-    # Drop api-spec subtree if present (OpenAPI YAML; not docs source).
+    # Stage this tag's fatsecret package under <build_dir>/src/fatsecret so
+    # autodoc can import it via master's `sys.path.insert(_root/src)`. Both
+    # the flat (`fatsecret/`) and src (`src/fatsecret/`) layouts are handled.
+    pkg_parent = _find_package_dir(worktree)
+    src_dir = build_dir / "src"
+    if pkg_parent is not None:
+        src_dir.mkdir(exist_ok=True)
+        shutil.copytree(pkg_parent / "fatsecret", src_dir / "fatsecret")
+    else:
+        # No package found — make src/ empty so master's sys.path insert is
+        # harmless, and we'll fall through to autodoc-stripped mode.
+        src_dir.mkdir(exist_ok=True)
+
     api_spec = sanitized / "api-spec"
     if api_spec.exists():
         shutil.rmtree(api_spec)
 
-    # Pull conf.py + theme assets from master so every archived version
-    # renders with the *current* template. Autodoc is force-disabled via an
-    # appended override below.
     master_conf = master_docs / "conf.py"
     if not master_conf.is_file():
         print(f"  [sphinx] {tag}: master conf.py not found at {master_conf}")
@@ -130,46 +192,27 @@ def try_sphinx_build(tag: str, worktree: Path, out_dir: Path, venv_python: Path,
                 shutil.rmtree(dst)
             shutil.copytree(src, dst)
 
-    # Append an override that runs *after* master's conf.py:
-    #   - strip autodoc/doctest/viewcode so we never import old source trees
-    #   - mark this build as an archive in the page title
-    # (version/release come from the per-tag pyproject.toml stub above.)
-    override = '''
+    conf_path = sanitized / "conf.py"
+    base_conf = conf_path.read_text()
 
-# --- archive override (appended by scripts/build-version-docs/build.py) ---
-extensions = [e for e in list(globals().get("extensions", [])) if not e.startswith("sphinx.ext.auto") and e not in ("sphinx.ext.doctest", "sphinx.ext.viewcode")]
-html_title = f"fatsecret {release} (archived)"
-html_show_sphinx = False
-exclude_patterns = list(set(list(globals().get("exclude_patterns", [])) + ["_build", "api-spec"]))
-'''
-    with (sanitized / "conf.py").open("a") as fh:
-        fh.write(override)
+    # Attempt 1: autodoc enabled with mocked third-party imports. Only viable
+    # if we found a package dir to import. This produces real API docs for
+    # legacy tags whose .rst uses `.. autoclass::` / `.. automodule::`.
+    if pkg_parent is not None:
+        conf_path.write_text(base_conf + AUTODOC_OVERRIDE.format(mock_imports=LEGACY_MOCK_IMPORTS))
+        ok, log = _run_sphinx(sanitized, out_dir, venv_python)
+        if ok:
+            return True
+        print(f"  [sphinx] {tag}: autodoc attempt failed, retrying with autodoc stripped")
+        print(log[-2000:] if log else "")
 
-    # Some old trees have an index.rst that .. include:: contents.rst.inc which
-    # tries to use autodoc directives. We let Sphinx render those as plain
-    # unknown-directive warnings (non-fatal without -W).
-    try:
-        run(
-            [
-                str(venv_python),
-                "-m",
-                "sphinx",
-                "-b",
-                "html",
-                "-q",  # quiet; we want minimal log noise
-                str(sanitized),
-                str(out_dir),
-            ],
-            check=True,
-        )
-    except subprocess.CalledProcessError as e:
-        print(f"  [sphinx] {tag}: build FAILED")
-        print(e.stdout)
-        print(e.stderr)
-        return False
-
-    if not (out_dir / "index.html").is_file():
-        print(f"  [sphinx] {tag}: no index.html produced")
+    # Attempt 2: strip autodoc and try again. Old .rst directives become
+    # unknown-directive warnings (non-fatal) but the rest of the page renders.
+    conf_path.write_text(base_conf + STRIPPED_OVERRIDE)
+    ok, log = _run_sphinx(sanitized, out_dir, venv_python)
+    if not ok:
+        print(f"  [sphinx] {tag}: build FAILED in both modes")
+        print(log[-2000:] if log else "")
         return False
     return True
 
