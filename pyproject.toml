@@ -13,11 +13,10 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://fatsecret.readthedocs.io/"
+Documentation = "https://chocotonic.github.io/fatsecret/"
 Source = "https://github.com/ChocoTonic/fatsecret"
 Issues = "https://github.com/ChocoTonic/fatsecret/issues"
 Changelog = "https://github.com/ChocoTonic/fatsecret/releases"
-"Per-version docs archive" = "https://chocotonic.github.io/fatsecret/"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
