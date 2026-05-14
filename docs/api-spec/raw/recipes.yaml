@@ -1,0 +1,309 @@
+endpoints:
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/recipe.add_favorite
+  exists: true
+  http_verb: GET
+  method: recipe.add_favorite
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipe/favorites/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipe.add_favorite" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/recipe.delete_favorite
+  exists: true
+  http_verb: GET
+  method: recipe.delete_favorite
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipe/favorites/v1"HTTP "DELETE"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipe.delete_favorite" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/recipe.get
+  exists: true
+  http_verb: GET
+  method: recipe.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipe/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipe.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/recipe.get
+  exists: true
+  http_verb: GET
+  method: recipe.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipe/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipe.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/recipe_types.get
+  exists: true
+  http_verb: GET
+  method: recipe_types.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipe-types/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipe_types.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/recipe_types.get
+  exists: true
+  http_verb: GET
+  method: recipe_types.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipe-types/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipe_types.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/recipes.get_favorites
+  exists: true
+  http_verb: GET
+  method: recipes.get_favorites
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipe/favorites/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipe.get_favorites" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/recipes.get_favorites
+  exists: true
+  http_verb: GET
+  method: recipes.get_favorites
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipe/favorites/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipe.get_favorites.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/recipes.search
+  exists: true
+  http_verb: GET
+  method: recipes.search
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipes/search/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipes.search" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v2/recipes.search
+  exists: true
+  http_verb: GET
+  method: recipes.search
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipes/search/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipes.search.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v3/recipes.search
+  exists: true
+  http_verb: GET
+  method: recipes.search
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/recipes/search/v3"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"recipes.search.v3" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v3

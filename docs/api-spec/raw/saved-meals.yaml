@@ -1,0 +1,281 @@
+endpoints:
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/saved_meal.create
+  exists: true
+  http_verb: GET
+  method: saved_meal.create
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meal.create" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/saved_meal.delete
+  exists: true
+  http_verb: GET
+  method: saved_meal.delete
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/v1"HTTP "DELETE"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meal.delete" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/saved_meal.edit
+  exists: true
+  http_verb: GET
+  method: saved_meal.edit
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/v1"HTTP "PUT"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meal.edit" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/saved_meal_item.add
+  exists: true
+  http_verb: GET
+  method: saved_meal_item.add
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meal_item.add" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/saved_meal_item.delete
+  exists: true
+  http_verb: GET
+  method: saved_meal_item.delete
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v1"HTTP "DELETE"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meal_item.delete" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/saved_meal_item.edit
+  exists: true
+  http_verb: GET
+  method: saved_meal_item.edit
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v1"HTTP "PUT"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meal_item.edit" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/saved_meal_items.get
+  exists: true
+  http_verb: GET
+  method: saved_meal_items.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meal_items.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/saved_meal_items.get
+  exists: true
+  http_verb: GET
+  method: saved_meal_items.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meal_items.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/saved_meals.get
+  exists: true
+  http_verb: GET
+  method: saved_meals.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meals.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/saved_meals.get
+  exists: true
+  http_verb: GET
+  method: saved_meals.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/saved-meals/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"saved_meals.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
