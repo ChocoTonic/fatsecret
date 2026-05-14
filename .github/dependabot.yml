@@ -7,6 +7,10 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "03:00"
+    groups:
+      python-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -14,3 +18,7 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "03:00"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
