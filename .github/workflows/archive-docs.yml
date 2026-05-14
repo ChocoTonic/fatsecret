@@ -1,0 +1,73 @@
+# Builds a static, version-pinned docs archive for every released tag of
+# fatsecret and publishes it to the `gh-pages` branch at the root so URLs
+# of the form `https://chocotonic.github.io/fatsecret/vX.Y.Z/` always work.
+#
+# Triggers:
+#   * push of a `vX.Y.Z` tag       -> incremental: build only that tag,
+#                                     preserve every previously-published
+#                                     per-version directory.
+#   * workflow_dispatch (manual)   -> full refresh: rebuild every tag from
+#                                     scratch.
+#
+# Read the Docs continues to own the "current docs" experience (`latest` =
+# master, `stable` = highest tag). This workflow owns the
+# "every-release-ever has accessible docs" promise.
+
+name: archive-docs
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository (full history for tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+
+      - name: Determine build mode
+        id: mode
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            tag="${GITHUB_REF_NAME}"
+            echo "tags=${tag}" >> "$GITHUB_OUTPUT"
+            echo "keep_files=true" >> "$GITHUB_OUTPUT"
+            echo "Incremental build for ${tag}"
+          else
+            echo "tags=" >> "$GITHUB_OUTPUT"
+            echo "keep_files=false" >> "$GITHUB_OUTPUT"
+            echo "Full refresh: rebuilding every vX.Y.Z tag"
+          fi
+
+      - name: Build per-version docs archive
+        run: |
+          if [ -n "${{ steps.mode.outputs.tags }}" ]; then
+            bash scripts/build-version-docs/build.sh --tags ${{ steps.mode.outputs.tags }}
+          else
+            bash scripts/build-version-docs/build.sh
+          fi
+
+      - name: Publish to gh-pages root
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./legacy-staging
+          # On a tag push we only built one version; keep the others.
+          # On a manual full refresh we rebuilt everything and want stale
+          # entries cleared out.
+          keep_files: ${{ steps.mode.outputs.keep_files }}
+          commit_message: "docs: publish per-version docs archive"

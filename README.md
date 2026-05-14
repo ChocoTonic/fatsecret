@@ -45,8 +45,8 @@ Refer to the [documentation](https://fatsecret.readthedocs.io/en/latest/) for fu
 
 ## Documentation
 
-- **Current** (v1.4.0 and newer + master) — [fatsecret.readthedocs.io](https://fatsecret.readthedocs.io/), built automatically by Read the Docs.
-- **Historical archive** (every release before v1.4.0) — [chocotonic.github.io/fatsecret/legacy/](https://chocotonic.github.io/fatsecret/legacy/), a one-time frozen snapshot hosted on the `gh-pages` branch so links to older version-specific docs don't 404.
+- **Current docs** — [fatsecret.readthedocs.io](https://fatsecret.readthedocs.io/), built automatically by Read the Docs (`latest` tracks `master`, `stable` tracks the highest released tag).
+- **Per-version docs** — `https://chocotonic.github.io/fatsecret/vX.Y.Z/` for any released tag (e.g. [`v1.4.1`](https://chocotonic.github.io/fatsecret/v1.4.1/), [`v1.2.1`](https://chocotonic.github.io/fatsecret/v1.2.1/), [`v0.5.0`](https://chocotonic.github.io/fatsecret/v0.5.0/)). A static per-tag snapshot is published to `gh-pages` so version-pinned URLs never 404. See [the all-versions index](https://chocotonic.github.io/fatsecret/) for a full list.
 
 ## Contributing
 
