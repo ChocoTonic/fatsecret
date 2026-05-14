@@ -7,7 +7,11 @@ build:
     post_create_environment:
       - pip install uv
     post_install:
-      - uv sync --all-extras --frozen
+      # Install into RTD's pip-managed venv (where `python -m sphinx` runs)
+      # instead of uv's separate `.venv`. Without this, sphinx-rtd-theme
+      # and myst-parser go to the wrong env and the build fails with
+      # `ThemeError: no theme named 'sphinx_rtd_theme' found`.
+      - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --all-extras --frozen
 sphinx:
   configuration: docs/conf.py
   fail_on_warning: true
