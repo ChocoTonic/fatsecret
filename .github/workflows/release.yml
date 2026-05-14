@@ -45,33 +45,7 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Check if release should run
-        id: should_release
-        run: |
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
-
-          if echo "$CHANGED_FILES" | grep -qvE '^(uv\.lock|pyproject\.toml)$'; then
-            IS_DEP_BUMP=false
-          else
-            IS_DEP_BUMP=true
-          fi
-
-          if echo "$COMMIT_MSG" | grep -qi "CVE\|security\|vulnerability"; then
-            HAS_CVE=true
-          else
-            HAS_CVE=false
-          fi
-
-          if [ "$IS_DEP_BUMP" = "true" ] && [ "$HAS_CVE" = "false" ]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
-            echo "Skipping: dependency bump without CVE"
-          else
-            echo "skip=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Bump patch version
-        if: steps.should_release.outputs.skip == 'false'
+      - name: Bump version
         id: version
         run: |
           git config user.name "github-actions[bot]"
@@ -81,13 +55,37 @@ jobs:
           MAJOR=$(echo $CURRENT | cut -d. -f1)
           MINOR=$(echo $CURRENT | cut -d. -f2)
           PATCH=$(echo $CURRENT | cut -d. -f3)
-          NEW="$MAJOR.$MINOR.$((PATCH + 1))"
+
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          IS_DEPENDABOT=${{ github.actor == 'dependabot[bot]' }}
+
+          # Dependabot or CVE → patch bump; all other commits → minor bump
+          if [ "$IS_DEPENDABOT" = "true" ]; then
+            if echo "$COMMIT_MSG" | grep -qi "CVE\|security\|vulnerability"; then
+              NEW="$MAJOR.$MINOR.$((PATCH + 1))"
+            else
+              echo "skip=true" >> $GITHUB_OUTPUT
+              echo "Skipping: dependabot bump without CVE"
+              exit 0
+            fi
+          else
+            NEW="$MAJOR.$((MINOR + 1)).0"
+          fi
+
+          # Skip if tag already exists
+          if git rev-parse "v$NEW" >/dev/null 2>&1; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Skipping: tag v$NEW already exists"
+            exit 0
+          fi
+
           sed -i "s/version = \"$CURRENT\"/version = \"$NEW\"/" pyproject.toml
+          echo "skip=false" >> $GITHUB_OUTPUT
           echo "version=$NEW" >> $GITHUB_OUTPUT
           echo "tag=v$NEW" >> $GITHUB_OUTPUT
 
       - name: Commit and tag version bump
-        if: steps.should_release.outputs.skip == 'false'
+        if: steps.version.outputs.skip == 'false'
         run: |
           git add pyproject.toml
           git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
@@ -95,7 +93,7 @@ jobs:
           git push origin master --tags
 
       - name: Create GitHub Release
-        if: steps.should_release.outputs.skip == 'false'
+        if: steps.version.outputs.skip == 'false'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -103,7 +101,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to PyPI
-        if: steps.should_release.outputs.skip == 'false'
+        if: steps.version.outputs.skip == 'false'
         run: make release
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
