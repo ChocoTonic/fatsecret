@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Index &mdash; fatsecret 1.5.10 (archived)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=6ea0bac2"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            fatsecret
+          </a>
+              <div class="version">
+                1.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Migrating from 0.x</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth2-client-credentials">OAuth2 (client-credentials)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth1-3-legged-examples">OAuth1 (3-legged) examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fatsecret</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Index</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ 
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+<!-- fatsecret-version-selector -->
+<script>
+(function() {
+  var versions = ["latest", "stable", "v1.5.10", "v1.5.9", "v1.5.8", "v1.5.7", "v1.5.6", "v1.5.5", "v1.5.4", "v1.5.3", "v1.5.2", "v1.5.1", "v1.5.0", "v1.4.1", "v1.4.0", "v1.3.0", "v1.2.2", "v1.2.1", "v1.2.0", "v1.1.0", "v1.0.2", "v1.0.1", "v1.0.0", "v0.15.0", "v0.14.0", "v0.13.0", "v0.12.0", "v0.11.0", "v0.10.0", "v0.9.0", "v0.8.0", "v0.7.0", "v0.6.0", "v0.5.1", "v0.5.0", "v0.4.0", "v0.3.0", "v0.2.3"];
+  var m = window.location.pathname.match(/\/(latest|stable|v\d+\.\d+\.\d+)(\/|$)/);
+  if (!m) return;
+  var current = m[1];
+  var base = window.location.pathname.substring(0, m.index + 1);
+
+  function buildSelect() {
+    var sel = document.createElement('select');
+    versions.forEach(function(v) {
+      var o = document.createElement('option');
+      o.value = v; o.text = v;
+      if (v === current) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.onchange = function() { window.location.href = base + sel.value + '/'; };
+    return sel;
+  }
+
+  // Preferred placement: inside the RTD theme's sidebar header
+  // (`.wy-side-nav-search`), matching where the original RTD flyout
+  // showed the version dropdown for ~10 years of this library's history.
+  var rtdSidebar = document.querySelector('.wy-side-nav-search');
+  if (rtdSidebar) {
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'padding:8px 12px;margin-top:4px;text-align:left;background:rgba(0,0,0,0.12);font:12px -apple-system,BlinkMacSystemFont,sans-serif';
+    var label = document.createElement('span');
+    label.textContent = 'Version: ';
+    label.style.cssText = 'color:#fff;margin-right:6px';
+    var sel = buildSelect();
+    sel.style.cssText = 'background:#fff;color:#222;border:none;border-radius:3px;padding:2px 6px;font:inherit;cursor:pointer';
+    wrap.appendChild(label);
+    wrap.appendChild(sel);
+    rtdSidebar.appendChild(wrap);
+    return;
+  }
+
+  // Fallback: fixed-position dropdown top-right. Covers stub pages and
+  // any future theme without a sidebar we recognise.
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;top:0.75rem;right:0.75rem;z-index:9999;background:#fff;color:#222;border:1px solid #ccc;border-radius:6px;padding:6px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.12);font:13px -apple-system,BlinkMacSystemFont,sans-serif';
+  var label = document.createElement('span');
+  label.textContent = 'Version: ';
+  label.style.cssText = 'color:#666;margin-right:4px';
+  var sel = buildSelect();
+  sel.style.cssText = 'font:inherit;background:#fff;color:#222;border:1px solid #ccc;border-radius:3px;padding:2px 4px';
+  wrap.appendChild(label);
+  wrap.appendChild(sel);
+  document.body.appendChild(wrap);
+})();
+</script>
+</body>
+</html>
