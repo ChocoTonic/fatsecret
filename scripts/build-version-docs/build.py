@@ -531,21 +531,19 @@ def inject_version_selector(staging: Path, versions: list[str]) -> int:
     return sel;
   }}
 
-  // Preferred placement: inside the RTD theme's sidebar header
-  // (`.wy-side-nav-search`), matching where the original RTD flyout
-  // showed the version dropdown for ~10 years of this library's history.
-  var rtdSidebar = document.querySelector('.wy-side-nav-search');
-  if (rtdSidebar) {{
-    var wrap = document.createElement('div');
-    wrap.style.cssText = 'padding:8px 12px;margin-top:4px;text-align:left;background:rgba(0,0,0,0.12);font:12px -apple-system,BlinkMacSystemFont,sans-serif';
-    var label = document.createElement('span');
-    label.textContent = 'Version: ';
-    label.style.cssText = 'color:#fff;margin-right:6px';
+  // Preferred placement: replace the RTD theme's version text under the
+  // project name (`.wy-side-nav-search .version`) with a <select> styled
+  // to look like the original text. Clicking the version number opens
+  // the dropdown — same location and look as the original RTD theme
+  // version label, just now interactive.
+  var rtdVersion = document.querySelector('.wy-side-nav-search .version');
+  if (rtdVersion) {{
     var sel = buildSelect();
-    sel.style.cssText = 'background:#fff;color:#222;border:none;border-radius:3px;padding:2px 6px;font:inherit;cursor:pointer';
-    wrap.appendChild(label);
-    wrap.appendChild(sel);
-    rtdSidebar.appendChild(wrap);
+    sel.style.cssText = 'background:transparent;color:inherit;border:none;border-radius:0;padding:0;margin:0;font:inherit;text-align:center;text-align-last:center;cursor:pointer;-webkit-appearance:none;-moz-appearance:none;appearance:none;outline:none';
+    sel.title = 'Switch documentation version';
+    rtdVersion.textContent = '';
+    rtdVersion.appendChild(sel);
+    rtdVersion.style.cursor = 'pointer';
     return;
   }}
 
