@@ -67,6 +67,22 @@ fmt:  ## Auto-format code (black + isort)
 check: lint test  ## Run lint and tests
 
 # -----------------------------
+# OAS pipeline
+# -----------------------------
+.PHONY: oas-regen-check
+
+oas-regen-check:  ## Verify pipeline output matches committed files
+	@md5sum docs/api-spec/raw/*.yaml docs/api-spec/openapi.yaml src/fatsecret/resources/_generated/*.py > /tmp/before.md5
+	@cd scripts/oas-sync && uv run oas-sync sync && \
+	  for tag in "Foods" "Food Classification" "Recipes" "Profile Foods" \
+	             "Saved Meals" "Food Diary" "Exercise Diary" "Weight Diary" \
+	             "Profile Auth" "Native APIs" "Feedback"; do \
+	      uv run oas-sync emit-resource "$$tag"; \
+	  done
+	@md5sum docs/api-spec/raw/*.yaml docs/api-spec/openapi.yaml src/fatsecret/resources/_generated/*.py > /tmp/after.md5
+	@diff /tmp/before.md5 /tmp/after.md5 && echo "✓ pipeline output matches committed files" || (echo "✗ DRIFT — re-run the pipeline locally and commit the diffs"; exit 1)
+
+# -----------------------------
 # Packaging
 # -----------------------------
 .PHONY: build release
