@@ -12,6 +12,7 @@ dist/
 
 # Docs build
 docs/_build/*
+legacy-staging/
 
 # Coverage reports
 .coverage

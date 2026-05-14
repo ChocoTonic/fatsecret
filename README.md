@@ -41,7 +41,12 @@ Once you have created a session then you can start reading from Fatsecret's publ
 foods = fs.foods_search("Tacos")
 ```
 
-Refer to the [documentation](https://pyfatsecret.readthedocs.io/en/latest/) for further examples and detail
+Refer to the [documentation](https://pyfatsecret.readthedocs.io/en/latest/) for further examples and detail.
+
+## Documentation
+
+- **Current** (v0.13.0 and newer) — [pyfatsecret.readthedocs.io](https://pyfatsecret.readthedocs.io/en/latest/), built automatically by Read the Docs.
+- **Historical archive** (pre-v0.13.0 releases) — [chocotonic.github.io/fatsecret/legacy/](https://chocotonic.github.io/fatsecret/legacy/), a one-time frozen snapshot hosted on the `gh-pages` branch so links to older version-specific docs don't 404.
 
 ## Contributing
 
