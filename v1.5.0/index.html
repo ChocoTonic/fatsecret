@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FatSecret &mdash; fatsecret 1.5.0 (archived)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=e0a75244"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Migrating from 0.x" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            fatsecret
+          </a>
+              <div class="version">
+                1.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Migrating from 0.x</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth2-client-credentials">OAuth2 (client-credentials)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth1-3-legged-examples">OAuth1 (3-legged) examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">fatsecret</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">FatSecret</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fatsecret">
+<h1>FatSecret<a class="headerlink" href="#fatsecret" title="Link to this heading"></a></h1>
+<p>This library provides a lightweight python wrapper for the Fatsecret API with the goal of making it easier to visualize
+the data retrieved from the API. To that end, this library will usually return lists of identical elements for ease of
+plotting, discarding extra header fields that the Fatsecret API otherwise includes. All API calls return either a
+single or list of JSON dictionaries.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>v1.0 is a breaking release.</strong> Every method now has an explicit version
+suffix (e.g. <code class="docutils literal notranslate"><span class="pre">foods_search_v5</span></code>). The unsuffixed names from 0.x remain
+as deprecation aliases until v2.0. Run with
+<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-W</span> <span class="pre">default::DeprecationWarning:fatsecret</span></code> to surface them.</p>
+</div>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>Install the module via pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install fatsecret
+</pre></div>
+</div>
+<p>or easy_install:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ easy_install fatsecret
+</pre></div>
+</div>
+</section>
+<section id="config">
+<h2>Config<a class="headerlink" href="#config" title="Link to this heading"></a></h2>
+<p>Register for a developer account at <a class="reference external" href="http://platform.fatsecret.com/api/">Fatsecret</a>. You will need your Consumer Key and Consumer Secret key for
+your application.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<p>Fatsecret supports both delegated and public calls. Only through delegated calls can you access Fatsecret user
+profile data.</p>
+<p>If you’re only interested in the public data you only require a session to make HTTP requests:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fatsecret</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fatsecret</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="n">Fatsecret</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once you have created a session then you can start reading from Fatsecret’s public food and recipe database</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">foods</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">foods_search_v5</span><span class="p">(</span><span class="s2">&quot;Tacos&quot;</span><span class="p">)</span>        <span class="c1"># latest upstream version</span>
+</pre></div>
+</div>
+</section>
+<section id="oauth-examples">
+<h2>OAuth Examples<a class="headerlink" href="#oauth-examples" title="Link to this heading"></a></h2>
+<p>You will need to authenticate to a Fatsecret user profile via OAuth 1.0 in order to access profile specific
+data such as the meal diary, favorite meals, etc.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Migrating from 0.x</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth2-client-credentials">OAuth2 (client-credentials)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth1-3-legged-examples">OAuth1 (3-legged) examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#web-application">Web Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#cli-application">CLI Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#use-new-profiles-for-your-app">Use New Profiles for Your App</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-right" title="Migrating from 0.x" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Historical archive.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
