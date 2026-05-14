@@ -52,7 +52,7 @@ PYPI_PROJECT = "fatsecret"
 
 # Minimal Sphinx pin. Modern Sphinx builds old .rst trees fine as long as we
 # disable autodoc so it never tries to import the package.
-SPHINX_REQUIREMENTS = ["sphinx==7.4.7", "furo==2024.8.6"]
+SPHINX_REQUIREMENTS = ["sphinx==7.4.7", "sphinx-rtd-theme==2.0.0"]
 
 
 @dataclass
@@ -453,6 +453,76 @@ def write_stable_redirect(out_dir: Path, target_tag: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Version selector — inject a dropdown into every built HTML page
+# ---------------------------------------------------------------------------
+
+
+VERSION_SELECTOR_MARKER = "<!-- fatsecret-version-selector -->"
+
+
+def inject_version_selector(staging: Path, versions: list[str]) -> int:
+    """Post-process every per-version HTML page to add a fixed-position
+    version dropdown in the top-right. Returns the number of files modified.
+
+    The selector is theme-agnostic — works on Furo, legacy themes, and
+    stub pages alike. Idempotent: skips files that already contain the
+    marker so we don't double-inject on re-runs.
+    """
+    import json as _json
+
+    versions_js = _json.dumps(versions)
+    snippet = f"""{VERSION_SELECTOR_MARKER}
+<script>
+(function() {{
+  var versions = {versions_js};
+  var m = window.location.pathname.match(/\\/(latest|stable|v\\d+\\.\\d+\\.\\d+)(\\/|$)/);
+  if (!m) return;
+  var current = m[1];
+  var base = window.location.pathname.substring(0, m.index + 1);
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;top:0.75rem;right:0.75rem;z-index:9999;background:#fff;color:#222;border:1px solid #ccc;border-radius:6px;padding:6px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.12);font:13px -apple-system,BlinkMacSystemFont,sans-serif';
+  var label = document.createElement('span');
+  label.textContent = 'Version: ';
+  label.style.cssText = 'color:#666;margin-right:4px';
+  var sel = document.createElement('select');
+  sel.style.cssText = 'font:inherit;background:#fff;color:#222;border:1px solid #ccc;border-radius:3px;padding:2px 4px';
+  versions.forEach(function(v) {{
+    var o = document.createElement('option');
+    o.value = v; o.text = v;
+    if (v === current) o.selected = true;
+    sel.appendChild(o);
+  }});
+  sel.onchange = function() {{ window.location.href = base + sel.value + '/'; }};
+  wrap.appendChild(label);
+  wrap.appendChild(sel);
+  document.body.appendChild(wrap);
+}})();
+</script>
+"""
+
+    modified = 0
+    for html_file in staging.rglob("*.html"):
+        # Skip the top-level index page — it already shows all versions.
+        if html_file.parent == staging:
+            continue
+        try:
+            content = html_file.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if VERSION_SELECTOR_MARKER in content:
+            continue
+        # Skip pure meta-refresh redirect pages (stable/).
+        if 'http-equiv="refresh"' in content and "</body>" in content and len(content) < 2000:
+            continue
+        if "</body>" not in content:
+            continue
+        new = content.replace("</body>", snippet + "</body>", 1)
+        html_file.write_text(new, encoding="utf-8")
+        modified += 1
+    return modified
+
+
+# ---------------------------------------------------------------------------
 # Driver
 # ---------------------------------------------------------------------------
 
@@ -610,6 +680,22 @@ def main() -> int:
             include_stable=build_current and stable_target is not None,
             stable_target=stable_target,
         )
+
+    # Inject version selector into every per-version HTML page. We always
+    # use the full known version list (latest + stable + every vX.Y.Z tag
+    # in the repo), regardless of which subset we built this run — because
+    # all of those URLs exist on the published site even when we're doing
+    # an incremental rebuild.
+    selector_versions: list[str] = []
+    if build_current:
+        selector_versions.append("latest")
+        if all_tags:
+            selector_versions.append("stable")
+    selector_versions.extend(all_tags)
+    if selector_versions:
+        print(f"\n== Injecting version selector ({len(selector_versions)} versions) ==")
+        n = inject_version_selector(staging, selector_versions)
+        print(f"  injected into {n} page(s)")
 
     print("\n== Summary ==")
     for r in results:
