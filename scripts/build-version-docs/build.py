@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import re
 import shutil
 import subprocess
 import sys
@@ -38,39 +39,14 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-# Tags to archive. These are tags that RTD won't auto-build because their
-# checkouts either lack `.readthedocs.yaml` entirely (anything pre-PR-#97)
-# or carry the broken pre-fix version (v1.3.0 = the merge commit of PR #97
-# itself). All v1.4.0+ tags ship with the fixed RTD config and are handled
-# by RTD; everything in this list goes to the gh-pages frozen archive.
-LEGACY_TAGS: list[str] = [
-    # v1.x retroactive tags that predate the RTD config (or carry the
-    # broken first version) and therefore can't auto-build on RTD.
-    "v1.3.0",
-    "v1.2.2",
-    "v1.2.1",
-    "v1.2.0",
-    "v1.1.0",
-    "v1.0.2",
-    "v1.0.1",
-    "v1.0.0",
-    # v0.x tags from before the OAS/RTD-era doc layout.
-    "v0.15.0",
-    "v0.14.0",
-    "v0.13.0",
-    "v0.12.0",
-    "v0.11.0",
-    "v0.10.0",
-    "v0.9.0",
-    "v0.8.0",
-    "v0.7.0",
-    "v0.6.0",
-    "v0.5.1",
-    "v0.5.0",
-    "v0.4.0",
-    "v0.3.0",
-    "v0.2.3",
-]
+def discover_tags(repo: Path) -> list[str]:
+    """Every `vX.Y.Z` tag in the repo, sorted newest-first by semver."""
+    out = subprocess.check_output(
+        ["git", "-C", str(repo), "tag", "--list", "--sort=-version:refname"],
+        text=True,
+    )
+    pat = re.compile(r"^v\d+\.\d+\.\d+$")
+    return [t for t in out.splitlines() if pat.match(t)]
 
 REPO_SLUG = "ChocoTonic/fatsecret"  # for GitHub source links
 PYPI_PROJECT = "fatsecret"
@@ -381,12 +357,22 @@ def main() -> int:
     parser.add_argument("--repo", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--staging", type=Path, default=Path("legacy-staging").resolve())
     parser.add_argument("--work-root", type=Path, default=Path(tempfile.gettempdir()) / "fatsecret-legacy-worktrees")
-    parser.add_argument("--tags", nargs="*", default=LEGACY_TAGS, help="Override tag list.")
+    parser.add_argument(
+        "--tags",
+        nargs="*",
+        default=None,
+        help="Tag list. Defaults to every `vX.Y.Z` tag the repo currently carries.",
+    )
     args = parser.parse_args()
 
     repo: Path = args.repo.resolve()
     staging: Path = args.staging.resolve()
     work_root: Path = args.work_root.resolve()
+    tags: list[str] = args.tags if args.tags is not None else discover_tags(repo)
+    if not tags:
+        print("No vX.Y.Z tags discovered in repo.", file=sys.stderr)
+        return 1
+    print(f"Building {len(tags)} tags: {' '.join(tags)}")
 
     # Each tag's docs land at <staging>/<tag>/ directly — no `legacy/`
     # prefix. The publish step uploads <staging>/ as the gh-pages root, so
@@ -398,7 +384,7 @@ def main() -> int:
     venv_python = ensure_venv(venv_dir)
 
     results: list[BuildResult] = []
-    for tag in args.tags:
+    for tag in tags:
         results.append(build_tag(tag, repo, work_root, staging, venv_python))
 
     write_top_index(staging, results)
