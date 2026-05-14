@@ -1,0 +1,55 @@
+name: Test
+
+on:
+  workflow_call:
+    inputs:
+      test-type:
+        description: 'Type of tests to run: unit or all'
+        required: false
+        default: 'unit'
+        type: string
+
+env:
+  FATSECRET_CONSUMER_KEY: ${{ secrets.FATSECRET_CONSUMER_KEY }}
+  FATSECRET_CONSUMER_SECRET: ${{ secrets.FATSECRET_CONSUMER_SECRET }}
+  FATSECRET_USERNAME: ${{ secrets.FATSECRET_USERNAME }}
+  FATSECRET_PASSWORD: ${{ secrets.FATSECRET_PASSWORD }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install uv and dependencies
+        run: |
+          pip install uv
+          uv sync --all-extras
+
+      - name: Run lint
+        run: make lint
+
+      - name: Build and validate docs
+        run: |
+          make docs > sphinx.log 2>&1
+          grep -E "WARNING:|ERROR:" sphinx.log && exit 1 || exit 0
+
+      - name: Run tests
+        run: |
+          if [ "${{ inputs.test-type }}" = "all" ]; then
+            make test
+          else
+            make test-unit
+          fi
+
+      - name: Upload coverage report
+        if: inputs.test-type == 'all'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage.xml
+          path: coverage.xml
