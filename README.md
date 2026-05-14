@@ -1,7 +1,7 @@
 # fatsecret
 
 ![status](https://badge.fury.io/py/fatsecret.svg)
-[![Documentation Status](https://readthedocs.org/projects/fatsecret/badge/?version=latest)](https://fatsecret.readthedocs.io/en/latest/?badge=latest)
+[![Docs](https://img.shields.io/badge/docs-gh--pages-blue)](https://chocotonic.github.io/fatsecret/)
 
 This library provides a lightweight python wrapper for the Fatsecret API with the goal of making it easier to visualize the data retrieved from the API. To that end, this library will usually return lists of identical elements for ease of plotting, discarding extra header fields that the Fatsecret API otherwise includes. All API calls return either a single or list of JSON dictionaries.
 
@@ -47,12 +47,11 @@ For OAuth2 client-credentials (required for Premier / Native endpoints):
 fs = Fatsecret(client_id, client_secret, auth="oauth2", scopes=["basic", "premier"])
 ```
 
-Refer to the [documentation](https://fatsecret.readthedocs.io/) for further examples and detail.
+Refer to the [documentation](https://chocotonic.github.io/fatsecret/) for further examples and detail.
 
 ## Documentation
 
-- **Current docs** — [fatsecret.readthedocs.io](https://fatsecret.readthedocs.io/), built automatically by Read the Docs (`latest` tracks `master`, `stable` tracks the highest released tag).
-- **Per-version docs** — `https://chocotonic.github.io/fatsecret/vX.Y.Z/` for any released tag (e.g. [`v1.4.1`](https://chocotonic.github.io/fatsecret/v1.4.1/), [`v1.2.1`](https://chocotonic.github.io/fatsecret/v1.2.1/), [`v0.5.0`](https://chocotonic.github.io/fatsecret/v0.5.0/)). A static per-tag snapshot is published to `gh-pages` so version-pinned URLs never 404. See [the all-versions index](https://chocotonic.github.io/fatsecret/) for a full list.
+Docs are published to GitHub Pages at [chocotonic.github.io/fatsecret](https://chocotonic.github.io/fatsecret/). Every released tag gets its own permanent URL at `https://chocotonic.github.io/fatsecret/vX.Y.Z/` (e.g. [`v1.5.6`](https://chocotonic.github.io/fatsecret/v1.5.6/), [`v1.4.1`](https://chocotonic.github.io/fatsecret/v1.4.1/), [`v0.5.0`](https://chocotonic.github.io/fatsecret/v0.5.0/)), so version-pinned URLs never 404. See [the all-versions index](https://chocotonic.github.io/fatsecret/) for the full list.
 
 ## Contributing
 
