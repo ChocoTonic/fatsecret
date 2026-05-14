@@ -1,7 +1,7 @@
 # fatsecret
 
 ![status](https://badge.fury.io/py/fatsecret.svg)
-[![Docs](https://img.shields.io/badge/docs-gh--pages-blue)](https://chocotonic.github.io/fatsecret/stable/)
+[![Documentation Status](https://readthedocs.org/projects/fatsecret/badge/?version=latest)](https://fatsecret.readthedocs.io/en/latest/?badge=latest)
 
 This library provides a lightweight python wrapper for the Fatsecret API with the goal of making it easier to visualize the data retrieved from the API. To that end, this library will usually return lists of identical elements for ease of plotting, discarding extra header fields that the Fatsecret API otherwise includes. All API calls return either a single or list of JSON dictionaries.
 
@@ -47,16 +47,15 @@ For OAuth2 client-credentials (required for Premier / Native endpoints):
 fs = Fatsecret(client_id, client_secret, auth="oauth2", scopes=["basic", "premier"])
 ```
 
-Refer to the [documentation](https://chocotonic.github.io/fatsecret/stable/) for further examples and detail.
+Refer to the [documentation](https://fatsecret.readthedocs.io/en/stable/) for further examples and detail.
 
 ## Documentation
 
-- **Stable** — [chocotonic.github.io/fatsecret/stable/](https://chocotonic.github.io/fatsecret/stable/) (tracks the highest released tag)
-- **Latest** — [chocotonic.github.io/fatsecret/latest/](https://chocotonic.github.io/fatsecret/latest/) (tracks `master`)
-- **Per-version permalinks** — every released tag is preserved at `https://chocotonic.github.io/fatsecret/vX.Y.Z/` (e.g. [`v1.5.9`](https://chocotonic.github.io/fatsecret/v1.5.9/), [`v1.4.1`](https://chocotonic.github.io/fatsecret/v1.4.1/), [`v0.5.0`](https://chocotonic.github.io/fatsecret/v0.5.0/)) so version-pinned links never 404
-- **All-versions index** — [chocotonic.github.io/fatsecret](https://chocotonic.github.io/fatsecret/)
+Docs are published to [Read the Docs](https://fatsecret.readthedocs.io/). Every released tag and the current `master` branch are auto-built — use the version dropdown in the bottom-left flyout to switch between them.
 
-A version-switcher dropdown sits in the sidebar of every doc page.
+- **Stable** (highest released tag) — [fatsecret.readthedocs.io/en/stable/](https://fatsecret.readthedocs.io/en/stable/)
+- **Latest** (tracks `master`) — [fatsecret.readthedocs.io/en/latest/](https://fatsecret.readthedocs.io/en/latest/)
+- **Per-version** — [fatsecret.readthedocs.io/en/v1.5.14/](https://fatsecret.readthedocs.io/en/v1.5.14/), etc.
 
 ## Contributing
 

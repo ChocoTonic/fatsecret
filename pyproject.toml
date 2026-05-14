@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://chocotonic.github.io/fatsecret/stable/"
+Documentation = "https://fatsecret.readthedocs.io/"
 Source = "https://github.com/ChocoTonic/fatsecret"
 Issues = "https://github.com/ChocoTonic/fatsecret/issues"
 Changelog = "https://github.com/ChocoTonic/fatsecret/releases"
