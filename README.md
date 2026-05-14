@@ -1,6 +1,7 @@
 # pyfatsecret
 
 ![status](https://badge.fury.io/py/fatsecret.svg)
+[![Documentation Status](https://readthedocs.org/projects/pyfatsecret/badge/?version=latest)](https://pyfatsecret.readthedocs.io/en/latest/?badge=latest)
 
 This library provides a lightweight python wrapper for the Fatsecret API with the goal of making it easier to visualize the data retrieved from the API. To that end, this library will usually return lists of identical elements for ease of plotting, discarding extra header fields that the Fatsecret API otherwise includes. All API calls return either a single or list of JSON dictionaries.
 
@@ -40,7 +41,7 @@ Once you have created a session then you can start reading from Fatsecret's publ
 foods = fs.foods_search("Tacos")
 ```
 
-Refer to the [documentation](https://pyfatsecret.readthedocs.org/en/latest/) for further examples and detail
+Refer to the [documentation](https://pyfatsecret.readthedocs.io/en/latest/) for further examples and detail
 
 ## Contributing
 
