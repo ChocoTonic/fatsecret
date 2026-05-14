@@ -309,10 +309,13 @@ def test_saved_meal_item_edit_v1_cannot_change_serving_id(fs):
     """Per the YAML spec, ``serving_id`` is NOT an editable param.
 
     The wrapper signature must not accept it as a keyword argument.
+    The namespaced method on ``meals`` holds the real signature; the
+    flat ``Fatsecret.saved_meal_item_edit_v1`` is a deprecation alias
+    using ``*args, **kwargs``.
     """
     import inspect
 
-    sig = inspect.signature(Fatsecret.saved_meal_item_edit_v1)
+    sig = inspect.signature(fs.meals.item_edit_v1)
     assert "serving_id" not in sig.parameters
     # Documented editable params are present:
     assert "saved_meal_item_id" in sig.parameters

@@ -21,6 +21,13 @@ Changelog = "https://github.com/ChocoTonic/fatsecret/releases"
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 markers = ["integration: mark a test as an integration test"]
+filterwarnings = [
+    # Suppress our own deprecation warnings inside the test suite. The
+    # legacy aliases call `warnings.warn(stacklevel=2)` so the warning
+    # registers as coming from the test file, not the fatsecret module —
+    # match by message instead of module.
+    "ignore:Fatsecret\\..*is deprecated.*:DeprecationWarning",
+]
 
 [dependency-groups]
 dev = [

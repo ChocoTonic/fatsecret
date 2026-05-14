@@ -1,9 +1,10 @@
-"""Phase 1 v2.0 resource-surface parity tests.
+"""Phase 1.5 v2.0 resource-surface parity tests.
 
-Every namespaced call (e.g. ``fs.foods.search_v5(...)``) must delegate
-to its flat-method equivalent (``fs.foods_search_v5(...)``) with the
-exact same args/kwargs and return value. This is exhaustive — one
-parametrize case per delegation.
+As of Phase 1.5, the real implementations live on the namespaced
+resources (e.g. ``fs.foods.search_v5``). Every flat ``_vN`` method on
+``Fatsecret`` is a deprecation alias that forwards to the namespaced
+method with identical args/kwargs and return value. This is exhaustive
+— one parametrize case per delegation.
 """
 
 from __future__ import annotations
@@ -152,13 +153,17 @@ def test_namespaced_method_delegates_to_flat(
     ns_method: str,
     flat_method: str,
 ) -> None:
-    """Each namespaced call forwards args/kwargs verbatim to the flat method
-    and returns the flat method's return value."""
+    """Each flat alias forwards args/kwargs verbatim to the namespaced
+    method and returns the namespaced method's return value."""
+    import warnings
+
     resource = getattr(client, resource_attr)
-    with patch.object(client, flat_method) as mock_flat:
-        mock_flat.return_value = "sentinel"
-        result = getattr(resource, ns_method)("pos1", "pos2", kw="value")
-    mock_flat.assert_called_once_with("pos1", "pos2", kw="value")
+    with patch.object(resource, ns_method) as mock_ns:
+        mock_ns.return_value = "sentinel"
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            result = getattr(client, flat_method)("pos1", "pos2", kw="value")
+    mock_ns.assert_called_once_with("pos1", "pos2", kw="value")
     assert result == "sentinel"
 
 

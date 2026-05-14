@@ -2,25 +2,37 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from ._base import BaseResource
 
 
 class ProfileResource(BaseResource):
-    """Resource methods for the OAS `Profile` tag.
+    """Resource methods for the OAS `Profile` tag."""
 
-    Phase 1: pure-delegation over flat methods on :class:`Fatsecret`.
-    """
+    def create_v1(self, user_id: Optional[str] = None) -> Any:
+        """profile.create v1. Returns (auth_token, auth_secret) when user_id is supplied."""
+        params: dict = {"method": "profile.create"}
+        if user_id is not None:
+            params["user_id"] = user_id
+        payload = self._client._call(params, method="POST")
+        profile = self._client._unwrap(payload, "profile")
+        if isinstance(profile, dict) and "auth_token" in profile:
+            return (profile["auth_token"], profile["auth_secret"])
+        return profile
 
-    def create_v1(self, *args: Any, **kwargs: Any) -> Any:
-        """Delegate to :meth:`Fatsecret.profile_create_v1`."""
-        return self._client.profile_create_v1(*args, **kwargs)
+    def get_v1(self) -> dict:
+        """profile.get v1. Returns the user's profile dict."""
+        payload = self._client._call({"method": "profile.get"})
+        return self._client._unwrap(payload, "profile")
 
-    def get_auth_v1(self, *args: Any, **kwargs: Any) -> Any:
-        """Delegate to :meth:`Fatsecret.profile_get_auth_v1`."""
-        return self._client.profile_get_auth_v1(*args, **kwargs)
-
-    def get_v1(self, *args: Any, **kwargs: Any) -> Any:
-        """Delegate to :meth:`Fatsecret.profile_get_v1`."""
-        return self._client.profile_get_v1(*args, **kwargs)
+    def get_auth_v1(self, user_id: Optional[str] = None) -> Any:
+        """profile.get_auth v1. Returns (auth_token, auth_secret)."""
+        params: dict = {"method": "profile.get_auth"}
+        if user_id is not None:
+            params["user_id"] = user_id
+        payload = self._client._call(params)
+        profile = self._client._unwrap(payload, "profile")
+        if isinstance(profile, dict) and "auth_token" in profile:
+            return (profile["auth_token"], profile["auth_secret"])
+        return profile
