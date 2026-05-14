@@ -22,10 +22,10 @@ def _fake_token_response(access_token="tok-abc", expires_in=3600):
 
 class TestOAuth2Init:
     def test_oauth2_constructor_does_not_make_http_calls(self):
-        # Patch BOTH requests.post (token fetch) and OAuth1Service so importing/instantiating
+        # Patch BOTH requests.post (token fetch) and OAuth1Session so importing/instantiating
         # never touches the network even on accidental fallbacks.
         with patch("fatsecret.fatsecret.requests.post") as mock_post, patch(
-            "fatsecret.fatsecret.OAuth1Service"
+            "fatsecret.fatsecret.OAuth1Session"
         ) as mock_oauth1:
             fs = Fatsecret(
                 "ck",
@@ -35,7 +35,7 @@ class TestOAuth2Init:
             )
             assert fs.auth_mode == "oauth2"
             assert fs.scopes == ["basic", "premier"]
-            # oauth1 service must NOT have been constructed
+            # oauth1 session must NOT have been constructed
             mock_oauth1.assert_not_called()
             # No HTTP token call during __init__
             mock_post.assert_not_called()
@@ -44,8 +44,7 @@ class TestOAuth2Init:
             assert fs._oauth2_token_expires_at == 0.0
 
     def test_oauth1_default_auth_mode(self):
-        with patch("fatsecret.fatsecret.OAuth1Service") as mock_oauth1:
-            mock_oauth1.return_value.get_session.return_value = MagicMock()
+        with patch("fatsecret.fatsecret.OAuth1Session") as mock_oauth1:
             fs = Fatsecret("ck", "cs")
             assert fs.auth_mode == "oauth1"
             mock_oauth1.assert_called_once()
@@ -58,7 +57,7 @@ class TestOAuth2Init:
 
 class TestGetOauth2Token:
     def _make_fs(self):
-        with patch("fatsecret.fatsecret.OAuth1Service"):
+        with patch("fatsecret.fatsecret.OAuth1Session"):
             return Fatsecret("ck", "cs", auth="oauth2", scopes=["basic"])
 
     def test_fetches_and_returns_access_token(self):
@@ -94,7 +93,7 @@ class TestGetOauth2Token:
         assert mock_post.call_count == 1
 
     def test_no_scopes_omits_scope_param(self):
-        with patch("fatsecret.fatsecret.OAuth1Service"):
+        with patch("fatsecret.fatsecret.OAuth1Session"):
             fs = Fatsecret("ck", "cs", auth="oauth2")  # no scopes
         with patch(
             "fatsecret.fatsecret.requests.post",

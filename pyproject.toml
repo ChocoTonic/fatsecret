@@ -8,8 +8,8 @@ dependencies = [
     "bs4",
     "lxml",
     "python-dotenv",
-    "rauth==0.7.3",
     "requests==2.32.5",
+    "requests-oauthlib>=2.0.0",
 ]
 
 [project.urls]
