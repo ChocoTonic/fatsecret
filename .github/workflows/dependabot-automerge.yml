@@ -1,0 +1,68 @@
+name: Dependabot Auto-Merge
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wait for checks to complete
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            let checksPassing = false;
+            let attempts = 0;
+            const maxAttempts = 30;
+
+            while (!checksPassing && attempts < maxAttempts) {
+              const checkRuns = await github.rest.checks.listForRef({
+                owner,
+                repo,
+                ref: pr.head.sha,
+              });
+
+              const relevantChecks = checkRuns.data.check_runs.filter(
+                check => check.name === 'CI / test' || check.name === 'Build / docs'
+              );
+
+              if (relevantChecks.length > 0) {
+                checksPassing = relevantChecks.every(check => check.conclusion === 'success');
+              }
+
+              if (!checksPassing) {
+                console.log(`Checks not ready yet. Attempt ${attempts + 1}/${maxAttempts}`);
+                await new Promise(resolve => setTimeout(resolve, 10000));
+                attempts++;
+              }
+            }
+
+            if (!checksPassing) {
+              core.setFailed('Checks did not pass or timed out');
+              return;
+            }
+
+            console.log('All checks passed! Auto-merging...');
+            await github.rest.pulls.merge({
+              owner,
+              repo,
+              pull_number: pr.number,
+              merge_method: 'squash',
+            });
+
+      - name: Enable auto-merge via GitHub CLI
+        if: failure()
+        run: |
+          gh pr merge "${{ github.event.pull_request.number }}" --squash --auto || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
