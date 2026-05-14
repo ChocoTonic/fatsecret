@@ -20,6 +20,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     env:
       FATSECRET_CONSUMER_KEY: ${{ secrets.FATSECRET_CONSUMER_KEY }}
       FATSECRET_CONSUMER_SECRET: ${{ secrets.FATSECRET_CONSUMER_SECRET }}
@@ -28,6 +31,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -39,41 +45,36 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Extract version from pyproject.toml
-        id: version
-        run: |
-          VERSION=$(python -c "import tomllib; print(tomllib.loads(open('pyproject.toml').read())['project']['version'])")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+      - name: Install commitizen
+        run: pip install commitizen
 
-      - name: Check if tag already exists
-        id: tag_check
-        run: |
-          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Create git tag
-        if: steps.tag_check.outputs.exists == 'false'
+      - name: Bump version and create changelog
+        id: bump
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.version }}"
-          git push origin "${{ steps.version.outputs.tag }}"
+          if cz bump --yes 2>&1 | grep -q "No commits found"; then
+            echo "bumped=false" >> $GITHUB_OUTPUT
+          else
+            echo "bumped=true" >> $GITHUB_OUTPUT
+            echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push version bump
+        if: steps.bump.outputs.bumped == 'true'
+        run: git push origin master --tags
 
       - name: Create GitHub Release
-        if: steps.tag_check.outputs.exists == 'false'
+        if: steps.bump.outputs.bumped == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          draft: false
-          prerelease: false
+          tag_name: ${{ steps.bump.outputs.tag }}
+          body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to PyPI
+        if: steps.bump.outputs.bumped == 'true'
         run: make release
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
