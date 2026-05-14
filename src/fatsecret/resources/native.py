@@ -1,19 +1,21 @@
-"""Resource wrapper for the OAS ``Native`` tag."""
+"""Native APIs resource - generated. Override hand-tunings go below the import.
+
+The Native APIs (NLP, image recognition) use a non-standard ``_call`` shape:
+``params={"format": "json"}`` as a kwarg, request body as ``json_body``, and a
+post-unwrap ``or []`` collapse when the upstream response is empty.  Codegen
+emits the canonical method-style shape; we re-implement the methods here to
+preserve the test-asserted wire format.
+"""
 
 from __future__ import annotations
 
 from typing import Optional
 
-from ._base import BaseResource
+from ._generated.native import NativeResource as _GeneratedNativeResource
 
 
-class NativeResource(BaseResource):
-    """Resource methods for the OAS `Native` tag.
-
-    Phase 1: pure-delegation over the flat ``natural_language_processing_*``
-    and ``image_recognition_*`` methods on :class:`Fatsecret`. Future phases
-    swap delegation for OAS-codegen'd implementations.
-    """
+class NativeResource(_GeneratedNativeResource):
+    """Generated Native APIs resource plus body-and-params hand-overrides."""
 
     def image_recognition_v1(
         self,
@@ -23,28 +25,14 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """image.recognition v1. URL-based REST endpoint (POST).
-
-        Premier-exclusive. OAuth2 scope: `image-recognition`. image_b64 max ~999,982 chars.
-        """
-        body: dict = {"image_b64": image_b64}
-        if include_food_data is not None:
-            body["include_food_data"] = include_food_data
-        if eaten_foods is not None:
-            body["eaten_foods"] = eaten_foods
-        if region is not None:
-            body["region"] = region
-        if language is not None:
-            body["language"] = language
-        payload = self._client._call(
-            params={"format": "json"},
-            url="https://platform.fatsecret.com/rest/image-recognition/v1",
-            method="POST",
-            json_body=body,
+        return self._image_recognition_impl(
+            "https://platform.fatsecret.com/rest/image-recognition/v1",
+            image_b64,
+            include_food_data,
+            eaten_foods,
+            region,
+            language,
         )
-        if isinstance(payload, dict) and "food_response" in payload:
-            return self._client._unwrap(payload, "food_response", list_key=None) or []
-        return payload
 
     def image_recognition_v2(
         self,
@@ -54,29 +42,14 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """image.recognition v2. URL-based REST endpoint (POST).
-
-        Premier-exclusive. OAuth2 scope: `image-recognition`. Faster inference, better
-        handling of generic/restaurant/mixed foods.
-        """
-        body: dict = {"image_b64": image_b64}
-        if include_food_data is not None:
-            body["include_food_data"] = include_food_data
-        if eaten_foods is not None:
-            body["eaten_foods"] = eaten_foods
-        if region is not None:
-            body["region"] = region
-        if language is not None:
-            body["language"] = language
-        payload = self._client._call(
-            params={"format": "json"},
-            url="https://platform.fatsecret.com/rest/image-recognition/v2",
-            method="POST",
-            json_body=body,
+        return self._image_recognition_impl(
+            "https://platform.fatsecret.com/rest/image-recognition/v2",
+            image_b64,
+            include_food_data,
+            eaten_foods,
+            region,
+            language,
         )
-        if isinstance(payload, dict) and "food_response" in payload:
-            return self._client._unwrap(payload, "food_response", list_key=None) or []
-        return payload
 
     def natural_language_processing_v1(
         self,
@@ -86,10 +59,6 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """natural.language.processing v1. URL-based REST endpoint (POST).
-
-        Premier-exclusive. OAuth2 scope: `nlp`. user_input limited to 1000 chars.
-        """
         body: dict = {"user_input": user_input}
         if include_food_data is not None:
             body["include_food_data"] = include_food_data
@@ -108,3 +77,34 @@ class NativeResource(BaseResource):
         if isinstance(payload, dict) and "food_response" in payload:
             return self._client._unwrap(payload, "food_response", list_key=None) or []
         return payload
+
+    def _image_recognition_impl(
+        self,
+        url: str,
+        image_b64: str,
+        include_food_data,
+        eaten_foods,
+        region,
+        language,
+    ):
+        body: dict = {"image_b64": image_b64}
+        if include_food_data is not None:
+            body["include_food_data"] = include_food_data
+        if eaten_foods is not None:
+            body["eaten_foods"] = eaten_foods
+        if region is not None:
+            body["region"] = region
+        if language is not None:
+            body["language"] = language
+        payload = self._client._call(
+            params={"format": "json"},
+            url=url,
+            method="POST",
+            json_body=body,
+        )
+        if isinstance(payload, dict) and "food_response" in payload:
+            return self._client._unwrap(payload, "food_response", list_key=None) or []
+        return payload
+
+
+__all__ = ["NativeResource"]

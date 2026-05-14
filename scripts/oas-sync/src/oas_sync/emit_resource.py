@@ -43,16 +43,24 @@ _TYPE_MAP = {
 
 _TAG_PREFIXES: dict[str, tuple[str, ...]] = {
     "Foods": ("foods_", "food_"),
-    "Food Classification": (
-        "food_sub_categories_",
-        "food_categories_",
-        "food_brands_",
-    ),
-    "Recipes": ("recipes_", "recipe_types_", "recipe_"),
+    # Food Classification: strip the ``food_`` family prefix; leave the
+    # ``brands_get`` / ``categories_get`` / ``sub_categories_get`` suffix so
+    # each method keeps a unique name.
+    "Food Classification": ("food_",),
+    # Recipes: strip only the ``recipes_`` / ``recipe_`` prefix so that
+    # ``recipe.get`` becomes ``get_v1`` and ``recipe_types.get`` becomes
+    # ``types_get_v1`` rather than colliding on ``get_v1``.
+    "Recipes": ("recipes_", "recipe_"),
     "Profile Foods": ("foods_", "food_"),
-    "Saved Meals": ("saved_meal_items_", "saved_meal_", "saved_meals_"),
-    "Food Diary": ("food_entries_", "food_entry_"),
-    "Exercise Diary": ("exercise_entries_", "exercise_entry_", "exercises_"),
+    # Saved Meals: strip the longest available prefix so that
+    # ``saved_meal.create`` -> ``create_v1`` and
+    # ``saved_meal_item.add`` -> ``item_add_v1`` / ``items_get_v1``.
+    "Saved Meals": ("saved_meals_", "saved_meal_"),
+    # Food Diary / Exercise Diary: keep the ``entries_`` / ``entry_`` /
+    # ``exercises_`` discriminator after stripping the resource prefix, so
+    # ``food_entry.create`` -> ``entry_create_v1`` (not ``create_v1``).
+    "Food Diary": ("food_",),
+    "Exercise Diary": ("exercise_",),
     "Weight Diary": ("weights_", "weight_"),
     "Profile Auth": ("profile_",),
     "Native APIs": (),
@@ -140,11 +148,21 @@ def derive_unwrap(schema: dict[str, Any]) -> tuple[tuple[str, ...], str | None, 
 # ---------------------------------------------------------------------------
 
 
+_METHOD_NAME_OVERRIDES: dict[tuple[str, str], str] = {
+    # operation_id after prefix-stripping -> canonical hand-written name.
+    ("Exercise Diary", "exercises_get_v1"): "list_v1",
+    ("Exercise Diary", "exercises_get_v2"): "list_v2",
+    ("Feedback", "feedback_v1"): "submit_v1",
+}
+
+
 def _method_name_for(tag: str, operation_id: str) -> str:
+    stripped = operation_id
     for p in _TAG_PREFIXES.get(tag, ()):
         if operation_id.startswith(p):
-            return operation_id[len(p):]
-    return operation_id
+            stripped = operation_id[len(p):]
+            break
+    return _METHOD_NAME_OVERRIDES.get((tag, stripped), stripped)
 
 
 def _param_type_hint(param: dict[str, Any]) -> str:
@@ -154,7 +172,12 @@ def _param_type_hint(param: dict[str, Any]) -> str:
 
 
 def _is_date_param(param: dict[str, Any]) -> bool:
-    if param.get("name") == "date":
+    name = param.get("name") or ""
+    if name == "date" or name.endswith("_date"):
+        # The extractor maps any arg whose annotation includes datetime/date
+        # to raw type ``Date``, but the assembler lowers Date → ``string`` so
+        # we also recognise the conventional ``date`` / ``*_date`` naming used
+        # throughout the hand-written resources.
         return True
     schema = param.get("schema") or {}
     return schema.get("format") == "date"
@@ -220,11 +243,16 @@ def _extract_method(
     required: list[dict[str, Any]] = []
     optional: list[dict[str, Any]] = []
     for p in parameters:
-        name = p.get("name")
-        if name in ("method", "format"):
+        wire = p.get("name")
+        if wire in ("method", "format"):
             continue
+        # Translate dotted wire names (e.g. ``calories.from``) to Python-safe
+        # arg names (``calories_from``).  The arg is what appears in the
+        # signature; the wire goes in the params dict.
+        arg = (wire or "").replace(".", "_")
         item = {
-            "name": name,
+            "arg": arg,
+            "wire": wire,
             "type": _param_type_hint(p),
             "is_date": _is_date_param(p),
         }
@@ -273,9 +301,9 @@ def _render_method(m: dict[str, Any]) -> str:
     buf.write(f"    def {name}(\n")
     buf.write("        self,\n")
     for p in m["required_params"]:
-        buf.write(f"        {p['name']}: {p['type']},\n")
+        buf.write(f"        {p['arg']}: {p['type']},\n")
     for p in m["optional_params"]:
-        buf.write(f"        {p['name']}: Optional[{p['type']}] = None,\n")
+        buf.write(f"        {p['arg']}: Optional[{p['type']}] = None,\n")
     buf.write(f"    ) -> {ret}:\n")
 
     # Docstring.
@@ -295,11 +323,11 @@ def _render_method(m: dict[str, Any]) -> str:
     for p in m["required_params"]:
         if p["is_date"]:
             buf.write(
-                f'        {container}["{p["name"]}"] = '
-                f"self._client.unix_time_v2({p['name']})\n"
+                f'        {container}["{p["wire"]}"] = '
+                f"self._client.unix_time_v2({p['arg']})\n"
             )
         else:
-            buf.write(f'        {container}["{p["name"]}"] = {p["name"]}\n')
+            buf.write(f'        {container}["{p["wire"]}"] = {p["arg"]}\n')
 
     if m["optional_params"]:
         buf.write("        self._client._set_optional(\n")
@@ -308,11 +336,11 @@ def _render_method(m: dict[str, Any]) -> str:
         for p in m["optional_params"]:
             if p["is_date"]:
                 buf.write(
-                    f'                ("{p["name"]}", None if {p["name"]} is None '
-                    f"else self._client.unix_time_v2({p['name']})),\n"
+                    f'                ("{p["wire"]}", None if {p["arg"]} is None '
+                    f"else self._client.unix_time_v2({p['arg']})),\n"
                 )
             else:
-                buf.write(f'                ("{p["name"]}", {p["name"]}),\n')
+                buf.write(f'                ("{p["wire"]}", {p["arg"]}),\n')
         buf.write("            ],\n")
         buf.write("        )\n")
 
@@ -323,15 +351,25 @@ def _render_method(m: dict[str, Any]) -> str:
             f"json_body=body)\n"
         )
     else:
-        buf.write("        payload = self._client._call(params)\n")
+        # Method-style endpoints default to GET; only emit the kwarg when the
+        # raw YAML specifies a mutating verb so the existing GET callsites are
+        # unchanged.
+        verb = m["http_verb"]
+        if verb and verb.upper() not in {"GET", ""}:
+            buf.write(
+                f'        payload = self._client._call(params, method="{verb}")\n'
+            )
+        else:
+            buf.write("        payload = self._client._call(params)\n")
 
     # Return.
     path_args = "".join(f', "{k}"' for k in m["unwrap_path"])
     if m["is_mutator"]:
-        buf.write(
-            f"        return self._client._mutator_success("
-            f"self._client._unwrap(payload{path_args}))\n"
-        )
+        # ``_mutator_success`` inspects the payload for a top-level ``success``
+        # key.  Pass ``payload`` straight through rather than pre-unwrapping;
+        # otherwise we hand it a bare scalar and the helper short-circuits to
+        # passthrough.
+        buf.write("        return self._client._mutator_success(payload)\n")
     elif m["list_key"]:
         buf.write(
             f"        return self._client._unwrap(payload{path_args}, "

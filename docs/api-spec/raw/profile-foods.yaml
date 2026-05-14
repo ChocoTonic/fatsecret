@@ -3,7 +3,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/food.add_favorite
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: food.add_favorite
   notes: ''
   oauth:
@@ -11,19 +11,27 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food/favorite/v1"HTTP "POST"'
-    name: N/A
+    description: Unique food identifier
+    name: food_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"food.add_favorite" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Unique serving identifier
+    name: serving_id
+    required: false
+    type: Long
+  - default: null
+    description: Number of units in this standard serving size. For instance, if the serving description
+      is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of
+      units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for
+      "Brand" the number of units will always be "1"
+    name: number_of_units
+    required: false
+    type: Decimal
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -31,7 +39,7 @@ endpoints:
   deprecated: true
   doc_url: https://platform.fatsecret.com/docs/v1/food.create
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: food.create
   notes: ''
   oauth:
@@ -39,19 +47,150 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food/v1"HTTP "POST"'
-    name: N/A
-    required: true
-    type: null
+    description: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+    name: brand_type
+    required: false
+    type: String
   - default: null
-    description: '"food.create" (included with other parameters)'
-    name: String
+    description: 'Brand name, only when food_type is "Brand". E.G.: "Quaker"'
+    name: brand_name
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: 'Name of the food, not including the brand name. E.G.: "Instant Oatmeal"'
+    name: food_name
+    required: true
+    type: String
+  - default: null
+    description: 'Full description of the serving size. E.G.: "1 serving"'
+    name: serving_size
+    required: true
+    type: String
+  - default: null
+    description: Energy content in kcal
+    name: calories
+    required: true
+    type: Decimal
+  - default: null
+    description: Total fat content in grams
+    name: fat
+    required: true
+    type: Decimal
+  - default: null
+    description: Total carbohydrate content in grams
+    name: carbohydrate
+    required: true
+    type: Decimal
+  - default: null
+    description: Protein content in grams
+    name: protein
+    required: true
+    type: Decimal
+  - default: null
+    description: The quantity combined with serving_amount_unit to derive the total standardized quantity
+      of the serving
+    name: serving_amount
+    required: false
+    type: String
+  - default: null
+    description: The metric unit of measure for the serving size – either "g" or "ml" or "oz" – combined
+      with metric_serving_amount to derive the total standardized quantity of the serving (default value
+      is "g")
+    name: serving_amount_unit
+    required: false
+    type: String
+  - default: null
+    description: The energy content in kcal from fat
+    name: calories_from_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Saturated fat content in grams (where available)
+    name: saturated_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Polyunsaturated fat content in grams (where available)
+    name: polyunsaturated_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Monounsaturated fat content in grams (where available)
+    name: monounsaturated_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Trans fat content in grams (where available)
+    name: trans_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Cholesterol content in milligrams (where available)
+    name: cholesterol
+    required: false
+    type: Decimal
+  - default: null
+    description: Sodium content in milligrams (where available)
+    name: sodium
+    required: false
+    type: Decimal
+  - default: null
+    description: Potassium content in milligrams (where available)
+    name: potassium
+    required: false
+    type: Decimal
+  - default: null
+    description: Fiber content in grams (where available)
+    name: fiber
+    required: false
+    type: Decimal
+  - default: null
+    description: Sugar content in grams (where available)
+    name: sugar
+    required: false
+    type: Decimal
+  - default: null
+    description: The other carbohydrate content in grams
+    name: other_carbohydrate
+    required: false
+    type: Decimal
+  - default: null
+    description: Percentage of daily recommended Vitamin A, based on a 2000 calorie diet (where available)
+    name: vitamin_a
+    required: false
+    type: Decimal
+  - default: null
+    description: Percentage of daily recommended Vitamin C, based on a 2000 calorie diet (where available)
+    name: vitamin_c
+    required: false
+    type: Decimal
+  - default: null
+    description: Percentage of daily recommended Calcium, based on a 2000 calorie diet (where available)
+    name: calcium
+    required: false
+    type: Decimal
+  - default: null
+    description: Percentage of daily recommended Iron, based on a 2000 calorie diet (where available)
+    name: iron
+    required: false
+    type: Decimal
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_id: ''
   rest_url: null
   scope: basic
   version: v1
@@ -59,7 +198,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v2/food.create
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: food.create
   notes: ''
   oauth:
@@ -67,48 +206,155 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: "The Vitamin A value is the raw value in micrograms (mcg).\n                \n      \
-      \          It is up to the developer to calculate the %DV (Percent Daily Value)"
-    name: "The Vitamin A value is the percentage of daily recommended.\n                \n           \
-      \     It is based on a 2000 calorie diet."
+    description: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+    name: brand_type
     required: false
-    type: null
+    type: String
   - default: null
-    description: "The Vitamin C value is the raw value in milligrams (mg).\n                \n       \
-      \         It is up to the developer to calculate the %DV"
-    name: "The Vitamin C value is the percentage of daily recommended.\n                \n           \
-      \     It is based on a 2000 calorie diet."
-    required: false
-    type: null
+    description: 'Brand name, only when food_type is "Brand". E.G.: "Quaker"'
+    name: brand_name
+    required: true
+    type: String
   - default: null
-    description: "The Calcium value is the raw value in milligrams (mg).\n                \n         \
-      \       It is up to the developer to calculate the %DV"
-    name: "The Calcium value is the percentage of daily recommended.\n                \n             \
-      \   It is based on a 2000 calorie diet."
-    required: false
-    type: null
+    description: 'Name of the food, not including the brand name. E.G.: "Instant Oatmeal"'
+    name: food_name
+    required: true
+    type: String
   - default: null
-    description: "The Iron value is the raw value in milligrams (mg).\n                \n            \
-      \    It is up to the developer to calculate the %DV"
-    name: "The Iron value is the percentage of daily recommended.\n                \n                It\
-      \ is based on a 2000 calorie diet."
-    required: false
-    type: null
+    description: 'Full description of the serving size. E.G.: "1 serving"'
+    name: serving_size
+    required: true
+    type: String
   - default: null
-    description: Vitamin D is the raw value in micrograms (mcg).
-    name: '---'
-    required: false
-    type: null
+    description: Energy content in kcal
+    name: calories
+    required: true
+    type: Decimal
   - default: null
-    description: "Added Sugars is the raw value in grams (g).\n                \n                It is\
-      \ new for our food_type = \"Brand\""
-    name: '---'
+    description: Total fat content in grams
+    name: fat
+    required: true
+    type: Decimal
+  - default: null
+    description: Total carbohydrate content in grams
+    name: carbohydrate
+    required: true
+    type: Decimal
+  - default: null
+    description: Protein content in grams
+    name: protein
+    required: true
+    type: Decimal
+  - default: null
+    description: The quantity combined with serving_amount_unit to derive the total standardized quantity
+      of the serving
+    name: serving_amount
     required: false
-    type: null
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: String
+  - default: null
+    description: The metric unit of measure for the serving size – either "g" or "ml" or "oz" – combined
+      with metric_serving_amount to derive the total standardized quantity of the serving (default value
+      is "g")
+    name: serving_amount_unit
+    required: false
+    type: String
+  - default: null
+    description: The energy content in kcal from fat
+    name: calories_from_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Saturated fat content in grams (where available)
+    name: saturated_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Polyunsaturated fat content in grams (where available)
+    name: polyunsaturated_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Monounsaturated fat content in grams (where available)
+    name: monounsaturated_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Trans fat content in grams (where available)
+    name: trans_fat
+    required: false
+    type: Decimal
+  - default: null
+    description: Cholesterol content in milligrams (where available)
+    name: cholesterol
+    required: false
+    type: Decimal
+  - default: null
+    description: Sodium content in milligrams (where available)
+    name: sodium
+    required: false
+    type: Decimal
+  - default: null
+    description: Potassium content in milligrams (where available)
+    name: potassium
+    required: false
+    type: Decimal
+  - default: null
+    description: Fiber content in grams (where available)
+    name: fiber
+    required: false
+    type: Decimal
+  - default: null
+    description: Sugar content in grams (where available)
+    name: sugar
+    required: false
+    type: Decimal
+  - default: null
+    description: Added Sugars content in grams (where available)
+    name: added_sugars
+    required: false
+    type: Decimal
+  - default: null
+    description: Vitamin D content in micrograms (where available)
+    name: vitamin_d
+    required: false
+    type: Decimal
+  - default: null
+    description: Vitamin A content in micrograms (where available)
+    name: vitamin_a
+    required: false
+    type: Decimal
+  - default: null
+    description: Vitamin C content in milligrams (where available)
+    name: vitamin_c
+    required: false
+    type: Decimal
+  - default: null
+    description: Calcium content in milligrams (where available)
+    name: calcium
+    required: false
+    type: Decimal
+  - default: null
+    description: Iron content in milligrams (where available)
+    name: iron
+    required: false
+    type: Decimal
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_id: ''
   rest_url: null
   scope: basic
   version: v2
@@ -116,7 +362,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/food.delete_favorite
   exists: true
-  http_verb: GET
+  http_verb: DELETE
   method: food.delete_favorite
   notes: ''
   oauth:
@@ -124,19 +370,27 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food/favorite/v1"HTTP "DELETE"'
-    name: N/A
+    description: Unique food identifier
+    name: food_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"food.delete_favorite" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Unique serving identifier
+    name: serving_id
+    required: false
+    type: Long
+  - default: null
+    description: Number of units in this standard serving size. For instance, if the serving description
+      is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of
+      units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for
+      "Brand" the number of units will always be "1"
+    name: number_of_units
+    required: false
+    type: Decimal
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -150,21 +404,14 @@ endpoints:
   oauth:
   - oauth1
   - oauth2
-  parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/favorites/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.get_favorites" (included with other parameters)'
-    name: String
-    required: true
-    type: String
+  parameters: []
   parse_warnings:
-  - could not detect api method= param or REST URL
+  - no parameters table found
   premier: true
-  response: {}
+  response:
+    foods:
+      food:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -178,21 +425,14 @@ endpoints:
   oauth:
   - oauth1
   - oauth2
-  parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/favorites/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.get_favorites.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
+  parameters: []
   parse_warnings:
-  - could not detect api method= param or REST URL
+  - no parameters table found
   premier: true
-  response: {}
+  response:
+    foods:
+      food:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -208,19 +448,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food/most-eaten/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.get_most_eaten" (included with other parameters)'
-    name: String
-    required: true
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    foods:
+      food:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -236,19 +473,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food/most-eaten/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.get_most_eaten.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    foods:
+      food:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -264,19 +498,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food/recently-eaten/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.get_recently_eaten" (included with other parameters)'
-    name: String
-    required: true
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    foods:
+      food:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -292,19 +523,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food/recently-eaten/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.get_recently_eaten.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    foods:
+      food:
+      - {}
   rest_url: null
   scope: basic
   version: v2

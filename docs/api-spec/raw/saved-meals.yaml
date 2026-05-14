@@ -3,7 +3,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/saved_meal.create
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: saved_meal.create
   notes: ''
   oauth:
@@ -11,19 +11,24 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/v1"HTTP "POST"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"saved_meal.create" (included with other parameters)'
-    name: String
+    description: New name of the saved meal
+    name: saved_meal_name
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: New description of the saved meal
+    name: saved_meal_description
+    required: false
+    type: String
+  - default: null
+    description: Comma separated list of meals the saved meal is suitable for
+    name: meals
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    saved_meal_id: ''
   rest_url: null
   scope: basic
   version: v1
@@ -31,7 +36,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/saved_meal.delete
   exists: true
-  http_verb: GET
+  http_verb: DELETE
   method: saved_meal.delete
   notes: ''
   oauth:
@@ -39,19 +44,14 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/v1"HTTP "DELETE"'
-    name: N/A
+    description: Unique saved meal identifier
+    name: saved_meal_id
     required: true
-    type: null
-  - default: null
-    description: '"saved_meal.delete" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -59,7 +59,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/saved_meal.edit
   exists: true
-  http_verb: GET
+  http_verb: PUT
   method: saved_meal.edit
   notes: ''
   oauth:
@@ -67,19 +67,29 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/v1"HTTP "PUT"'
-    name: N/A
+    description: Unique saved meal identifier
+    name: saved_meal_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"saved_meal.edit" (included with other parameters)'
-    name: String
-    required: true
+    description: New name of the saved meal
+    name: saved_meal_name
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: New description of the saved meal
+    name: saved_meal_description
+    required: false
+    type: String
+  - default: null
+    description: Comma separated list of meals the saved meal is suitable for
+    name: meals
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -87,7 +97,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/saved_meal_item.add
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: saved_meal_item.add
   notes: ''
   oauth:
@@ -95,19 +105,37 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v1"HTTP "POST"'
-    name: N/A
+    description: Unique saved meal identifier
+    name: saved_meal_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"saved_meal_item.add" (included with other parameters)'
-    name: String
+    description: Unique food identifier
+    name: food_id
+    required: true
+    type: Long
+  - default: null
+    description: New name of the saved meal item
+    name: saved_meal_item_name
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Unique serving identifier
+    name: serving_id
+    required: true
+    type: Long
+  - default: null
+    description: Number of units in this standard serving size. For instance, if the serving description
+      is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of
+      units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for
+      "Brand" the number of units will always be "1"
+    name: number_of_units
+    required: true
+    type: Decimal
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    saved_meal_item_id: ''
   rest_url: null
   scope: basic
   version: v1
@@ -115,7 +143,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/saved_meal_item.delete
   exists: true
-  http_verb: GET
+  http_verb: DELETE
   method: saved_meal_item.delete
   notes: ''
   oauth:
@@ -123,19 +151,14 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v1"HTTP "DELETE"'
-    name: N/A
+    description: Unique saved meal item identifier
+    name: saved_meal_item_id
     required: true
-    type: null
-  - default: null
-    description: '"saved_meal_item.delete" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -143,7 +166,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/saved_meal_item.edit
   exists: true
-  http_verb: GET
+  http_verb: PUT
   method: saved_meal_item.edit
   notes: ''
   oauth:
@@ -151,19 +174,27 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v1"HTTP "PUT"'
-    name: N/A
+    description: Unique saved meal item identifier
+    name: saved_meal_item_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"saved_meal_item.edit" (included with other parameters)'
-    name: String
-    required: true
+    description: New name of the saved meal item
+    name: saved_meal_item_name
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Number of units in this standard serving size. For instance, if the serving description
+      is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of
+      units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for
+      "Brand" the number of units will always be "1"
+    name: number_of_units
+    required: false
+    type: Decimal
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -179,19 +210,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v1"HTTP "GET"'
-    name: N/A
+    description: Unique saved meal identifier
+    name: saved_meal_id
     required: true
-    type: null
-  - default: null
-    description: '"saved_meal_items.get" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    saved_meal_items:
+      saved_meal_item:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -207,19 +235,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/item/v2"HTTP "GET"'
-    name: N/A
+    description: Unique saved meal identifier
+    name: saved_meal_id
     required: true
-    type: null
-  - default: null
-    description: '"saved_meal_items.get.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    saved_meal_items:
+      saved_meal_item:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -235,19 +260,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"saved_meals.get" (included with other parameters)'
-    name: String
-    required: true
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    saved_meals:
+      saved_meal:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -263,19 +285,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/saved-meals/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"saved_meals.get.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    saved_meals:
+      saved_meal:
+      - {}
   rest_url: null
   scope: basic
   version: v2

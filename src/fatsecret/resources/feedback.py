@@ -1,14 +1,22 @@
-"""Resource wrapper for the OAS `Feedback` tag."""
+"""Feedback resource - generated. Override hand-tunings go below the import."""
 
 from __future__ import annotations
 
 from typing import Optional
 
-from ._base import BaseResource
+from ._generated.feedback import FeedbackResource as _GeneratedFeedbackResource
 
 
-class FeedbackResource(BaseResource):
-    """Resource methods for the OAS `Feedback` tag."""
+class FeedbackResource(_GeneratedFeedbackResource):
+    """Generated Feedback resource plus body-shape hand-overrides.
+
+    Hand overrides:
+
+      * ``submit_v1`` is overridden to fold ``returned_food_id`` and
+        ``returned_serving_id`` into a nested ``returned_food`` object on the
+        request body, matching the upstream wire format.  Codegen has no way
+        to derive this grouping from the flat raw-YAML parameter list.
+    """
 
     def submit_v1(
         self,
@@ -23,12 +31,6 @@ class FeedbackResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> dict:
-        """feedback v1. URL-based REST endpoint (POST).
-
-        Premier-exclusive. OAuth2 scope: `feedback`. issue_type_id codes:
-        1=Wrong Name/Brand, 2=Wrong Nutrition, 3=Missing Serving Size,
-        4=Barcode not found, 99=Other.
-        """
         body: dict = {"issue_type_id": issue_type_id, "external_id": external_id}
         if barcode is not None:
             body["barcode"] = barcode
@@ -56,3 +58,6 @@ class FeedbackResource(BaseResource):
             json_body=body,
         )
         return payload
+
+
+__all__ = ["FeedbackResource"]

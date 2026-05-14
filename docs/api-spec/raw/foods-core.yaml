@@ -10,31 +10,36 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - &id001
-    description: FatSecret food identifier.
+  - default: null
+    description: Unique food identifier
     name: food_id
     required: true
-    type: String
-  - &id004
-    description: Include food sub-categories.
+    type: Long
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
     name: include_sub_categories
     required: false
     type: Boolean
-  - &id005
-    description: Flag the default serving in the response.
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
     name: flag_default_serving
     required: false
     type: Boolean
-  - &id002
-    description: Region.
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
     name: region
     required: false
     type: String
-  - &id003
-    description: Language.
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
     name: language
     required: false
     type: String
+  parse_warnings: []
   premier: true
   response:
     food: {}
@@ -52,9 +57,36 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id001
-  - *id002
-  - *id003
+  - default: null
+    description: Unique food identifier
+    name: food_id
+    required: true
+    type: Long
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     food: {}
@@ -72,11 +104,36 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id001
-  - *id004
-  - *id005
-  - *id002
-  - *id003
+  - default: null
+    description: Unique food identifier
+    name: food_id
+    required: true
+    type: Long
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     food: {}
@@ -94,21 +151,48 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id001
-  - *id004
-  - &id006
-    description: Include food images.
+  - default: null
+    description: Unique food identifier
+    name: food_id
+    required: true
+    type: Long
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food image in the response. (Requires separate premier offering,
+      please contact us in order for this feature to be enabled for your account)
     name: include_food_images
     required: false
     type: Boolean
-  - &id007
-    description: Include food attributes (allergens / preferences).
+  - default: null
+    description: Response will include food dietary preferences and allergens if available. (Requires
+      separate premier offering, please contact us in order for this feature to be enabled for your account)
     name: include_food_attributes
     required: false
     type: Boolean
-  - *id005
-  - *id002
-  - *id003
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     food: {}
@@ -126,13 +210,48 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id001
-  - *id004
-  - *id006
-  - *id007
-  - *id005
-  - *id002
-  - *id003
+  - default: null
+    description: Unique food identifier
+    name: food_id
+    required: true
+    type: Long
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food image in the response. (Requires separate premier offering,
+      please contact us in order for this feature to be enabled for your account)
+    name: include_food_images
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food dietary preferences and allergens if available. (Requires
+      separate premier offering, please contact us in order for this feature to be enabled for your account)
+    name: include_food_attributes
+    required: false
+    type: Boolean
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     food: {}
@@ -150,27 +269,46 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - &id008
-    description: Search expression.
+  - default: null
+    description: Search expression to match on food names
     name: search_expression
-    required: true
+    required: false
     type: String
-  - &id009
-    description: Zero-based page index.
+  - default: null
+    description: Zero-based offset into the results for the query
     name: page_number
     required: false
     type: Int
-  - &id010
-    description: Maximum results per page.
+  - default: null
+    description: Maximum number of results to return (default value is 20). This number cannot be greater
+      than 50
     name: max_results
     required: false
     type: Int
-  - description: Filter on generic_description.
+  - default: null
+    description: 'Either "weight" or "portion": Weight (default) - the summary description for key nutritional
+      values is displayed by weight (typically 100g); E.G.: "Per 100g". Portion - the summary description
+      for key nutritional values is displayed using the default portion size; E.G.: "Per 1 Cup"
+
+      Note that the summary nutrition description for "Brand" food items is always shown using a "portion"
+      based description'
     name: generic_description
     required: false
     type: String
-  - *id002
-  - *id003
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     foods:
@@ -190,13 +328,47 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id008
-  - *id009
-  - *id010
-  - *id004
-  - *id005
-  - *id002
-  - *id003
+  - default: null
+    description: Search expression to match on food names
+    name: search_expression
+    required: false
+    type: String
+  - default: null
+    description: Zero-based offset into the results for the query
+    name: page_number
+    required: false
+    type: Int
+  - default: null
+    description: Maximum number of results to return (default value is 20). This number cannot be greater
+      than 50
+    name: max_results
+    required: false
+    type: Int
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     foods_search:
@@ -217,15 +389,59 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id008
-  - *id009
-  - *id010
-  - *id004
-  - *id006
-  - *id007
-  - *id005
-  - *id002
-  - *id003
+  - default: null
+    description: Search expression to match on food names
+    name: search_expression
+    required: false
+    type: String
+  - default: null
+    description: Zero-based offset into the results for the query
+    name: page_number
+    required: false
+    type: Int
+  - default: null
+    description: Maximum number of results to return (default value is 20). This number cannot be greater
+      than 50
+    name: max_results
+    required: false
+    type: Int
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food image in the response. (Requires separate premier offering,
+      please contact us in order for this feature to be enabled for your account)
+    name: include_food_images
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food dietary preferences and allergens if available. (Requires
+      separate premier offering, please contact us in order for this feature to be enabled for your account)
+    name: include_food_attributes
+    required: false
+    type: Boolean
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     foods_search:
@@ -246,15 +462,59 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id008
-  - *id009
-  - *id010
-  - *id004
-  - *id006
-  - *id007
-  - *id005
-  - *id002
-  - *id003
+  - default: null
+    description: Search expression to match on food names
+    name: search_expression
+    required: false
+    type: String
+  - default: null
+    description: Zero-based offset into the results for the query
+    name: page_number
+    required: false
+    type: Int
+  - default: null
+    description: Maximum number of results to return (default value is 20). This number cannot be greater
+      than 50
+    name: max_results
+    required: false
+    type: Int
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food image in the response. (Requires separate premier offering,
+      please contact us in order for this feature to be enabled for your account)
+    name: include_food_images
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food dietary preferences and allergens if available. (Requires
+      separate premier offering, please contact us in order for this feature to be enabled for your account)
+    name: include_food_attributes
+    required: false
+    type: Boolean
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     foods_search:
@@ -275,19 +535,65 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id008
-  - *id009
-  - *id010
-  - *id004
-  - *id006
-  - *id007
-  - *id005
-  - description: One of 'generic'|'brand'|'none'.
+  - default: null
+    description: Search expression to match on food names
+    name: search_expression
+    required: false
+    type: String
+  - default: null
+    description: Zero-based offset into the results for the query
+    name: page_number
+    required: false
+    type: Int
+  - default: null
+    description: Maximum number of results to return (default value is 20). This number cannot be greater
+      than 50
+    name: max_results
+    required: false
+    type: Int
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food image in the response. (Requires separate premier offering,
+      please contact us in order for this feature to be enabled for your account)
+    name: include_food_images
+    required: false
+    type: Boolean
+  - default: null
+    description: Response will include food dietary preferences and allergens if available. (Requires
+      separate premier offering, please contact us in order for this feature to be enabled for your account)
+    name: include_food_attributes
+    required: false
+    type: Boolean
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - default: null
+    description: Restricts search results to a specific type. Valid values are "none", "generic" or "brand".
+      Defaults to "none" i.e no filter
     name: food_type
     required: false
     type: String
-  - *id002
-  - *id003
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     foods_search:
