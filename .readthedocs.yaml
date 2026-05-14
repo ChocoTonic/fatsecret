@@ -1,0 +1,16 @@
+version: 2
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.11"
+  jobs:
+    post_create_environment:
+      - pip install --upgrade pip
+    post_install:
+      - pip install -e . || pip install -e ".[dev]" || true
+      - pip install sphinx==7.4.7 sphinx-rtd-theme==2.0.0
+sphinx:
+  configuration: docs/conf.py
+  fail_on_warning: false
+formats:
+  - htmlzip
