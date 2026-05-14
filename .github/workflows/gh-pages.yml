@@ -43,7 +43,4 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Print deployment URL
-        run: |
-          REPO_OWNER=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
-          REPO_NAME=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
-          echo "Documentation will be published at: https://$REPO_OWNER.github.io/$REPO_NAME/"
+        run: echo "Documentation published at ${{ steps.deployment.outputs.page_url }}"
