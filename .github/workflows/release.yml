@@ -198,28 +198,71 @@ jobs:
           # run (the `tags:` trigger). Both runs target the same version.
           # First one publishes successfully; second one would 400 on PyPI
           # ("File already exists"). Skip publish when PyPI already has it.
+          #
+          # Check BOTH the JSON API and the `simple/` index — they have
+          # different CDN cache behavior, and either may reflect a fresh
+          # upload sooner than the other.
           VERSION="${{ steps.version.outputs.version }}"
-          STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
-            "https://pypi.org/pypi/fatsecret/${VERSION}/json" || true)
-          if [ "${STATUS}" = "200" ]; then
-            echo "PyPI already has fatsecret==${VERSION}; skipping publish."
+          found="false"
+          if curl -sf -o /dev/null "https://pypi.org/pypi/fatsecret/${VERSION}/json"; then
+            found="true"
+          elif curl -sf -H "Accept: application/vnd.pypi.simple.v1+json" \
+                "https://pypi.org/simple/fatsecret/" \
+              | grep -q "\"${VERSION}\""; then
+            found="true"
+          fi
+          if [ "$found" = "true" ]; then
+            echo "fatsecret==${VERSION} already on PyPI; skipping publish."
             echo "already=true" >> "$GITHUB_OUTPUT"
           else
-            echo "PyPI does not have ${VERSION} yet (HTTP ${STATUS}); will publish."
+            echo "fatsecret==${VERSION} not on PyPI yet; will attempt publish."
             echo "already=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create GitHub Release
+      - name: Check if GitHub Release already exists
+        id: gh_release_check
         if: steps.version.outputs.skip == 'false' && steps.pypi_check.outputs.already != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "${{ steps.version.outputs.tag }}" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "GitHub Release ${{ steps.version.outputs.tag }} already exists; skipping create."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "GitHub Release ${{ steps.version.outputs.tag }} does not exist; will create."
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        if: |
+          steps.version.outputs.skip == 'false'
+          && steps.pypi_check.outputs.already != 'true'
+          && steps.gh_release_check.outputs.exists != 'true'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           generate_release_notes: true
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to PyPI
         if: steps.version.outputs.skip == 'false' && steps.pypi_check.outputs.already != 'true'
-        run: make release
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          # Idempotency for the upload race: PyPI's JSON / simple indices
+          # are CDN-cached and may still 404 for ~30-60s after a successful
+          # upload from a concurrent run. If `make release` fails solely
+          # because the file already exists, treat that as success — the
+          # concurrent run won the race and the artifact is on PyPI.
+          set -o pipefail
+          if make release 2>&1 | tee /tmp/publish.log; then
+            exit 0
+          fi
+          if grep -q "File already exists" /tmp/publish.log; then
+            echo "::warning::PyPI says file already exists — treating as success (concurrent run won the upload race)."
+            exit 0
+          fi
+          echo "::error::PyPI publish failed for a reason other than duplicate-file."
+          exit 1
