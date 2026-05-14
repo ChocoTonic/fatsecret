@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_PAT }}
 
       - uses: actions/setup-python@v5
         with:
@@ -90,7 +90,7 @@ jobs:
           git add pyproject.toml
           git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
           git tag "${{ steps.version.outputs.tag }}"
-          git push origin master --tags
+          git push https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }} master --tags
 
       - name: Create GitHub Release
         if: steps.version.outputs.skip == 'false'
