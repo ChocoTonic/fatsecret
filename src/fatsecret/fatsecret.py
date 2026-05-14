@@ -537,7 +537,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.exercises_get_v1()
+        return self.exercises.list_v1()
 
     def exercise_entries_commit_day(self, date=None):
         """Saves the default exercise entries for the user on a nominated date.
@@ -554,7 +554,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.exercise_entries_commit_day_v1(date=date)
+        return self.exercises.entries_commit_day_v1(date=date)
 
     def exercise_entries_get(self, date=None):
         """Returns the daily exercise entries for the user on a nominated date.
@@ -577,7 +577,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.exercise_entries_get_v1(date=date)
+        return self.exercises.entries_get_v1(date=date)
 
     def exercise_entries_get_month(self, date=None):
         """Returns the summary estimated daily calories expended for a user's exercise diary entries for
@@ -599,7 +599,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.exercise_entries_get_month_v1(date=date)
+        return self.exercises.entries_get_month_v1(date=date)
 
     def exercise_entries_save_template(self, days, date=None):
         """
@@ -626,7 +626,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.exercise_entries_save_template_v1(int(days), date=date)
+        return self.exercises.entries_save_template_v1(int(days), date=date)
 
     def exercise_entry_edit(
         self,
@@ -675,7 +675,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.exercise_entry_edit_v1(
+        return self.exercises.entry_edit_v1(
             shift_to_id,
             shift_from_id,
             minutes,
@@ -706,7 +706,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_add_favorite_v1(
+        return self.profile_foods.add_favorite_v1(
             food_id, serving_id=serving_id, number_of_units=number_of_units
         )
 
@@ -729,7 +729,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_delete_favorite_v1(
+        return self.profile_foods.delete_favorite_v1(
             food_id, serving_id=serving_id, number_of_units=number_of_units
         )
 
@@ -751,22 +751,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_get_v1(food_id)
-
-    def food_get_v2(self, food_id, region=None, language=None):
-        """Returns detailed nutritional information for the specified food.
-        Use this call to display nutrition values for a food to users.
-
-        :param food_id: Fatsecret food identifier
-        :type food_id: str
-        """
-        params = {"method": "food.get.v2", "food_id": food_id, "format": "json"}
-        if region:
-            params["region"] = region
-        if language:
-            params["language"] = language
-        response = self.session.get(self.api_url, params=params)
-        return self.valid_response(response)
+        return self.foods.get_v1(food_id)
 
     def food_find_id_for_barcode(self, barcode, region=None, language=None):
         """
@@ -799,7 +784,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_find_id_for_barcode_v1(
+        return self.foods.find_id_for_barcode_v1(
             barcode, region=region, language=language
         )
 
@@ -818,7 +803,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.foods_get_favorites_v1()
+        return self.profile_foods.get_favorites_v1()
 
     def foods_get_most_eaten(self, meal=None):
         """Returns the most eaten foods for the user according to the meal specified.
@@ -839,7 +824,7 @@ class Fatsecret:
             stacklevel=2,
         )
         meal_arg = meal if meal in ["breakfast", "lunch", "dinner", "other"] else None
-        return self.foods_get_most_eaten_v1(meal=meal_arg)
+        return self.profile_foods.get_most_eaten_v1(meal=meal_arg)
 
     def foods_get_recently_eaten(self, meal=None):
         """Returns the recently eaten foods for the user according to the meal specified
@@ -860,7 +845,7 @@ class Fatsecret:
             stacklevel=2,
         )
         meal_arg = meal if meal in ["breakfast", "lunch", "dinner", "other"] else None
-        return self.foods_get_recently_eaten_v1(meal=meal_arg)
+        return self.profile_foods.get_recently_eaten_v1(meal=meal_arg)
 
     def foods_search(
         self,
@@ -893,7 +878,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.foods_search_v1(
+        return self.foods.search_v1(
             search_expression,
             page_number=page_number,
             max_results=max_results,
@@ -928,7 +913,7 @@ class Fatsecret:
             stacklevel=2,
         )
         del language  # preserved on signature for back-compat; v1 endpoint ignores it
-        return self.foods_autocomplete_v1(
+        return self.foods.autocomplete_v1(
             expression, max_results=max_results, region=region
         )
 
@@ -954,7 +939,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_entries_copy_v1(from_date, to_date, meal=meal)
+        return self.diary.entries_copy_v1(from_date, to_date, meal=meal)
 
     def food_entries_copy_saved_meal(self, meal_id, meal, date=None):
         """Copies the food entries for a specified saved meal to a specified meal.
@@ -975,7 +960,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_entries_copy_saved_meal_v1(meal_id, meal, date=date)
+        return self.diary.entries_copy_saved_meal_v1(meal_id, meal, date=date)
 
     def food_entries_get(self, food_entry_id=None, date=None):
         """Returns saved food diary entries for the user according to the filter specified.
@@ -1000,7 +985,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_entries_get_v1(food_entry_id=food_entry_id, date=date)
+        return self.diary.entries_get_v1(food_entry_id=food_entry_id, date=date)
 
     def food_entries_get_month(self, date=None):
         """Returns summary daily nutritional information for a user's food diary entries for the month specified.
@@ -1021,7 +1006,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_entries_get_month_v1(date=date)
+        return self.diary.entries_get_month_v1(date=date)
 
     def food_entry_create(
         self, food_id, food_entry_name, serving_id, number_of_units, meal, date=None
@@ -1050,7 +1035,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_entry_create_v1(
+        return self.diary.entry_create_v1(
             food_id, food_entry_name, serving_id, number_of_units, meal, date=date
         )
 
@@ -1069,7 +1054,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_entry_delete_v1(food_entry_id)
+        return self.diary.entry_delete_v1(food_entry_id)
 
     def food_entry_edit(
         self, food_entry_id, entry_name=None, serving_id=None, num_units=None, meal=None
@@ -1099,7 +1084,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.food_entry_edit_v1(
+        return self.diary.entry_edit_v1(
             food_entry_id,
             food_entry_name=entry_name,
             serving_id=serving_id,
@@ -1132,7 +1117,7 @@ class Fatsecret:
             stacklevel=2,
         )
         meals_str = ",".join(meals) if meals else None
-        return self.saved_meal_create_v1(
+        return self.meals.create_v1(
             meal_name, saved_meal_description=meal_desc, meals=meals_str
         )
 
@@ -1152,7 +1137,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.saved_meal_delete_v1(meal_id)
+        return self.meals.delete_v1(meal_id)
 
     def saved_meal_edit(self, meal_id, new_name=None, meal_desc=None, meals=None):
         """
@@ -1178,7 +1163,7 @@ class Fatsecret:
             stacklevel=2,
         )
         meals_str = ",".join(meals) if meals else None
-        return self.saved_meal_edit_v1(
+        return self.meals.edit_v1(
             meal_id,
             saved_meal_name=new_name,
             saved_meal_description=meal_desc,
@@ -1203,7 +1188,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.saved_meals_get_v1(meal=meal)
+        return self.meals.get_v1(meal=meal)
 
     def saved_meal_item_add(
         self, meal_id, food_id, food_entry_name, serving_id, num_units
@@ -1230,7 +1215,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.saved_meal_item_add_v1(
+        return self.meals.item_add_v1(
             meal_id, food_id, food_entry_name, serving_id, num_units
         )
 
@@ -1249,7 +1234,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.saved_meal_item_delete_v1(meal_item_id)
+        return self.meals.item_delete_v1(meal_item_id)
 
     def saved_meal_item_edit(self, meal_item_id, item_name=None, num_units=None):
         """Records a change to a user's saved meal item.
@@ -1273,7 +1258,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.saved_meal_item_edit_v1(
+        return self.meals.item_edit_v1(
             meal_item_id,
             saved_meal_item_name=item_name,
             number_of_units=num_units,
@@ -1297,7 +1282,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.saved_meal_items_get_v1(meal_id)
+        return self.meals.items_get_v1(meal_id)
 
     # ========================= PROFILE =========================
 
@@ -1321,7 +1306,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.profile_create_v1(user_id=user_id)
+        return self.profile.create_v1(user_id=user_id)
 
     def profile_get(self):
         """Returns general status information for a nominated user.
@@ -1335,7 +1320,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.profile_get_v1()
+        return self.profile.get_v1()
 
     def profile_get_auth(self, user_id):
         """Returns the authentication information for a nominated user.
@@ -1352,7 +1337,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.profile_get_auth_v1(user_id=user_id)
+        return self.profile.get_auth_v1(user_id=user_id)
 
     # ========================= RECIPES =========================
 
@@ -1372,7 +1357,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.recipe_add_favorite_v1(recipe_id)
+        return self.recipes.add_favorite_v1(recipe_id)
 
     def recipes_delete_favorite(self, recipe_id):
         """Delete a recipe to a user's favorite.
@@ -1390,7 +1375,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.recipe_delete_favorite_v1(recipe_id)
+        return self.recipes.delete_favorite_v1(recipe_id)
 
     def recipe_get(self, recipe_id):
         """Returns detailed information for the specified recipe.
@@ -1409,7 +1394,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.recipe_get_v1(recipe_id)
+        return self.recipes.get_v1(recipe_id)
 
     def recipes_get_favorites(self):
         """Returns the favorite recipes for the specified user.
@@ -1426,7 +1411,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.recipes_get_favorites_v1()
+        return self.recipes.get_favorites_v1()
 
     def recipes_search(
         self, search_expression, recipe_type=None, page_number=None, max_results=None
@@ -1457,7 +1442,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.recipes_search_v1(
+        return self.recipes.search_v1(
             search_expression=search_expression,
             recipe_type=recipe_type,
             page_number=page_number,
@@ -1479,7 +1464,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.recipe_types_get_v1()
+        return self.recipes.types_get_v1()
 
     # ========================= WEIGHT =========================
 
@@ -1522,7 +1507,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.weight_update_v1(
+        return self.weight.update_v1(
             current_weight_kg,
             date=date,
             weight_type=weight_type,
@@ -1551,7 +1536,7 @@ class Fatsecret:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.weights_get_month_v1(date=date)
+        return self.weight.get_month_v1(date=date)
 
     # ========================= VERSIONED METHODS (v1.0+) =========================
     # Auto-added in v1.0 to cover every (method, version) pair documented at
@@ -1574,1401 +1559,827 @@ class Fatsecret:
 
     # ------------------------- Foods: foods.search -------------------------
 
-    def foods_search_v1(
-        self,
-        search_expression: str,
-        page_number: Optional[int] = None,
-        max_results: Optional[int] = None,
-        generic_description: Optional[str] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """foods.search v1. Lightweight result set (no nested servings).
-
-        Region/language are Premier-exclusive on v1.
-        """
-        params = {"method": "foods.search", "search_expression": search_expression}
-        self._set_optional(
-            params,
-            [
-                ("page_number", page_number),
-                ("max_results", max_results),
-                ("generic_description", generic_description),
-                ("region", region),
-                ("language", language),
-            ],
+    def foods_search_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.foods.search_v1`."""
+        warnings.warn(
+            "Fatsecret.foods_search_v1() is deprecated; use Fatsecret.foods.search_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "foods", list_key="food")
+        return self.foods.search_v1(*args, **kwargs)
 
-    def foods_search_v2(
-        self,
-        search_expression: str,
-        page_number: Optional[int] = None,
-        max_results: Optional[int] = None,
-        include_sub_categories: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """foods.search v2 (DEPRECATED upstream). Returns nested servings + nutrition. Premier."""
-        params = {"method": "foods.search.v2", "search_expression": search_expression}
-        self._set_optional(
-            params,
-            [
-                ("page_number", page_number),
-                ("max_results", max_results),
-                ("include_sub_categories", include_sub_categories),
-                ("flag_default_serving", flag_default_serving),
-                ("region", region),
-                ("language", language),
-            ],
+    def foods_search_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.foods.search_v2`."""
+        warnings.warn(
+            "Fatsecret.foods_search_v2() is deprecated; use Fatsecret.foods.search_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "foods_search", "results", list_key="food")
+        return self.foods.search_v2(*args, **kwargs)
 
-    def foods_search_v3(
-        self,
-        search_expression: str,
-        page_number: Optional[int] = None,
-        max_results: Optional[int] = None,
-        include_sub_categories: Optional[bool] = None,
-        include_food_images: Optional[bool] = None,
-        include_food_attributes: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """foods.search v3 (DEPRECATED upstream). Adds include_food_images and include_food_attributes. Premier."""
-        params = {"method": "foods.search.v3", "search_expression": search_expression}
-        self._set_optional(
-            params,
-            [
-                ("page_number", page_number),
-                ("max_results", max_results),
-                ("include_sub_categories", include_sub_categories),
-                ("include_food_images", include_food_images),
-                ("include_food_attributes", include_food_attributes),
-                ("flag_default_serving", flag_default_serving),
-                ("region", region),
-                ("language", language),
-            ],
+    def foods_search_v3(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.foods.search_v3`."""
+        warnings.warn(
+            "Fatsecret.foods_search_v3() is deprecated; use Fatsecret.foods.search_v3(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "foods_search", "results", list_key="food")
+        return self.foods.search_v3(*args, **kwargs)
 
-    def foods_search_v4(
-        self,
-        search_expression: str,
-        page_number: Optional[int] = None,
-        max_results: Optional[int] = None,
-        include_sub_categories: Optional[bool] = None,
-        include_food_images: Optional[bool] = None,
-        include_food_attributes: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """foods.search v4 (DEPRECATED upstream). Brand foods include derived 100g/100ml servings. Premier."""
-        params = {"method": "foods.search.v4", "search_expression": search_expression}
-        self._set_optional(
-            params,
-            [
-                ("page_number", page_number),
-                ("max_results", max_results),
-                ("include_sub_categories", include_sub_categories),
-                ("include_food_images", include_food_images),
-                ("include_food_attributes", include_food_attributes),
-                ("flag_default_serving", flag_default_serving),
-                ("region", region),
-                ("language", language),
-            ],
+    def foods_search_v4(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.foods.search_v4`."""
+        warnings.warn(
+            "Fatsecret.foods_search_v4() is deprecated; use Fatsecret.foods.search_v4(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "foods_search", "results", list_key="food")
+        return self.foods.search_v4(*args, **kwargs)
 
-    def foods_search_v5(
-        self,
-        search_expression: str,
-        page_number: Optional[int] = None,
-        max_results: Optional[int] = None,
-        include_sub_categories: Optional[bool] = None,
-        include_food_images: Optional[bool] = None,
-        include_food_attributes: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        food_type: Optional[str] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """foods.search v5 (current). Adds `food_type` filter ('none'/'generic'/'brand'). Premier."""
-        params = {"method": "foods.search.v5", "search_expression": search_expression}
-        self._set_optional(
-            params,
-            [
-                ("page_number", page_number),
-                ("max_results", max_results),
-                ("include_sub_categories", include_sub_categories),
-                ("include_food_images", include_food_images),
-                ("include_food_attributes", include_food_attributes),
-                ("flag_default_serving", flag_default_serving),
-                ("food_type", food_type),
-                ("region", region),
-                ("language", language),
-            ],
+    def foods_search_v5(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.foods.search_v5`."""
+        warnings.warn(
+            "Fatsecret.foods_search_v5() is deprecated; use Fatsecret.foods.search_v5(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "foods_search", "results", list_key="food")
+        return self.foods.search_v5(*args, **kwargs)
 
     # ------------------------- Foods: food.get -------------------------
 
-    def food_get_v1(
-        self,
-        food_id: str,
-        include_sub_categories: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> dict:
-        """food.get v1 (DEPRECATED upstream). Vitamins A/C, calcium, iron reported as %DV."""
-        params = {"method": "food.get", "food_id": food_id}
-        self._set_optional(
-            params,
-            [
-                ("include_sub_categories", include_sub_categories),
-                ("flag_default_serving", flag_default_serving),
-                ("region", region),
-                ("language", language),
-            ],
+    def food_get_v1(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.foods.get_v1`."""
+        warnings.warn(
+            "Fatsecret.food_get_v1() is deprecated; use Fatsecret.foods.get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "food")
+        return self.foods.get_v1(*args, **kwargs)
 
-    # food_get_v2: existing legacy method (lines ~679-692 above) already targets food.get.v2.
-    # Per DECISIONS.md, it is preserved as-is; the v2 (method, version) pair is therefore covered.
-
-    def food_get_v3(
-        self,
-        food_id: str,
-        include_sub_categories: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> dict:
-        """food.get v3 (DEPRECATED upstream). Schema near-identical to v2."""
-        params = {"method": "food.get.v3", "food_id": food_id}
-        self._set_optional(
-            params,
-            [
-                ("include_sub_categories", include_sub_categories),
-                ("flag_default_serving", flag_default_serving),
-                ("region", region),
-                ("language", language),
-            ],
+    def food_get_v2(self, *args: Any, **kwargs: Any):
+        """Deprecated; use :meth:`Fatsecret.foods.get_v2`."""
+        warnings.warn(
+            "Fatsecret.food_get_v2() is deprecated; use Fatsecret.foods.get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "food")
+        return self.foods.get_v2(*args, **kwargs)
 
-    def food_get_v4(
-        self,
-        food_id: str,
-        include_sub_categories: Optional[bool] = None,
-        include_food_images: Optional[bool] = None,
-        include_food_attributes: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> dict:
-        """food.get v4 (DEPRECATED upstream). Adds food_images and food_attributes (allergens, preferences)."""
-        params = {"method": "food.get.v4", "food_id": food_id}
-        self._set_optional(
-            params,
-            [
-                ("include_sub_categories", include_sub_categories),
-                ("include_food_images", include_food_images),
-                ("include_food_attributes", include_food_attributes),
-                ("flag_default_serving", flag_default_serving),
-                ("region", region),
-                ("language", language),
-            ],
+    def food_get_v3(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.foods.get_v3`."""
+        warnings.warn(
+            "Fatsecret.food_get_v3() is deprecated; use Fatsecret.foods.get_v3(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "food")
+        return self.foods.get_v3(*args, **kwargs)
 
-    def food_get_v5(
-        self,
-        food_id: str,
-        include_sub_categories: Optional[bool] = None,
-        include_food_images: Optional[bool] = None,
-        include_food_attributes: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> dict:
-        """food.get v5 (current). Brand foods get derived 100g/100ml servings with serving_id=0."""
-        params = {"method": "food.get.v5", "food_id": food_id}
-        self._set_optional(
-            params,
-            [
-                ("include_sub_categories", include_sub_categories),
-                ("include_food_images", include_food_images),
-                ("include_food_attributes", include_food_attributes),
-                ("flag_default_serving", flag_default_serving),
-                ("region", region),
-                ("language", language),
-            ],
+    def food_get_v4(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.foods.get_v4`."""
+        warnings.warn(
+            "Fatsecret.food_get_v4() is deprecated; use Fatsecret.foods.get_v4(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "food")
+        return self.foods.get_v4(*args, **kwargs)
+
+    def food_get_v5(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.foods.get_v5`."""
+        warnings.warn(
+            "Fatsecret.food_get_v5() is deprecated; use Fatsecret.foods.get_v5(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.foods.get_v5(*args, **kwargs)
 
     # ------------------------- Foods: autocomplete -------------------------
 
-    def foods_autocomplete_v1(
-        self,
-        expression: str,
-        max_results: Optional[int] = None,
-        region: Optional[str] = None,
-    ) -> list:
-        """foods.autocomplete v1 (DEPRECATED upstream). Premier-only."""
-        params = {"method": "foods.autocomplete", "expression": expression}
-        self._set_optional(params, [("max_results", max_results), ("region", region)])
-        payload = self._call(params)
-        return self._unwrap(payload, "suggestions", list_key="suggestion")
+    def foods_autocomplete_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.foods.autocomplete_v1`."""
+        warnings.warn(
+            "Fatsecret.foods_autocomplete_v1() is deprecated; use Fatsecret.foods.autocomplete_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.foods.autocomplete_v1(*args, **kwargs)
 
-    def foods_autocomplete_v2(
-        self,
-        expression: str,
-        max_results: Optional[int] = None,
-        region: Optional[str] = None,
-    ) -> list:
-        """foods.autocomplete v2 (current). Premier-only."""
-        params = {"method": "foods.autocomplete.v2", "expression": expression}
-        self._set_optional(params, [("max_results", max_results), ("region", region)])
-        payload = self._call(params)
-        return self._unwrap(payload, "suggestions", list_key="suggestion")
+    def foods_autocomplete_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.foods.autocomplete_v2`."""
+        warnings.warn(
+            "Fatsecret.foods_autocomplete_v2() is deprecated; use Fatsecret.foods.autocomplete_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.foods.autocomplete_v2(*args, **kwargs)
 
     # ------------------------- Foods: find_id_for_barcode -------------------------
 
-    def food_find_id_for_barcode_v1(
-        self,
-        barcode: str,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> Any:
-        """food.find_id_for_barcode v1. Premier (`barcode` scope). Returns food_id (0 if no match)."""
-        params = {"method": "food.find_id_for_barcode", "barcode": barcode}
-        self._set_optional(params, [("region", region), ("language", language)])
-        payload = self._call(params)
-        return self._unwrap(payload, "food_id")
-
-    def food_find_id_for_barcode_v2(
-        self,
-        barcode: str,
-        include_sub_categories: Optional[bool] = None,
-        include_food_images: Optional[bool] = None,
-        include_food_attributes: Optional[bool] = None,
-        flag_default_serving: Optional[bool] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> dict:
-        """food.find_id_for_barcode v2. Returns full food record. Premier (`barcode` scope)."""
-        params = {"method": "food.find_id_for_barcode.v2", "barcode": barcode}
-        self._set_optional(
-            params,
-            [
-                ("include_sub_categories", include_sub_categories),
-                ("include_food_images", include_food_images),
-                ("include_food_attributes", include_food_attributes),
-                ("flag_default_serving", flag_default_serving),
-                ("region", region),
-                ("language", language),
-            ],
+    def food_find_id_for_barcode_v1(self, *args: Any, **kwargs: Any) -> Any:
+        """Deprecated; use :meth:`Fatsecret.foods.find_id_for_barcode_v1`."""
+        warnings.warn(
+            "Fatsecret.food_find_id_for_barcode_v1() is deprecated; use Fatsecret.foods.find_id_for_barcode_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "food")
+        return self.foods.find_id_for_barcode_v1(*args, **kwargs)
+
+    def food_find_id_for_barcode_v2(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.foods.find_id_for_barcode_v2`."""
+        warnings.warn(
+            "Fatsecret.food_find_id_for_barcode_v2() is deprecated; use Fatsecret.foods.find_id_for_barcode_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.foods.find_id_for_barcode_v2(*args, **kwargs)
 
     # ------------------------- Food Classification: brands -------------------------
 
-    def food_brands_get_v1(
-        self,
-        starts_with: str,
-        brand_type: Optional[str] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """food_brands.get v1 (DEPRECATED upstream). Premier."""
-        params = {"method": "food_brands.get", "starts_with": starts_with}
-        self._set_optional(
-            params,
-            [("brand_type", brand_type), ("region", region), ("language", language)],
+    def food_brands_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.classification.brands_get_v1`."""
+        warnings.warn(
+            "Fatsecret.food_brands_get_v1() is deprecated; use Fatsecret.classification.brands_get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "food_brands", list_key="food_brand")
+        return self.classification.brands_get_v1(*args, **kwargs)
 
-    def food_brands_get_v2(
-        self,
-        starts_with: str,
-        brand_type: Optional[str] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """food_brands.get v2 (current). Premier."""
-        params = {"method": "food_brands.get.v2", "starts_with": starts_with}
-        self._set_optional(
-            params,
-            [("brand_type", brand_type), ("region", region), ("language", language)],
+    def food_brands_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.classification.brands_get_v2`."""
+        warnings.warn(
+            "Fatsecret.food_brands_get_v2() is deprecated; use Fatsecret.classification.brands_get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "food_brands", list_key="food_brand")
+        return self.classification.brands_get_v2(*args, **kwargs)
 
     # ------------------------- Food Classification: categories -------------------------
 
-    def food_categories_get_v1(
-        self, region: Optional[str] = None, language: Optional[str] = None
-    ) -> list:
-        """food_categories.get v1 (DEPRECATED upstream). Premier."""
-        params = {"method": "food_categories.get"}
-        self._set_optional(params, [("region", region), ("language", language)])
-        payload = self._call(params)
-        return self._unwrap(payload, "food_categories", list_key="food_category")
+    def food_categories_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.classification.categories_get_v1`."""
+        warnings.warn(
+            "Fatsecret.food_categories_get_v1() is deprecated; use Fatsecret.classification.categories_get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.classification.categories_get_v1(*args, **kwargs)
 
-    def food_categories_get_v2(
-        self, region: Optional[str] = None, language: Optional[str] = None
-    ) -> list:
-        """food_categories.get v2 (current). Premier."""
-        params = {"method": "food_categories.get.v2"}
-        self._set_optional(params, [("region", region), ("language", language)])
-        payload = self._call(params)
-        return self._unwrap(payload, "food_categories", list_key="food_category")
+    def food_categories_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.classification.categories_get_v2`."""
+        warnings.warn(
+            "Fatsecret.food_categories_get_v2() is deprecated; use Fatsecret.classification.categories_get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.classification.categories_get_v2(*args, **kwargs)
 
     # ------------------------- Food Classification: sub-categories -------------------------
 
-    def food_sub_categories_get_v1(
-        self,
-        food_category_id: str,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """food_sub_categories.get v1 (DEPRECATED upstream). Premier."""
-        params = {
-            "method": "food_sub_categories.get",
-            "food_category_id": food_category_id,
-        }
-        self._set_optional(params, [("region", region), ("language", language)])
-        payload = self._call(params)
-        return self._unwrap(
-            payload, "food_sub_categories", list_key="food_sub_category"
+    def food_sub_categories_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.classification.sub_categories_get_v1`."""
+        warnings.warn(
+            "Fatsecret.food_sub_categories_get_v1() is deprecated; use Fatsecret.classification.sub_categories_get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
+        return self.classification.sub_categories_get_v1(*args, **kwargs)
 
-    def food_sub_categories_get_v2(
-        self,
-        food_category_id: str,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """food_sub_categories.get v2 (current). Premier."""
-        params = {
-            "method": "food_sub_categories.get.v2",
-            "food_category_id": food_category_id,
-        }
-        self._set_optional(params, [("region", region), ("language", language)])
-        payload = self._call(params)
-        return self._unwrap(
-            payload, "food_sub_categories", list_key="food_sub_category"
+    def food_sub_categories_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.classification.sub_categories_get_v2`."""
+        warnings.warn(
+            "Fatsecret.food_sub_categories_get_v2() is deprecated; use Fatsecret.classification.sub_categories_get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
+        return self.classification.sub_categories_get_v2(*args, **kwargs)
 
     # ------------------------- Recipes: recipe.get -------------------------
 
-    def recipe_get_v1(self, recipe_id: str, region: Optional[str] = None) -> dict:
-        """recipe.get v1 (DEPRECATED upstream)."""
-        params = {"method": "recipe.get", "recipe_id": recipe_id}
-        self._set_optional(params, [("region", region)])
-        payload = self._call(params)
-        return self._unwrap(payload, "recipe")
+    def recipe_get_v1(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.recipes.get_v1`."""
+        warnings.warn(
+            "Fatsecret.recipe_get_v1() is deprecated; use Fatsecret.recipes.get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.recipes.get_v1(*args, **kwargs)
 
-    def recipe_get_v2(self, recipe_id: str, region: Optional[str] = None) -> dict:
-        """recipe.get v2 (current). Adds grams_per_portion."""
-        params = {"method": "recipe.get.v2", "recipe_id": recipe_id}
-        self._set_optional(params, [("region", region)])
-        payload = self._call(params)
-        return self._unwrap(payload, "recipe")
+    def recipe_get_v2(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.recipes.get_v2`."""
+        warnings.warn(
+            "Fatsecret.recipe_get_v2() is deprecated; use Fatsecret.recipes.get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.recipes.get_v2(*args, **kwargs)
 
     # ------------------------- Recipes: recipes.search -------------------------
 
-    def recipes_search_v1(
-        self,
-        search_expression: Optional[str] = None,
-        recipe_type: Optional[str] = None,
-        page_number: Optional[int] = None,
-        max_results: Optional[int] = None,
-    ) -> list:
-        """recipes.search v1 (DEPRECATED upstream)."""
-        params: dict = {"method": "recipes.search"}
-        self._set_optional(
-            params,
-            [
-                ("search_expression", search_expression),
-                ("recipe_type", recipe_type),
-                ("page_number", page_number),
-                ("max_results", max_results),
-            ],
+    def recipes_search_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.recipes.search_v1`."""
+        warnings.warn(
+            "Fatsecret.recipes_search_v1() is deprecated; use Fatsecret.recipes.search_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "recipes", list_key="recipe")
+        return self.recipes.search_v1(*args, **kwargs)
 
-    def recipes_search_v2(
-        self,
-        search_expression: Optional[str] = None,
-        must_have_images: Optional[bool] = None,
-        calories_from: Optional[int] = None,
-        calories_to: Optional[int] = None,
-        carb_percentage_from: Optional[int] = None,
-        carb_percentage_to: Optional[int] = None,
-        protein_percentage_from: Optional[int] = None,
-        protein_percentage_to: Optional[int] = None,
-        fat_percentage_from: Optional[int] = None,
-        fat_percentage_to: Optional[int] = None,
-        prep_time_from: Optional[int] = None,
-        prep_time_to: Optional[int] = None,
-        page_number: Optional[int] = None,
-        max_results: Optional[int] = None,
-        sort_by: Optional[str] = None,
-        region: Optional[str] = None,
-    ) -> list:
-        """recipes.search v2 (DEPRECATED upstream). Adds nutritional/time filters."""
-        params: dict = {"method": "recipes.search.v2"}
-        self._set_optional(
-            params,
-            [
-                ("search_expression", search_expression),
-                ("must_have_images", must_have_images),
-                ("calories.from", calories_from),
-                ("calories.to", calories_to),
-                ("carb_percentage.from", carb_percentage_from),
-                ("carb_percentage.to", carb_percentage_to),
-                ("protein_percentage.from", protein_percentage_from),
-                ("protein_percentage.to", protein_percentage_to),
-                ("fat_percentage.from", fat_percentage_from),
-                ("fat_percentage.to", fat_percentage_to),
-                ("prep_time.from", prep_time_from),
-                ("prep_time.to", prep_time_to),
-                ("page_number", page_number),
-                ("max_results", max_results),
-                ("sort_by", sort_by),
-                ("region", region),
-            ],
+    def recipes_search_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.recipes.search_v2`."""
+        warnings.warn(
+            "Fatsecret.recipes_search_v2() is deprecated; use Fatsecret.recipes.search_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "recipes", list_key="recipe")
+        return self.recipes.search_v2(*args, **kwargs)
 
-    def recipes_search_v3(
-        self,
-        search_expression: Optional[str] = None,
-        recipe_types: Optional[str] = None,
-        recipe_types_matchall: Optional[bool] = None,
-        must_have_images: Optional[bool] = None,
-        calories_from: Optional[int] = None,
-        calories_to: Optional[int] = None,
-        carb_percentage_from: Optional[int] = None,
-        carb_percentage_to: Optional[int] = None,
-        protein_percentage_from: Optional[int] = None,
-        protein_percentage_to: Optional[int] = None,
-        fat_percentage_from: Optional[int] = None,
-        fat_percentage_to: Optional[int] = None,
-        prep_time_from: Optional[int] = None,
-        prep_time_to: Optional[int] = None,
-        page_number: Optional[int] = None,
-        max_results: Optional[int] = None,
-        sort_by: Optional[str] = None,
-        region: Optional[str] = None,
-    ) -> list:
-        """recipes.search v3 (current). Adds recipe_types comma-list + matchall."""
-        params: dict = {"method": "recipes.search.v3"}
-        self._set_optional(
-            params,
-            [
-                ("search_expression", search_expression),
-                ("recipe_types", recipe_types),
-                ("recipe_types_matchall", recipe_types_matchall),
-                ("must_have_images", must_have_images),
-                ("calories.from", calories_from),
-                ("calories.to", calories_to),
-                ("carb_percentage.from", carb_percentage_from),
-                ("carb_percentage.to", carb_percentage_to),
-                ("protein_percentage.from", protein_percentage_from),
-                ("protein_percentage.to", protein_percentage_to),
-                ("fat_percentage.from", fat_percentage_from),
-                ("fat_percentage.to", fat_percentage_to),
-                ("prep_time.from", prep_time_from),
-                ("prep_time.to", prep_time_to),
-                ("page_number", page_number),
-                ("max_results", max_results),
-                ("sort_by", sort_by),
-                ("region", region),
-            ],
+    def recipes_search_v3(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.recipes.search_v3`."""
+        warnings.warn(
+            "Fatsecret.recipes_search_v3() is deprecated; use Fatsecret.recipes.search_v3(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params)
-        return self._unwrap(payload, "recipes", list_key="recipe")
+        return self.recipes.search_v3(*args, **kwargs)
 
     # ------------------------- Recipes: recipe_types.get -------------------------
 
-    def recipe_types_get_v1(self) -> list:
-        """recipe_types.get v1 (DEPRECATED upstream)."""
-        payload = self._call({"method": "recipe_types.get"})
-        return self._unwrap(payload, "recipe_types", list_key="recipe_type")
+    def recipe_types_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.recipes.types_get_v1`."""
+        warnings.warn(
+            "Fatsecret.recipe_types_get_v1() is deprecated; use Fatsecret.recipes.types_get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.recipes.types_get_v1(*args, **kwargs)
 
-    def recipe_types_get_v2(
-        self, region: Optional[str] = None, language: Optional[str] = None
-    ) -> list:
-        """recipe_types.get v2 (current). Region/language are Premier-exclusive."""
-        params = {"method": "recipe_types.get.v2"}
-        self._set_optional(params, [("region", region), ("language", language)])
-        payload = self._call(params)
-        return self._unwrap(payload, "recipe_types", list_key="recipe_type")
+    def recipe_types_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.recipes.types_get_v2`."""
+        warnings.warn(
+            "Fatsecret.recipe_types_get_v2() is deprecated; use Fatsecret.recipes.types_get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.recipes.types_get_v2(*args, **kwargs)
 
     # ------------------------- Recipes: favorites -------------------------
 
-    def recipe_add_favorite_v1(self, recipe_id: str) -> Union[bool, Any]:
-        """recipe.add_favorite v1. Fixes the legacy plural-typo bug (uses singular `recipe.add_favorite`)."""
-        payload = self._call(
-            {"method": "recipe.add_favorite", "recipe_id": recipe_id}, method="POST"
+    def recipe_add_favorite_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.recipes.add_favorite_v1`."""
+        warnings.warn(
+            "Fatsecret.recipe_add_favorite_v1() is deprecated; use Fatsecret.recipes.add_favorite_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return self._mutator_success(payload)
+        return self.recipes.add_favorite_v1(*args, **kwargs)
 
-    def recipe_delete_favorite_v1(self, recipe_id: str) -> Union[bool, Any]:
-        """recipe.delete_favorite v1. Fixes the legacy plural-typo bug."""
-        payload = self._call(
-            {"method": "recipe.delete_favorite", "recipe_id": recipe_id},
-            method="DELETE",
+    def recipe_delete_favorite_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.recipes.delete_favorite_v1`."""
+        warnings.warn(
+            "Fatsecret.recipe_delete_favorite_v1() is deprecated; use Fatsecret.recipes.delete_favorite_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return self._mutator_success(payload)
+        return self.recipes.delete_favorite_v1(*args, **kwargs)
 
-    def recipes_get_favorites_v1(self) -> list:
-        """recipes.get_favorites v1 (DEPRECATED upstream). api_method_param: recipe.get_favorites."""
-        payload = self._call({"method": "recipe.get_favorites"})
-        return self._unwrap(payload, "recipes", list_key="recipe")
+    def recipes_get_favorites_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.recipes.get_favorites_v1`."""
+        warnings.warn(
+            "Fatsecret.recipes_get_favorites_v1() is deprecated; use Fatsecret.recipes.get_favorites_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.recipes.get_favorites_v1(*args, **kwargs)
 
-    def recipes_get_favorites_v2(self) -> list:
-        """recipes.get_favorites v2 (current). api_method_param: recipe.get_favorites.v2."""
-        payload = self._call({"method": "recipe.get_favorites.v2"})
-        return self._unwrap(payload, "recipes", list_key="recipe")
+    def recipes_get_favorites_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.recipes.get_favorites_v2`."""
+        warnings.warn(
+            "Fatsecret.recipes_get_favorites_v2() is deprecated; use Fatsecret.recipes.get_favorites_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.recipes.get_favorites_v2(*args, **kwargs)
 
     # ------------------------- Profile-Foods: food.create -------------------------
 
-    def food_create_v1(
-        self,
-        brand_name: str,
-        food_name: str,
-        serving_size: str,
-        calories: float,
-        fat: float,
-        carbohydrate: float,
-        protein: float,
-        brand_type: Optional[str] = None,
-        serving_amount: Optional[str] = None,
-        serving_amount_unit: Optional[str] = None,
-        calories_from_fat: Optional[float] = None,
-        saturated_fat: Optional[float] = None,
-        polyunsaturated_fat: Optional[float] = None,
-        monounsaturated_fat: Optional[float] = None,
-        trans_fat: Optional[float] = None,
-        cholesterol: Optional[float] = None,
-        sodium: Optional[float] = None,
-        potassium: Optional[float] = None,
-        fiber: Optional[float] = None,
-        sugar: Optional[float] = None,
-        other_carbohydrate: Optional[float] = None,
-        vitamin_a: Optional[float] = None,
-        vitamin_c: Optional[float] = None,
-        calcium: Optional[float] = None,
-        iron: Optional[float] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> Any:
-        """food.create v1 (DEPRECATED upstream). Premier-exclusive. OAuth1 only.
-
-        v1 takes vitamin_a/c, calcium, iron as %DV.
-        """
-        params = {
-            "method": "food.create",
-            "brand_name": brand_name,
-            "food_name": food_name,
-            "serving_size": serving_size,
-            "calories": calories,
-            "fat": fat,
-            "carbohydrate": carbohydrate,
-            "protein": protein,
-        }
-        self._set_optional(
-            params,
-            [
-                ("brand_type", brand_type),
-                ("serving_amount", serving_amount),
-                ("serving_amount_unit", serving_amount_unit),
-                ("calories_from_fat", calories_from_fat),
-                ("saturated_fat", saturated_fat),
-                ("polyunsaturated_fat", polyunsaturated_fat),
-                ("monounsaturated_fat", monounsaturated_fat),
-                ("trans_fat", trans_fat),
-                ("cholesterol", cholesterol),
-                ("sodium", sodium),
-                ("potassium", potassium),
-                ("fiber", fiber),
-                ("sugar", sugar),
-                ("other_carbohydrate", other_carbohydrate),
-                ("vitamin_a", vitamin_a),
-                ("vitamin_c", vitamin_c),
-                ("calcium", calcium),
-                ("iron", iron),
-                ("region", region),
-                ("language", language),
-            ],
+    def food_create_v1(self, *args: Any, **kwargs: Any) -> Any:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.create_v1`."""
+        warnings.warn(
+            "Fatsecret.food_create_v1() is deprecated; use Fatsecret.profile_foods.create_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="POST")
-        return self._unwrap(payload, "food_id")
+        return self.profile_foods.create_v1(*args, **kwargs)
 
-    def food_create_v2(
-        self,
-        brand_name: str,
-        food_name: str,
-        serving_size: str,
-        calories: float,
-        fat: float,
-        carbohydrate: float,
-        protein: float,
-        brand_type: Optional[str] = None,
-        serving_amount: Optional[str] = None,
-        serving_amount_unit: Optional[str] = None,
-        calories_from_fat: Optional[float] = None,
-        saturated_fat: Optional[float] = None,
-        polyunsaturated_fat: Optional[float] = None,
-        monounsaturated_fat: Optional[float] = None,
-        trans_fat: Optional[float] = None,
-        cholesterol: Optional[float] = None,
-        sodium: Optional[float] = None,
-        potassium: Optional[float] = None,
-        fiber: Optional[float] = None,
-        sugar: Optional[float] = None,
-        added_sugars: Optional[float] = None,
-        vitamin_d: Optional[float] = None,
-        vitamin_a: Optional[float] = None,
-        vitamin_c: Optional[float] = None,
-        calcium: Optional[float] = None,
-        iron: Optional[float] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> Any:
-        """food.create v2 (current). Premier-exclusive. OAuth1 only.
-
-        v2 takes raw nutrient values; adds added_sugars and vitamin_d.
-        """
-        params = {
-            "method": "food.create.v2",
-            "brand_name": brand_name,
-            "food_name": food_name,
-            "serving_size": serving_size,
-            "calories": calories,
-            "fat": fat,
-            "carbohydrate": carbohydrate,
-            "protein": protein,
-        }
-        self._set_optional(
-            params,
-            [
-                ("brand_type", brand_type),
-                ("serving_amount", serving_amount),
-                ("serving_amount_unit", serving_amount_unit),
-                ("calories_from_fat", calories_from_fat),
-                ("saturated_fat", saturated_fat),
-                ("polyunsaturated_fat", polyunsaturated_fat),
-                ("monounsaturated_fat", monounsaturated_fat),
-                ("trans_fat", trans_fat),
-                ("cholesterol", cholesterol),
-                ("sodium", sodium),
-                ("potassium", potassium),
-                ("fiber", fiber),
-                ("sugar", sugar),
-                ("added_sugars", added_sugars),
-                ("vitamin_d", vitamin_d),
-                ("vitamin_a", vitamin_a),
-                ("vitamin_c", vitamin_c),
-                ("calcium", calcium),
-                ("iron", iron),
-                ("region", region),
-                ("language", language),
-            ],
+    def food_create_v2(self, *args: Any, **kwargs: Any) -> Any:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.create_v2`."""
+        warnings.warn(
+            "Fatsecret.food_create_v2() is deprecated; use Fatsecret.profile_foods.create_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="POST")
-        return self._unwrap(payload, "food_id")
+        return self.profile_foods.create_v2(*args, **kwargs)
 
     # ------------------------- Profile-Foods: favorites/eaten -------------------------
 
-    def food_add_favorite_v1(
-        self,
-        food_id: str,
-        serving_id: Optional[str] = None,
-        number_of_units: Optional[float] = None,
-    ) -> Union[bool, Any]:
-        """food.add_favorite v1."""
-        params = {"method": "food.add_favorite", "food_id": food_id}
-        self._set_optional(
-            params, [("serving_id", serving_id), ("number_of_units", number_of_units)]
+    def food_add_favorite_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.add_favorite_v1`."""
+        warnings.warn(
+            "Fatsecret.food_add_favorite_v1() is deprecated; use Fatsecret.profile_foods.add_favorite_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="POST")
-        return self._mutator_success(payload)
+        return self.profile_foods.add_favorite_v1(*args, **kwargs)
 
-    def food_delete_favorite_v1(
-        self,
-        food_id: str,
-        serving_id: Optional[str] = None,
-        number_of_units: Optional[float] = None,
-    ) -> Union[bool, Any]:
-        """food.delete_favorite v1."""
-        params = {"method": "food.delete_favorite", "food_id": food_id}
-        self._set_optional(
-            params, [("serving_id", serving_id), ("number_of_units", number_of_units)]
+    def food_delete_favorite_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.delete_favorite_v1`."""
+        warnings.warn(
+            "Fatsecret.food_delete_favorite_v1() is deprecated; use Fatsecret.profile_foods.delete_favorite_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="DELETE")
-        return self._mutator_success(payload)
+        return self.profile_foods.delete_favorite_v1(*args, **kwargs)
 
-    def foods_get_favorites_v1(self) -> list:
-        """foods.get_favorites v1 (DEPRECATED upstream)."""
-        payload = self._call({"method": "foods.get_favorites"})
-        return self._unwrap(payload, "foods", list_key="food")
+    def foods_get_favorites_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.get_favorites_v1`."""
+        warnings.warn(
+            "Fatsecret.foods_get_favorites_v1() is deprecated; use Fatsecret.profile_foods.get_favorites_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile_foods.get_favorites_v1(*args, **kwargs)
 
-    def foods_get_favorites_v2(self) -> list:
-        """foods.get_favorites v2 (current)."""
-        payload = self._call({"method": "foods.get_favorites.v2"})
-        return self._unwrap(payload, "foods", list_key="food")
+    def foods_get_favorites_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.get_favorites_v2`."""
+        warnings.warn(
+            "Fatsecret.foods_get_favorites_v2() is deprecated; use Fatsecret.profile_foods.get_favorites_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile_foods.get_favorites_v2(*args, **kwargs)
 
-    def foods_get_most_eaten_v1(self, meal: Optional[str] = None) -> list:
-        """foods.get_most_eaten v1 (DEPRECATED upstream)."""
-        params = {"method": "foods.get_most_eaten"}
-        self._set_optional(params, [("meal", meal)])
-        payload = self._call(params)
-        return self._unwrap(payload, "foods", list_key="food")
+    def foods_get_most_eaten_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.get_most_eaten_v1`."""
+        warnings.warn(
+            "Fatsecret.foods_get_most_eaten_v1() is deprecated; use Fatsecret.profile_foods.get_most_eaten_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile_foods.get_most_eaten_v1(*args, **kwargs)
 
-    def foods_get_most_eaten_v2(self, meal: Optional[str] = None) -> list:
-        """foods.get_most_eaten v2 (current)."""
-        params = {"method": "foods.get_most_eaten.v2"}
-        self._set_optional(params, [("meal", meal)])
-        payload = self._call(params)
-        return self._unwrap(payload, "foods", list_key="food")
+    def foods_get_most_eaten_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.get_most_eaten_v2`."""
+        warnings.warn(
+            "Fatsecret.foods_get_most_eaten_v2() is deprecated; use Fatsecret.profile_foods.get_most_eaten_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile_foods.get_most_eaten_v2(*args, **kwargs)
 
-    def foods_get_recently_eaten_v1(self, meal: Optional[str] = None) -> list:
-        """foods.get_recently_eaten v1 (DEPRECATED upstream)."""
-        params = {"method": "foods.get_recently_eaten"}
-        self._set_optional(params, [("meal", meal)])
-        payload = self._call(params)
-        return self._unwrap(payload, "foods", list_key="food")
+    def foods_get_recently_eaten_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.get_recently_eaten_v1`."""
+        warnings.warn(
+            "Fatsecret.foods_get_recently_eaten_v1() is deprecated; use Fatsecret.profile_foods.get_recently_eaten_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile_foods.get_recently_eaten_v1(*args, **kwargs)
 
-    def foods_get_recently_eaten_v2(self, meal: Optional[str] = None) -> list:
-        """foods.get_recently_eaten v2 (current). Premier per spec."""
-        params = {"method": "foods.get_recently_eaten.v2"}
-        self._set_optional(params, [("meal", meal)])
-        payload = self._call(params)
-        return self._unwrap(payload, "foods", list_key="food")
+    def foods_get_recently_eaten_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.profile_foods.get_recently_eaten_v2`."""
+        warnings.warn(
+            "Fatsecret.foods_get_recently_eaten_v2() is deprecated; use Fatsecret.profile_foods.get_recently_eaten_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile_foods.get_recently_eaten_v2(*args, **kwargs)
 
     # ------------------------- Saved Meals -------------------------
 
-    def saved_meal_create_v1(
-        self,
-        saved_meal_name: str,
-        saved_meal_description: Optional[str] = None,
-        meals: Optional[str] = None,
-    ) -> Any:
-        """saved_meal.create v1."""
-        params = {"method": "saved_meal.create", "saved_meal_name": saved_meal_name}
-        self._set_optional(
-            params,
-            [("saved_meal_description", saved_meal_description), ("meals", meals)],
+    def saved_meal_create_v1(self, *args: Any, **kwargs: Any) -> Any:
+        """Deprecated; use :meth:`Fatsecret.meals.create_v1`."""
+        warnings.warn(
+            "Fatsecret.saved_meal_create_v1() is deprecated; use Fatsecret.meals.create_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="POST")
-        return self._unwrap(payload, "saved_meal_id")
+        return self.meals.create_v1(*args, **kwargs)
 
-    def saved_meal_edit_v1(
-        self,
-        saved_meal_id: str,
-        saved_meal_name: Optional[str] = None,
-        saved_meal_description: Optional[str] = None,
-        meals: Optional[str] = None,
-    ) -> Union[bool, Any]:
-        """saved_meal.edit v1."""
-        params = {"method": "saved_meal.edit", "saved_meal_id": saved_meal_id}
-        self._set_optional(
-            params,
-            [
-                ("saved_meal_name", saved_meal_name),
-                ("saved_meal_description", saved_meal_description),
-                ("meals", meals),
-            ],
+    def saved_meal_edit_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.meals.edit_v1`."""
+        warnings.warn(
+            "Fatsecret.saved_meal_edit_v1() is deprecated; use Fatsecret.meals.edit_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="PUT")
-        return self._mutator_success(payload)
+        return self.meals.edit_v1(*args, **kwargs)
 
-    def saved_meal_delete_v1(self, saved_meal_id: str) -> Union[bool, Any]:
-        """saved_meal.delete v1."""
-        payload = self._call(
-            {"method": "saved_meal.delete", "saved_meal_id": saved_meal_id},
-            method="DELETE",
+    def saved_meal_delete_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.meals.delete_v1`."""
+        warnings.warn(
+            "Fatsecret.saved_meal_delete_v1() is deprecated; use Fatsecret.meals.delete_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return self._mutator_success(payload)
+        return self.meals.delete_v1(*args, **kwargs)
 
-    def saved_meals_get_v1(self, meal: Optional[str] = None) -> list:
-        """saved_meals.get v1 (DEPRECATED upstream)."""
-        params = {"method": "saved_meals.get"}
-        self._set_optional(params, [("meal", meal)])
-        payload = self._call(params)
-        return self._unwrap(payload, "saved_meals", list_key="saved_meal")
-
-    def saved_meals_get_v2(self, meal: Optional[str] = None) -> list:
-        """saved_meals.get v2 (current)."""
-        params = {"method": "saved_meals.get.v2"}
-        self._set_optional(params, [("meal", meal)])
-        payload = self._call(params)
-        return self._unwrap(payload, "saved_meals", list_key="saved_meal")
-
-    def saved_meal_item_add_v1(
-        self,
-        saved_meal_id: str,
-        food_id: str,
-        saved_meal_item_name: str,
-        serving_id: str,
-        number_of_units: float,
-    ) -> Any:
-        """saved_meal_item.add v1."""
-        params = {
-            "method": "saved_meal_item.add",
-            "saved_meal_id": saved_meal_id,
-            "food_id": food_id,
-            "saved_meal_item_name": saved_meal_item_name,
-            "serving_id": serving_id,
-            "number_of_units": number_of_units,
-        }
-        payload = self._call(params, method="POST")
-        return self._unwrap(payload, "saved_meal_item_id")
-
-    def saved_meal_item_edit_v1(
-        self,
-        saved_meal_item_id: str,
-        saved_meal_item_name: Optional[str] = None,
-        number_of_units: Optional[float] = None,
-    ) -> Union[bool, Any]:
-        """saved_meal_item.edit v1."""
-        params = {
-            "method": "saved_meal_item.edit",
-            "saved_meal_item_id": saved_meal_item_id,
-        }
-        self._set_optional(
-            params,
-            [
-                ("saved_meal_item_name", saved_meal_item_name),
-                ("number_of_units", number_of_units),
-            ],
+    def saved_meals_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.meals.get_v1`."""
+        warnings.warn(
+            "Fatsecret.saved_meals_get_v1() is deprecated; use Fatsecret.meals.get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="PUT")
-        return self._mutator_success(payload)
+        return self.meals.get_v1(*args, **kwargs)
 
-    def saved_meal_item_delete_v1(self, saved_meal_item_id: str) -> Union[bool, Any]:
-        """saved_meal_item.delete v1."""
-        payload = self._call(
-            {
-                "method": "saved_meal_item.delete",
-                "saved_meal_item_id": saved_meal_item_id,
-            },
-            method="DELETE",
+    def saved_meals_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.meals.get_v2`."""
+        warnings.warn(
+            "Fatsecret.saved_meals_get_v2() is deprecated; use Fatsecret.meals.get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return self._mutator_success(payload)
+        return self.meals.get_v2(*args, **kwargs)
 
-    def saved_meal_items_get_v1(self, saved_meal_id: str) -> list:
-        """saved_meal_items.get v1 (DEPRECATED upstream)."""
-        payload = self._call(
-            {"method": "saved_meal_items.get", "saved_meal_id": saved_meal_id}
+    def saved_meal_item_add_v1(self, *args: Any, **kwargs: Any) -> Any:
+        """Deprecated; use :meth:`Fatsecret.meals.item_add_v1`."""
+        warnings.warn(
+            "Fatsecret.saved_meal_item_add_v1() is deprecated; use Fatsecret.meals.item_add_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return self._unwrap(payload, "saved_meal_items", list_key="saved_meal_item")
+        return self.meals.item_add_v1(*args, **kwargs)
 
-    def saved_meal_items_get_v2(self, saved_meal_id: str) -> list:
-        """saved_meal_items.get v2 (current)."""
-        payload = self._call(
-            {"method": "saved_meal_items.get.v2", "saved_meal_id": saved_meal_id}
+    def saved_meal_item_edit_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.meals.item_edit_v1`."""
+        warnings.warn(
+            "Fatsecret.saved_meal_item_edit_v1() is deprecated; use Fatsecret.meals.item_edit_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return self._unwrap(payload, "saved_meal_items", list_key="saved_meal_item")
+        return self.meals.item_edit_v1(*args, **kwargs)
+
+    def saved_meal_item_delete_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.meals.item_delete_v1`."""
+        warnings.warn(
+            "Fatsecret.saved_meal_item_delete_v1() is deprecated; use Fatsecret.meals.item_delete_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.meals.item_delete_v1(*args, **kwargs)
+
+    def saved_meal_items_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.meals.items_get_v1`."""
+        warnings.warn(
+            "Fatsecret.saved_meal_items_get_v1() is deprecated; use Fatsecret.meals.items_get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.meals.items_get_v1(*args, **kwargs)
+
+    def saved_meal_items_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.meals.items_get_v2`."""
+        warnings.warn(
+            "Fatsecret.saved_meal_items_get_v2() is deprecated; use Fatsecret.meals.items_get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.meals.items_get_v2(*args, **kwargs)
 
     # ------------------------- Food Diary -------------------------
 
-    def food_entry_create_v1(
-        self,
-        food_id: str,
-        food_entry_name: str,
-        serving_id: str,
-        number_of_units: float,
-        meal: str,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """food_entry.create v1."""
-        params = {
-            "method": "food_entry.create",
-            "food_id": food_id,
-            "food_entry_name": food_entry_name,
-            "serving_id": serving_id,
-            "number_of_units": number_of_units,
-            "meal": meal,
-        }
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params, method="POST")
-        return self._unwrap(payload, "food_entries", list_key="food_entry")
-
-    def food_entry_edit_v1(
-        self,
-        food_entry_id: str,
-        food_entry_name: Optional[str] = None,
-        serving_id: Optional[str] = None,
-        number_of_units: Optional[float] = None,
-        meal: Optional[str] = None,
-    ) -> Union[bool, Any]:
-        """food_entry.edit v1."""
-        params = {"method": "food_entry.edit", "food_entry_id": food_entry_id}
-        self._set_optional(
-            params,
-            [
-                ("food_entry_name", food_entry_name),
-                ("serving_id", serving_id),
-                ("number_of_units", number_of_units),
-                ("meal", meal),
-            ],
+    def food_entry_create_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.diary.entry_create_v1`."""
+        warnings.warn(
+            "Fatsecret.food_entry_create_v1() is deprecated; use Fatsecret.diary.entry_create_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="PUT")
-        return self._mutator_success(payload)
+        return self.diary.entry_create_v1(*args, **kwargs)
 
-    def food_entry_delete_v1(self, food_entry_id: str) -> Union[bool, Any]:
-        """food_entry.delete v1."""
-        payload = self._call(
-            {"method": "food_entry.delete", "food_entry_id": food_entry_id},
-            method="DELETE",
+    def food_entry_edit_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.diary.entry_edit_v1`."""
+        warnings.warn(
+            "Fatsecret.food_entry_edit_v1() is deprecated; use Fatsecret.diary.entry_edit_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return self._mutator_success(payload)
+        return self.diary.entry_edit_v1(*args, **kwargs)
 
-    def food_entries_get_v1(
-        self,
-        food_entry_id: Optional[str] = None,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """food_entries.get v1 (DEPRECATED upstream). Pass either food_entry_id or date."""
-        if food_entry_id is None and date is None:
-            return []
-        params: dict = {"method": "food_entries.get"}
-        if food_entry_id is not None:
-            params["food_entry_id"] = food_entry_id
-        else:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "food_entries", list_key="food_entry")
+    def food_entry_delete_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.diary.entry_delete_v1`."""
+        warnings.warn(
+            "Fatsecret.food_entry_delete_v1() is deprecated; use Fatsecret.diary.entry_delete_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.diary.entry_delete_v1(*args, **kwargs)
 
-    def food_entries_get_v2(
-        self,
-        food_entry_id: Optional[str] = None,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """food_entries.get v2 (current). Pass either food_entry_id or date."""
-        if food_entry_id is None and date is None:
-            return []
-        params: dict = {"method": "food_entries.get.v2"}
-        if food_entry_id is not None:
-            params["food_entry_id"] = food_entry_id
-        else:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "food_entries", list_key="food_entry")
+    def food_entries_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.diary.entries_get_v1`."""
+        warnings.warn(
+            "Fatsecret.food_entries_get_v1() is deprecated; use Fatsecret.diary.entries_get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.diary.entries_get_v1(*args, **kwargs)
 
-    def food_entries_get_month_v1(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """food_entries.get_month v1 (DEPRECATED upstream)."""
-        params: dict = {"method": "food_entries.get_month"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "month", list_key="day")
+    def food_entries_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.diary.entries_get_v2`."""
+        warnings.warn(
+            "Fatsecret.food_entries_get_v2() is deprecated; use Fatsecret.diary.entries_get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.diary.entries_get_v2(*args, **kwargs)
 
-    def food_entries_get_month_v2(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """food_entries.get_month v2 (current)."""
-        params: dict = {"method": "food_entries.get_month.v2"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "month", list_key="day")
+    def food_entries_get_month_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.diary.entries_get_month_v1`."""
+        warnings.warn(
+            "Fatsecret.food_entries_get_month_v1() is deprecated; use Fatsecret.diary.entries_get_month_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.diary.entries_get_month_v1(*args, **kwargs)
 
-    def food_entries_copy_v1(
-        self,
-        from_date: Union[datetime.datetime, datetime.date, int, float],
-        to_date: Union[datetime.datetime, datetime.date, int, float],
-        meal: Optional[str] = None,
-    ) -> Union[bool, Any]:
-        """food_entries.copy v1."""
-        params = {
-            "method": "food_entries.copy",
-            "from_date": self.unix_time_v2(from_date),
-            "to_date": self.unix_time_v2(to_date),
-        }
-        self._set_optional(params, [("meal", meal)])
-        payload = self._call(params, method="POST")
-        return self._mutator_success(payload)
+    def food_entries_get_month_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.diary.entries_get_month_v2`."""
+        warnings.warn(
+            "Fatsecret.food_entries_get_month_v2() is deprecated; use Fatsecret.diary.entries_get_month_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.diary.entries_get_month_v2(*args, **kwargs)
 
-    def food_entries_copy_saved_meal_v1(
-        self,
-        saved_meal_id: str,
-        meal: str,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> Union[bool, Any]:
-        """food_entries.copy_saved_meal v1."""
-        params = {
-            "method": "food_entries.copy_saved_meal",
-            "saved_meal_id": saved_meal_id,
-            "meal": meal,
-        }
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params, method="POST")
-        return self._mutator_success(payload)
+    def food_entries_copy_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.diary.entries_copy_v1`."""
+        warnings.warn(
+            "Fatsecret.food_entries_copy_v1() is deprecated; use Fatsecret.diary.entries_copy_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.diary.entries_copy_v1(*args, **kwargs)
+
+    def food_entries_copy_saved_meal_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.diary.entries_copy_saved_meal_v1`."""
+        warnings.warn(
+            "Fatsecret.food_entries_copy_saved_meal_v1() is deprecated; use Fatsecret.diary.entries_copy_saved_meal_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.diary.entries_copy_saved_meal_v1(*args, **kwargs)
 
     # ------------------------- Exercise / Weight / Profile -------------------------
 
-    def exercises_get_v1(
-        self, region: Optional[str] = None, language: Optional[str] = None
-    ) -> list:
-        """exercises.get v1 (DEPRECATED upstream)."""
-        params = {"method": "exercises.get"}
-        self._set_optional(params, [("region", region), ("language", language)])
-        payload = self._call(params)
-        return self._unwrap(payload, "exercise_types", list_key="exercise")
-
-    def exercises_get_v2(
-        self, region: Optional[str] = None, language: Optional[str] = None
-    ) -> list:
-        """exercises.get v2 (current). Region/language are Premier-exclusive."""
-        params = {"method": "exercises.get.v2"}
-        self._set_optional(params, [("region", region), ("language", language)])
-        payload = self._call(params)
-        return self._unwrap(payload, "exercise_types", list_key="exercise")
-
-    def exercise_entry_edit_v1(
-        self,
-        shift_to_id: str,
-        shift_from_id: str,
-        minutes: int,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-        shift_to_name: Optional[str] = None,
-        shift_from_name: Optional[str] = None,
-        kcal: Optional[int] = None,
-    ) -> Union[bool, Any]:
-        """exercise_entry.edit v1. Shifts time between activities while maintaining 24h balance."""
-        params = {
-            "method": "exercise_entry.edit",
-            "shift_to_id": shift_to_id,
-            "shift_from_id": shift_from_id,
-            "minutes": minutes,
-        }
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        self._set_optional(
-            params,
-            [
-                ("shift_to_name", shift_to_name),
-                ("shift_from_name", shift_from_name),
-                ("kcal", kcal),
-            ],
+    def exercises_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.exercises.list_v1`."""
+        warnings.warn(
+            "Fatsecret.exercises_get_v1() is deprecated; use Fatsecret.exercises.list_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="PUT")
-        return self._mutator_success(payload)
+        return self.exercises.list_v1(*args, **kwargs)
 
-    def exercise_entries_get_v1(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """exercise_entries.get v1 (DEPRECATED upstream)."""
-        params: dict = {"method": "exercise_entries.get"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "exercise_entries", list_key="exercise_entry")
-
-    def exercise_entries_get_v2(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """exercise_entries.get v2 (current)."""
-        params: dict = {"method": "exercise_entries.get.v2"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "exercise_entries", list_key="exercise_entry")
-
-    def exercise_entries_get_month_v1(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """exercise_entries.get_month v1 (DEPRECATED upstream)."""
-        params: dict = {"method": "exercise_entries.get_month"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "month", list_key="day")
-
-    def exercise_entries_get_month_v2(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """exercise_entries.get_month v2 (current)."""
-        params: dict = {"method": "exercise_entries.get_month.v2"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "month", list_key="day")
-
-    def exercise_entries_commit_day_v1(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> Union[bool, Any]:
-        """exercise_entries.commit_day v1."""
-        params: dict = {"method": "exercise_entries.commit_day"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params, method="POST")
-        return self._mutator_success(payload)
-
-    def exercise_entries_save_template_v1(
-        self,
-        days: int,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> Union[bool, Any]:
-        """exercise_entries.save_template v1. Fixes the legacy bug that hit `exercise_entries.get_month`."""
-        params = {"method": "exercise_entries.save_template", "days": int(days)}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params, method="POST")
-        return self._mutator_success(payload)
-
-    def weight_update_v1(
-        self,
-        current_weight_kg: float,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-        weight_type: Optional[str] = None,
-        height_type: Optional[str] = None,
-        goal_weight_kg: Optional[float] = None,
-        current_height_cm: Optional[float] = None,
-        comment: Optional[str] = None,
-    ) -> Union[bool, Any]:
-        """weight.update v1. First-time entries require goal_weight_kg and current_height_cm."""
-        params = {"method": "weight.update", "current_weight_kg": current_weight_kg}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        self._set_optional(
-            params,
-            [
-                ("weight_type", weight_type),
-                ("height_type", height_type),
-                ("goal_weight_kg", goal_weight_kg),
-                ("current_height_cm", current_height_cm),
-                ("comment", comment),
-            ],
+    def exercises_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.exercises.list_v2`."""
+        warnings.warn(
+            "Fatsecret.exercises_get_v2() is deprecated; use Fatsecret.exercises.list_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        payload = self._call(params, method="POST")
-        return self._mutator_success(payload)
+        return self.exercises.list_v2(*args, **kwargs)
 
-    def weights_get_month_v1(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """weights.get_month v1 (DEPRECATED upstream)."""
-        params: dict = {"method": "weights.get_month"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "month", list_key="day")
+    def exercise_entry_edit_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.exercises.entry_edit_v1`."""
+        warnings.warn(
+            "Fatsecret.exercise_entry_edit_v1() is deprecated; use Fatsecret.exercises.entry_edit_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.exercises.entry_edit_v1(*args, **kwargs)
 
-    def weights_get_month_v2(
-        self,
-        date: Optional[Union[datetime.datetime, datetime.date, int, float]] = None,
-    ) -> list:
-        """weights.get_month v2 (current)."""
-        params: dict = {"method": "weights.get_month.v2"}
-        if date is not None:
-            params["date"] = self.unix_time_v2(date)
-        payload = self._call(params)
-        return self._unwrap(payload, "month", list_key="day")
+    def exercise_entries_get_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.exercises.entries_get_v1`."""
+        warnings.warn(
+            "Fatsecret.exercise_entries_get_v1() is deprecated; use Fatsecret.exercises.entries_get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.exercises.entries_get_v1(*args, **kwargs)
 
-    def profile_create_v1(self, user_id: Optional[str] = None) -> Any:
-        """profile.create v1. Returns (auth_token, auth_secret) when user_id is supplied."""
-        params: dict = {"method": "profile.create"}
-        if user_id is not None:
-            params["user_id"] = user_id
-        payload = self._call(params, method="POST")
-        profile = self._unwrap(payload, "profile")
-        if isinstance(profile, dict) and "auth_token" in profile:
-            return (profile["auth_token"], profile["auth_secret"])
-        return profile
+    def exercise_entries_get_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.exercises.entries_get_v2`."""
+        warnings.warn(
+            "Fatsecret.exercise_entries_get_v2() is deprecated; use Fatsecret.exercises.entries_get_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.exercises.entries_get_v2(*args, **kwargs)
 
-    def profile_get_v1(self) -> dict:
-        """profile.get v1. Returns the user's profile dict."""
-        payload = self._call({"method": "profile.get"})
-        return self._unwrap(payload, "profile")
+    def exercise_entries_get_month_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.exercises.entries_get_month_v1`."""
+        warnings.warn(
+            "Fatsecret.exercise_entries_get_month_v1() is deprecated; use Fatsecret.exercises.entries_get_month_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.exercises.entries_get_month_v1(*args, **kwargs)
 
-    def profile_get_auth_v1(self, user_id: Optional[str] = None) -> Any:
-        """profile.get_auth v1. Returns (auth_token, auth_secret)."""
-        params: dict = {"method": "profile.get_auth"}
-        if user_id is not None:
-            params["user_id"] = user_id
-        payload = self._call(params)
-        profile = self._unwrap(payload, "profile")
-        if isinstance(profile, dict) and "auth_token" in profile:
-            return (profile["auth_token"], profile["auth_secret"])
-        return profile
+    def exercise_entries_get_month_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.exercises.entries_get_month_v2`."""
+        warnings.warn(
+            "Fatsecret.exercise_entries_get_month_v2() is deprecated; use Fatsecret.exercises.entries_get_month_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.exercises.entries_get_month_v2(*args, **kwargs)
+
+    def exercise_entries_commit_day_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.exercises.entries_commit_day_v1`."""
+        warnings.warn(
+            "Fatsecret.exercise_entries_commit_day_v1() is deprecated; use Fatsecret.exercises.entries_commit_day_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.exercises.entries_commit_day_v1(*args, **kwargs)
+
+    def exercise_entries_save_template_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.exercises.entries_save_template_v1`."""
+        warnings.warn(
+            "Fatsecret.exercise_entries_save_template_v1() is deprecated; use Fatsecret.exercises.entries_save_template_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.exercises.entries_save_template_v1(*args, **kwargs)
+
+    def weight_update_v1(self, *args: Any, **kwargs: Any) -> Union[bool, Any]:
+        """Deprecated; use :meth:`Fatsecret.weight.update_v1`."""
+        warnings.warn(
+            "Fatsecret.weight_update_v1() is deprecated; use Fatsecret.weight.update_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.weight.update_v1(*args, **kwargs)
+
+    def weights_get_month_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.weight.get_month_v1`."""
+        warnings.warn(
+            "Fatsecret.weights_get_month_v1() is deprecated; use Fatsecret.weight.get_month_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.weight.get_month_v1(*args, **kwargs)
+
+    def weights_get_month_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.weight.get_month_v2`."""
+        warnings.warn(
+            "Fatsecret.weights_get_month_v2() is deprecated; use Fatsecret.weight.get_month_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.weight.get_month_v2(*args, **kwargs)
+
+    def profile_create_v1(self, *args: Any, **kwargs: Any) -> Any:
+        """Deprecated; use :meth:`Fatsecret.profile.create_v1`."""
+        warnings.warn(
+            "Fatsecret.profile_create_v1() is deprecated; use Fatsecret.profile.create_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile.create_v1(*args, **kwargs)
+
+    def profile_get_v1(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.profile.get_v1`."""
+        warnings.warn(
+            "Fatsecret.profile_get_v1() is deprecated; use Fatsecret.profile.get_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile.get_v1(*args, **kwargs)
+
+    def profile_get_auth_v1(self, *args: Any, **kwargs: Any) -> Any:
+        """Deprecated; use :meth:`Fatsecret.profile.get_auth_v1`."""
+        warnings.warn(
+            "Fatsecret.profile_get_auth_v1() is deprecated; use Fatsecret.profile.get_auth_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.profile.get_auth_v1(*args, **kwargs)
 
     # ------------------------- Native APIs (REST URL endpoints) -------------------------
 
-    def natural_language_processing_v1(
-        self,
-        user_input: str,
-        include_food_data: Optional[bool] = None,
-        eaten_foods: Optional[list] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """natural.language.processing v1. URL-based REST endpoint (POST).
-
-        Premier-exclusive. OAuth2 scope: `nlp`. user_input limited to 1000 chars.
-        """
-        body: dict = {"user_input": user_input}
-        if include_food_data is not None:
-            body["include_food_data"] = include_food_data
-        if eaten_foods is not None:
-            body["eaten_foods"] = eaten_foods
-        if region is not None:
-            body["region"] = region
-        if language is not None:
-            body["language"] = language
-        payload = self._call(
-            params={"format": "json"},
-            url="https://platform.fatsecret.com/rest/natural-language-processing/v1",
-            method="POST",
-            json_body=body,
+    def natural_language_processing_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.native.natural_language_processing_v1`."""
+        warnings.warn(
+            "Fatsecret.natural_language_processing_v1() is deprecated; use Fatsecret.native.natural_language_processing_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        if isinstance(payload, dict) and "food_response" in payload:
-            return self._unwrap(payload, "food_response", list_key=None) or []
-        return payload
+        return self.native.natural_language_processing_v1(*args, **kwargs)
 
-    def image_recognition_v1(
-        self,
-        image_b64: str,
-        include_food_data: Optional[bool] = None,
-        eaten_foods: Optional[list] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """image.recognition v1. URL-based REST endpoint (POST).
-
-        Premier-exclusive. OAuth2 scope: `image-recognition`. image_b64 max ~999,982 chars.
-        """
-        body: dict = {"image_b64": image_b64}
-        if include_food_data is not None:
-            body["include_food_data"] = include_food_data
-        if eaten_foods is not None:
-            body["eaten_foods"] = eaten_foods
-        if region is not None:
-            body["region"] = region
-        if language is not None:
-            body["language"] = language
-        payload = self._call(
-            params={"format": "json"},
-            url="https://platform.fatsecret.com/rest/image-recognition/v1",
-            method="POST",
-            json_body=body,
+    def image_recognition_v1(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.native.image_recognition_v1`."""
+        warnings.warn(
+            "Fatsecret.image_recognition_v1() is deprecated; use Fatsecret.native.image_recognition_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        if isinstance(payload, dict) and "food_response" in payload:
-            return self._unwrap(payload, "food_response", list_key=None) or []
-        return payload
+        return self.native.image_recognition_v1(*args, **kwargs)
 
-    def image_recognition_v2(
-        self,
-        image_b64: str,
-        include_food_data: Optional[bool] = None,
-        eaten_foods: Optional[list] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> list:
-        """image.recognition v2. URL-based REST endpoint (POST).
-
-        Premier-exclusive. OAuth2 scope: `image-recognition`. Faster inference, better
-        handling of generic/restaurant/mixed foods.
-        """
-        body: dict = {"image_b64": image_b64}
-        if include_food_data is not None:
-            body["include_food_data"] = include_food_data
-        if eaten_foods is not None:
-            body["eaten_foods"] = eaten_foods
-        if region is not None:
-            body["region"] = region
-        if language is not None:
-            body["language"] = language
-        payload = self._call(
-            params={"format": "json"},
-            url="https://platform.fatsecret.com/rest/image-recognition/v2",
-            method="POST",
-            json_body=body,
+    def image_recognition_v2(self, *args: Any, **kwargs: Any) -> list:
+        """Deprecated; use :meth:`Fatsecret.native.image_recognition_v2`."""
+        warnings.warn(
+            "Fatsecret.image_recognition_v2() is deprecated; use Fatsecret.native.image_recognition_v2(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        if isinstance(payload, dict) and "food_response" in payload:
-            return self._unwrap(payload, "food_response", list_key=None) or []
-        return payload
+        return self.native.image_recognition_v2(*args, **kwargs)
 
     # ------------------------- Feedback (REST URL endpoint) -------------------------
 
-    def feedback_v1(
-        self,
-        issue_type_id: int,
-        external_id: str,
-        barcode: Optional[int] = None,
-        issue_type: Optional[str] = None,
-        notes: Optional[str] = None,
-        returned_food_id: Optional[int] = None,
-        returned_serving_id: Optional[int] = None,
-        image_file_extension: Optional[str] = None,
-        region: Optional[str] = None,
-        language: Optional[str] = None,
-    ) -> dict:
-        """feedback v1. URL-based REST endpoint (POST).
-
-        Premier-exclusive. OAuth2 scope: `feedback`. issue_type_id codes:
-        1=Wrong Name/Brand, 2=Wrong Nutrition, 3=Missing Serving Size,
-        4=Barcode not found, 99=Other.
-        """
-        body: dict = {"issue_type_id": issue_type_id, "external_id": external_id}
-        if barcode is not None:
-            body["barcode"] = barcode
-        if issue_type is not None:
-            body["issue_type"] = issue_type
-        if notes is not None:
-            body["notes"] = notes
-        if returned_food_id is not None or returned_serving_id is not None:
-            returned_food: dict = {}
-            if returned_food_id is not None:
-                returned_food["food_id"] = returned_food_id
-            if returned_serving_id is not None:
-                returned_food["serving_id"] = returned_serving_id
-            body["returned_food"] = returned_food
-        if image_file_extension is not None:
-            body["image_file_extension"] = image_file_extension
-        if region is not None:
-            body["region"] = region
-        if language is not None:
-            body["language"] = language
-        payload = self._call(
-            params={"format": "json"},
-            url="https://platform.fatsecret.com/rest/feedback/v1",
-            method="POST",
-            json_body=body,
+    def feedback_v1(self, *args: Any, **kwargs: Any) -> dict:
+        """Deprecated; use :meth:`Fatsecret.feedback.submit_v1`."""
+        warnings.warn(
+            "Fatsecret.feedback_v1() is deprecated; use Fatsecret.feedback.submit_v1(). "
+            "Will be removed in v3.0.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return payload
+        return self.feedback.submit_v1(*args, **kwargs)
+
