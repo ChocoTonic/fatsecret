@@ -51,7 +51,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull origin master
-          CURRENT=$(python -c "import tomllib; print(tomllib.loads(open('pyproject.toml').read())['project']['version'])")
+
+          # Derive current version from latest tag, not pyproject.toml
+          CURRENT=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | tr -d 'v')
           MAJOR=$(echo $CURRENT | cut -d. -f1)
           MINOR=$(echo $CURRENT | cut -d. -f2)
           PATCH=$(echo $CURRENT | cut -d. -f3)
@@ -72,14 +74,7 @@ jobs:
             NEW="$MAJOR.$((MINOR + 1)).0"
           fi
 
-          # Skip if tag already exists
-          if git rev-parse "v$NEW" >/dev/null 2>&1; then
-            echo "skip=true" >> $GITHUB_OUTPUT
-            echo "Skipping: tag v$NEW already exists"
-            exit 0
-          fi
-
-          sed -i "s/version = \"$CURRENT\"/version = \"$NEW\"/" pyproject.toml
+          sed -i "s/version = \"[^\"]*\"/version = \"$NEW\"/" pyproject.toml
           echo "skip=false" >> $GITHUB_OUTPUT
           echo "version=$NEW" >> $GITHUB_OUTPUT
           echo "tag=v$NEW" >> $GITHUB_OUTPUT
