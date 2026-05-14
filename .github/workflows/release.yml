@@ -45,36 +45,35 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Install commitizen
-        run: pip install commitizen
-
-      - name: Bump version and create changelog
-        id: bump
+      - name: Bump patch version
+        id: version
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if cz bump --yes 2>&1 | grep -q "No commits found"; then
-            echo "bumped=false" >> $GITHUB_OUTPUT
-          else
-            echo "bumped=true" >> $GITHUB_OUTPUT
-            echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
-          fi
+          CURRENT=$(python -c "import tomllib; print(tomllib.loads(open('pyproject.toml').read())['project']['version'])")
+          MAJOR=$(echo $CURRENT | cut -d. -f1)
+          MINOR=$(echo $CURRENT | cut -d. -f2)
+          PATCH=$(echo $CURRENT | cut -d. -f3)
+          NEW="$MAJOR.$MINOR.$((PATCH + 1))"
+          sed -i "s/version = \"$CURRENT\"/version = \"$NEW\"/" pyproject.toml
+          echo "version=$NEW" >> $GITHUB_OUTPUT
+          echo "tag=v$NEW" >> $GITHUB_OUTPUT
 
-      - name: Push version bump
-        if: steps.bump.outputs.bumped == 'true'
-        run: git push origin master --tags
+      - name: Commit and tag version bump
+        run: |
+          git add pyproject.toml
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin master --tags
 
       - name: Create GitHub Release
-        if: steps.bump.outputs.bumped == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.bump.outputs.tag }}
-          body_path: CHANGELOG.md
+          tag_name: ${{ steps.version.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to PyPI
-        if: steps.bump.outputs.bumped == 'true'
         run: make release
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
