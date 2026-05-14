@@ -10,20 +10,34 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food.get" (included with other parameters)'
-    name: String
+  - &id001
+    description: FatSecret food identifier.
+    name: food_id
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - &id004
+    description: Include food sub-categories.
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - &id005
+    description: Flag the default serving in the response.
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - &id002
+    description: Region.
+    name: region
+    required: false
+    type: String
+  - &id003
+    description: Language.
+    name: language
+    required: false
+    type: String
   premier: true
-  response: {}
+  response:
+    food: {}
   rest_url: null
   scope: basic
   version: v1
@@ -38,49 +52,12 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: "The Vitamin A value is the raw value in micrograms (mcg).\n                \n      \
-      \          It is up to the developer to calculate the %DV (Percent Daily Value)"
-    name: "The Vitamin A value is the percentage of daily recommended.\n                \n           \
-      \     It is based on a 2000 calorie diet."
-    required: false
-    type: null
-  - default: null
-    description: "The Vitamin C value is the raw value in milligrams (mg).\n                \n       \
-      \         It is up to the developer to calculate the %DV"
-    name: "The Vitamin C value is the percentage of daily recommended.\n                \n           \
-      \     It is based on a 2000 calorie diet."
-    required: false
-    type: null
-  - default: null
-    description: "The Calcium value is the raw value in milligrams (mg).\n                \n         \
-      \       It is up to the developer to calculate the %DV"
-    name: "The Calcium value is the percentage of daily recommended.\n                \n             \
-      \   It is based on a 2000 calorie diet."
-    required: false
-    type: null
-  - default: null
-    description: "The Iron value is the raw value in milligrams (mg).\n                \n            \
-      \    It is up to the developer to calculate the %DV"
-    name: "The Iron value is the percentage of daily recommended.\n                \n                It\
-      \ is based on a 2000 calorie diet."
-    required: false
-    type: null
-  - default: null
-    description: Vitamin D is the raw value in micrograms (mcg).
-    name: '---'
-    required: false
-    type: null
-  - default: null
-    description: "Added Sugars is the raw value in grams (g).\n                \n                It is\
-      \ new for our food_type = \"Brand\""
-    name: '---'
-    required: false
-    type: null
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id001
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    food: {}
   rest_url: null
   scope: basic
   version: v2
@@ -95,20 +72,14 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/v3"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food.get.v3" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id001
+  - *id004
+  - *id005
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    food: {}
   rest_url: null
   scope: basic
   version: v3
@@ -123,20 +94,24 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/v4"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food.get.v4" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id001
+  - *id004
+  - &id006
+    description: Include food images.
+    name: include_food_images
+    required: false
+    type: Boolean
+  - &id007
+    description: Include food attributes (allergens / preferences).
+    name: include_food_attributes
+    required: false
+    type: Boolean
+  - *id005
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    food: {}
   rest_url: null
   scope: basic
   version: v4
@@ -151,20 +126,16 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/v5"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food.get.v5" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id001
+  - *id004
+  - *id006
+  - *id007
+  - *id005
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    food: {}
   rest_url: null
   scope: basic
   version: v5
@@ -179,20 +150,32 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/foods/search/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.search" (included with other parameters)'
-    name: String
+  - &id008
+    description: Search expression.
+    name: search_expression
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - &id009
+    description: Zero-based page index.
+    name: page_number
+    required: false
+    type: Int
+  - &id010
+    description: Maximum results per page.
+    name: max_results
+    required: false
+    type: Int
+  - description: Filter on generic_description.
+    name: generic_description
+    required: false
+    type: String
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    foods:
+      food:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -207,20 +190,19 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/foods/search/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.search.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id008
+  - *id009
+  - *id010
+  - *id004
+  - *id005
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    foods_search:
+      results:
+        food:
+        - {}
   rest_url: null
   scope: basic
   version: v2
@@ -235,20 +217,21 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/foods/search/v3"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.search.v3" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id008
+  - *id009
+  - *id010
+  - *id004
+  - *id006
+  - *id007
+  - *id005
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    foods_search:
+      results:
+        food:
+        - {}
   rest_url: null
   scope: basic
   version: v3
@@ -263,20 +246,21 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/foods/search/v4"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.search.v4" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id008
+  - *id009
+  - *id010
+  - *id004
+  - *id006
+  - *id007
+  - *id005
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    foods_search:
+      results:
+        food:
+        - {}
   rest_url: null
   scope: basic
   version: v4
@@ -291,20 +275,25 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/foods/search/v5"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.search.v5" (included with other parameters)'
-    name: String
-    required: true
+  - *id008
+  - *id009
+  - *id010
+  - *id004
+  - *id006
+  - *id007
+  - *id005
+  - description: One of 'generic'|'brand'|'none'.
+    name: food_type
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    foods_search:
+      results:
+        food:
+        - {}
   rest_url: null
   scope: basic
   version: v5
