@@ -98,6 +98,35 @@ class Fatsecret:
         else:
             raise ValueError(f"auth must be 'oauth1' or 'oauth2', got {auth!r}")
 
+        # v2.0 resource-namespaced surface. Each resource exposes the
+        # OAS-tag's endpoints via short names (e.g. fs.foods.search_v5).
+        # Phase 1: pure delegation over the flat _vN methods on this class.
+        from .resources import (
+            ClassificationResource,
+            DiaryResource,
+            ExercisesResource,
+            FeedbackResource,
+            FoodsResource,
+            MealsResource,
+            NativeResource,
+            ProfileFoodsResource,
+            ProfileResource,
+            RecipesResource,
+            WeightResource,
+        )
+
+        self.foods = FoodsResource(self)
+        self.classification = ClassificationResource(self)
+        self.recipes = RecipesResource(self)
+        self.profile_foods = ProfileFoodsResource(self)
+        self.meals = MealsResource(self)
+        self.diary = DiaryResource(self)
+        self.exercises = ExercisesResource(self)
+        self.weight = WeightResource(self)
+        self.profile = ProfileResource(self)
+        self.native = NativeResource(self)
+        self.feedback = FeedbackResource(self)
+
     def _get_oauth2_token(self) -> str:
         """Fetch (and cache) an OAuth2 bearer token via client_credentials.
 
