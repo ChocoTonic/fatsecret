@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   test:
     uses: ./.github/workflows/test.yml
@@ -61,7 +65,7 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.tag_check.outputs.exists == 'false'
-        uses: softprof/action-gh-release@v1
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           draft: false
