@@ -108,10 +108,14 @@ def run_authenticated_demo(fs_auth: Fatsecret) -> None:
     most_eaten = fs_auth.profile_foods.get_most_eaten_v1()
     pprint(most_eaten[:3] if isinstance(most_eaten, list) else most_eaten)
 
-    token = (fs_auth.access_token, fs_auth.access_token_secret)
+    def _tail(s: str) -> str:
+        return f"****{s[-4:]}" if s and len(s) > 4 else "****"
+
+    masked = (_tail(fs_auth.access_token), _tail(fs_auth.access_token_secret))
     print(
         "\nSave these as FATSECRET_ACCESS_TOKEN / FATSECRET_ACCESS_SECRET to skip\n"
-        f"the HTML-scrape next time:\n  {token}"
+        f"the HTML-scrape next time (printed masked, look in fs_auth.access_token /\n"
+        f"fs_auth.access_token_secret for the full values):\n  {masked}"
     )
 
 
