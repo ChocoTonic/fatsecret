@@ -20,6 +20,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     env:
       FATSECRET_CONSUMER_KEY: ${{ secrets.FATSECRET_CONSUMER_KEY }}
       FATSECRET_CONSUMER_SECRET: ${{ secrets.FATSECRET_CONSUMER_SECRET }}
@@ -28,6 +31,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -45,14 +51,12 @@ jobs:
           COMMIT_MSG=$(git log -1 --pretty=%B)
           CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
 
-          # Only dep files changed?
           if echo "$CHANGED_FILES" | grep -qvE '^(uv\.lock|pyproject\.toml)$'; then
             IS_DEP_BUMP=false
           else
             IS_DEP_BUMP=true
           fi
 
-          # CVE/security mentioned?
           if echo "$COMMIT_MSG" | grep -qi "CVE\|security\|vulnerability"; then
             HAS_CVE=true
           else
@@ -66,39 +70,35 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Extract version from pyproject.toml
+      - name: Bump patch version
         if: steps.should_release.outputs.skip == 'false'
         id: version
         run: |
-          VERSION=$(python -c "import tomllib; print(tomllib.loads(open('pyproject.toml').read())['project']['version'])")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Check if tag already exists
-        if: steps.should_release.outputs.skip == 'false'
-        id: tag_check
-        run: |
-          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Create git tag
-        if: steps.should_release.outputs.skip == 'false' && steps.tag_check.outputs.exists == 'false'
-        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.version }}"
-          git push origin "${{ steps.version.outputs.tag }}"
+          git pull origin master
+          CURRENT=$(python -c "import tomllib; print(tomllib.loads(open('pyproject.toml').read())['project']['version'])")
+          MAJOR=$(echo $CURRENT | cut -d. -f1)
+          MINOR=$(echo $CURRENT | cut -d. -f2)
+          PATCH=$(echo $CURRENT | cut -d. -f3)
+          NEW="$MAJOR.$MINOR.$((PATCH + 1))"
+          sed -i "s/version = \"$CURRENT\"/version = \"$NEW\"/" pyproject.toml
+          echo "version=$NEW" >> $GITHUB_OUTPUT
+          echo "tag=v$NEW" >> $GITHUB_OUTPUT
+
+      - name: Commit and tag version bump
+        if: steps.should_release.outputs.skip == 'false'
+        run: |
+          git add pyproject.toml
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin master --tags
 
       - name: Create GitHub Release
-        if: steps.should_release.outputs.skip == 'false' && steps.tag_check.outputs.exists == 'false'
+        if: steps.should_release.outputs.skip == 'false'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
-          draft: false
-          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
