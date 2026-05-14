@@ -1,0 +1,71 @@
+name: OAS Regen Check
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+jobs:
+  oas-regen-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Cache oas-sync scraper HTML
+        uses: actions/cache@v4
+        with:
+          path: scripts/oas-sync/.cache
+          key: oas-sync-cache-${{ hashFiles('scripts/oas-sync/uv.lock') }}
+          restore-keys: |
+            oas-sync-cache-
+
+      - name: Install oas-sync dependencies
+        working-directory: scripts/oas-sync
+        run: uv sync --frozen
+
+      - name: Snapshot committed pipeline outputs
+        run: |
+          md5sum docs/api-spec/raw/*.yaml docs/api-spec/openapi.yaml \
+            src/fatsecret/resources/_generated/*.py > /tmp/before.md5
+          cat /tmp/before.md5
+
+      - name: Run oas-sync pipeline
+        working-directory: scripts/oas-sync
+        run: |
+          uv run oas-sync sync
+          for tag in "Foods" "Food Classification" "Recipes" "Profile Foods" \
+                     "Saved Meals" "Food Diary" "Exercise Diary" "Weight Diary" \
+                     "Profile Auth" "Native APIs" "Feedback"; do
+              echo "::group::emit-resource $tag"
+              uv run oas-sync emit-resource "$tag"
+              echo "::endgroup::"
+          done
+
+      - name: Snapshot regenerated pipeline outputs
+        run: |
+          md5sum docs/api-spec/raw/*.yaml docs/api-spec/openapi.yaml \
+            src/fatsecret/resources/_generated/*.py > /tmp/after.md5
+          cat /tmp/after.md5
+
+      - name: Diff snapshots
+        id: diff
+        run: diff /tmp/before.md5 /tmp/after.md5
+
+      - name: Show drift on failure
+        if: failure() && steps.diff.outcome == 'failure'
+        run: |
+          echo "::error::Pipeline output diverged from committed files."
+          echo "Re-run the pipeline locally (\`make oas-regen-check\`) and commit the diffs."
+          git --no-pager diff -- \
+            docs/api-spec/raw \
+            docs/api-spec/openapi.yaml \
+            src/fatsecret/resources/_generated || true
