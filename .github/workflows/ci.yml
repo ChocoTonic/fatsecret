@@ -1,62 +1,19 @@
-name: Build
+name: CI
 
 on:
-    push:
-        branches:
-            - master
-    pull_request:
-        branches: ["**"]
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: ["**"]
 
 concurrency:
-    group: fatsecret-tests
-    cancel-in-progress: false # ensures one workflow at a time, no cancellation
+  group: fatsecret-tests
+  cancel-in-progress: false
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
-
-        env:
-            FATSECRET_CONSUMER_KEY: ${{ secrets.FATSECRET_CONSUMER_KEY }}
-            FATSECRET_CONSUMER_SECRET: ${{ secrets.FATSECRET_CONSUMER_SECRET }}
-            FATSECRET_USERNAME: ${{ secrets.FATSECRET_USERNAME }}
-            FATSECRET_PASSWORD: ${{ secrets.FATSECRET_PASSWORD }}
-
-        steps:
-            - uses: actions/checkout@v4
-
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: "3.14"
-
-            - name: Install uv and dependencies
-              run: |
-                  pip install uv
-                  uv sync --all-extras
-
-            - name: Run lint
-              run: make lint
-
-            - name: Run tests (with coverage)
-              run: make test
-
-            - name: Upload coverage report
-              uses: actions/upload-artifact@v4
-              with:
-                  name: coverage.xml
-                  path: coverage.xml
-
-    docs:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: "3.14"
-            - name: Install uv and dependencies
-              run: |
-                  pip install uv
-                  uv sync --all-extras
-            - name: Build docs and fail on warnings/errors
-              run: |
-                  make docs > sphinx.log 2>&1
-                  grep -E "WARNING:|ERROR:" sphinx.log && exit 1 || exit 0
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+    with:
+      test-type: ${{ github.event_name == 'pull_request' && 'unit' || 'all' }}
