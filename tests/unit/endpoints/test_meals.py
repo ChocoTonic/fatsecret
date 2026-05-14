@@ -26,6 +26,13 @@ import pytest
 from fatsecret import Fatsecret
 
 
+def _resolve(obj, dotted_path):
+    """Walk a dotted attribute path (e.g. 'foods.search_v5')."""
+    for part in dotted_path.split("."):
+        obj = getattr(obj, part)
+    return obj
+
+
 @pytest.fixture
 def fs():
     with patch("fatsecret.fatsecret.OAuth1Service") as mock_oauth1:
@@ -41,7 +48,7 @@ def fs():
 def test_saved_meal_create_v1_happy_path(fs):
     payload = {"saved_meal_id": {"value": "12345"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.saved_meal_create_v1("My Lunch")
+        result = fs.meals.create_v1("My Lunch")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "saved_meal.create"
@@ -56,7 +63,7 @@ def test_saved_meal_create_v1_happy_path(fs):
 def test_saved_meal_create_v1_with_all_optionals(fs):
     payload = {"saved_meal_id": "999"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.saved_meal_create_v1(
+        result = fs.meals.create_v1(
             "Dinner",
             saved_meal_description="A tasty dinner",
             meals="breakfast,lunch",
@@ -75,7 +82,7 @@ def test_saved_meal_create_v1_meals_is_passthrough_string(fs):
     """v1 wrapper does NOT mutate `meals`; the legacy alias joined lists."""
     payload = {"saved_meal_id": "1"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.saved_meal_create_v1("name", meals="breakfast")
+        fs.meals.create_v1("name", meals="breakfast")
 
     params = mock_call.call_args.args[0]
     assert params["meals"] == "breakfast"
@@ -85,7 +92,7 @@ def test_saved_meal_create_v1_meals_is_passthrough_string(fs):
 def test_saved_meal_create_v1_empty_response(fs):
     # `_unwrap` for a scalar key returns None when the key is missing.
     with patch.object(Fatsecret, "_call", return_value={}):
-        result = fs.saved_meal_create_v1("name")
+        result = fs.meals.create_v1("name")
     assert result is None
 
 
@@ -98,7 +105,7 @@ def test_saved_meal_edit_v1_happy_path(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"success": 1}
     ) as mock_call:
-        result = fs.saved_meal_edit_v1("123")
+        result = fs.meals.edit_v1("123")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "saved_meal.edit"
@@ -114,7 +121,7 @@ def test_saved_meal_edit_v1_with_all_optionals(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"success": 1}
     ) as mock_call:
-        result = fs.saved_meal_edit_v1(
+        result = fs.meals.edit_v1(
             "123",
             saved_meal_name="Renamed",
             saved_meal_description="updated desc",
@@ -130,14 +137,14 @@ def test_saved_meal_edit_v1_with_all_optionals(fs):
 
 def test_saved_meal_edit_v1_success_string_one_also_true(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": "1"}):
-        result = fs.saved_meal_edit_v1("123")
+        result = fs.meals.edit_v1("123")
     assert result is True
 
 
 def test_saved_meal_edit_v1_non_success_payload_passthrough(fs):
     payload = {"error": "something"}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.saved_meal_edit_v1("123")
+        result = fs.meals.edit_v1("123")
     assert result == payload
 
 
@@ -150,7 +157,7 @@ def test_saved_meal_delete_v1_happy_path(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"success": 1}
     ) as mock_call:
-        result = fs.saved_meal_delete_v1("123")
+        result = fs.meals.delete_v1("123")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "saved_meal.delete"
@@ -161,7 +168,7 @@ def test_saved_meal_delete_v1_happy_path(fs):
 
 def test_saved_meal_delete_v1_failure_passthrough(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 0}):
-        result = fs.saved_meal_delete_v1("123")
+        result = fs.meals.delete_v1("123")
     assert result is False
 
 
@@ -170,8 +177,8 @@ def test_saved_meal_delete_v1_failure_passthrough(fs):
 # ---------------------------------------------------------------------------
 
 SAVED_MEALS_GET_VERSIONS = [
-    ("saved_meals_get_v1", "saved_meals.get"),
-    ("saved_meals_get_v2", "saved_meals.get.v2"),
+    ("meals.get_v1", "saved_meals.get"),
+    ("meals.get_v2", "saved_meals.get.v2"),
 ]
 
 
@@ -186,7 +193,7 @@ def test_saved_meals_get_happy_path(fs, method_name, api_method):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -203,7 +210,7 @@ def test_saved_meals_get_happy_path(fs, method_name, api_method):
 def test_saved_meals_get_with_meal_filter(fs, method_name, api_method):
     payload = {"saved_meals": {"saved_meal": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)(meal="breakfast")
+        result = _resolve(fs, method_name)(meal="breakfast")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -215,7 +222,7 @@ def test_saved_meals_get_with_meal_filter(fs, method_name, api_method):
 def test_saved_meals_get_single_dict_coerced(fs, method_name, _):
     payload = {"saved_meals": {"saved_meal": {"saved_meal_id": "1"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == [{"saved_meal_id": "1"}]
 
 
@@ -223,7 +230,7 @@ def test_saved_meals_get_single_dict_coerced(fs, method_name, _):
 def test_saved_meals_get_empty_response(fs, method_name, _):
     # No `saved_meals` key at all → unwrap returns [].
     with patch.object(Fatsecret, "_call", return_value={}):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == []
 
 
@@ -232,7 +239,7 @@ def test_saved_meals_get_null_inner_response(fs, method_name, _):
     with patch.object(
         Fatsecret, "_call", return_value={"saved_meals": None}
     ):
-        result = getattr(fs, method_name)()
+        result = _resolve(fs, method_name)()
     assert result == []
 
 
@@ -244,7 +251,7 @@ def test_saved_meals_get_null_inner_response(fs, method_name, _):
 def test_saved_meal_item_add_v1_happy_path(fs):
     payload = {"saved_meal_item_id": "77"}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.saved_meal_item_add_v1(
+        result = fs.meals.item_add_v1(
             saved_meal_id="10",
             food_id="200",
             saved_meal_item_name="Apple",
@@ -265,7 +272,7 @@ def test_saved_meal_item_add_v1_happy_path(fs):
 
 def test_saved_meal_item_add_v1_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        result = fs.saved_meal_item_add_v1("1", "2", "n", "3", 1.0)
+        result = fs.meals.item_add_v1("1", "2", "n", "3", 1.0)
     assert result is None
 
 
@@ -278,7 +285,7 @@ def test_saved_meal_item_edit_v1_happy_path(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"success": 1}
     ) as mock_call:
-        result = fs.saved_meal_item_edit_v1("77")
+        result = fs.meals.item_edit_v1("77")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "saved_meal_item.edit"
@@ -293,7 +300,7 @@ def test_saved_meal_item_edit_v1_with_all_optionals(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"success": 1}
     ) as mock_call:
-        result = fs.saved_meal_item_edit_v1(
+        result = fs.meals.item_edit_v1(
             "77",
             saved_meal_item_name="Renamed Apple",
             number_of_units=2.0,
@@ -310,7 +317,7 @@ def test_saved_meal_item_edit_v1_cannot_change_serving_id(fs):
 
     The wrapper signature must not accept it as a keyword argument.
     The namespaced method on ``meals`` holds the real signature; the
-    flat ``Fatsecret.saved_meal_item_edit_v1`` is a deprecation alias
+    flat ``Fatsecret.meals.item_edit_v1`` is a deprecation alias
     using ``*args, **kwargs``.
     """
     import inspect
@@ -327,7 +334,7 @@ def test_saved_meal_item_edit_v1_partial_optional_only_name(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"success": 1}
     ) as mock_call:
-        fs.saved_meal_item_edit_v1("77", saved_meal_item_name="x")
+        fs.meals.item_edit_v1("77", saved_meal_item_name="x")
 
     params = mock_call.call_args.args[0]
     assert params["saved_meal_item_name"] == "x"
@@ -343,7 +350,7 @@ def test_saved_meal_item_delete_v1_happy_path(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"success": 1}
     ) as mock_call:
-        result = fs.saved_meal_item_delete_v1("77")
+        result = fs.meals.item_delete_v1("77")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "saved_meal_item.delete"
@@ -355,7 +362,7 @@ def test_saved_meal_item_delete_v1_happy_path(fs):
 def test_saved_meal_item_delete_v1_failure_passthrough(fs):
     payload = {"success": 0}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.saved_meal_item_delete_v1("77")
+        result = fs.meals.item_delete_v1("77")
     assert result is False
 
 
@@ -364,8 +371,8 @@ def test_saved_meal_item_delete_v1_failure_passthrough(fs):
 # ---------------------------------------------------------------------------
 
 SAVED_MEAL_ITEMS_GET_VERSIONS = [
-    ("saved_meal_items_get_v1", "saved_meal_items.get"),
-    ("saved_meal_items_get_v2", "saved_meal_items.get.v2"),
+    ("meals.items_get_v1", "saved_meal_items.get"),
+    ("meals.items_get_v2", "saved_meal_items.get.v2"),
 ]
 
 
@@ -382,7 +389,7 @@ def test_saved_meal_items_get_happy_path(fs, method_name, api_method):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)("10")
+        result = _resolve(fs, method_name)("10")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == api_method
@@ -400,14 +407,14 @@ def test_saved_meal_items_get_single_dict_coerced(fs, method_name, _):
         "saved_meal_items": {"saved_meal_item": {"saved_meal_item_id": "1"}}
     }
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)("10")
+        result = _resolve(fs, method_name)("10")
     assert result == [{"saved_meal_item_id": "1"}]
 
 
 @pytest.mark.parametrize("method_name,_", SAVED_MEAL_ITEMS_GET_VERSIONS)
 def test_saved_meal_items_get_empty_response(fs, method_name, _):
     with patch.object(Fatsecret, "_call", return_value={}):
-        result = getattr(fs, method_name)("10")
+        result = _resolve(fs, method_name)("10")
     assert result == []
 
 
@@ -416,5 +423,5 @@ def test_saved_meal_items_get_null_inner_response(fs, method_name, _):
     with patch.object(
         Fatsecret, "_call", return_value={"saved_meal_items": None}
     ):
-        result = getattr(fs, method_name)("10")
+        result = _resolve(fs, method_name)("10")
     assert result == []

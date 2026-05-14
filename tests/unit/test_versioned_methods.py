@@ -25,7 +25,7 @@ def fs():
 def test_foods_search_v1_call_and_unwrap(fs):
     payload = {"foods": {"food": [{"food_id": "1"}, {"food_id": "2"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.foods_search_v1("apple", page_number=0, max_results=10)
+        result = fs.foods.search_v1("apple", page_number=0, max_results=10)
 
     mock_call.assert_called_once()
     params = mock_call.call_args.args[0]
@@ -39,7 +39,7 @@ def test_foods_search_v1_call_and_unwrap(fs):
 def test_foods_search_v1_unwrap_coerces_single_dict(fs):
     payload = {"foods": {"food": {"food_id": "1"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.foods_search_v1("apple")
+        result = fs.foods.search_v1("apple")
     assert result == [{"food_id": "1"}]
 
 
@@ -51,7 +51,7 @@ def test_foods_search_v5_call_and_unwrap(fs):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.foods_search_v5("banana", food_type="brand")
+        result = fs.foods.search_v5("banana", food_type="brand")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "foods.search.v5"
@@ -65,7 +65,7 @@ def test_foods_search_v5_call_and_unwrap(fs):
 def test_food_get_v1_call_and_unwrap(fs):
     payload = {"food": {"food_id": "1", "food_name": "Apple"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_get_v1("1")
+        result = fs.foods.get_v1("1")
     params = mock_call.call_args.args[0]
     assert params["method"] == "food.get"
     assert params["food_id"] == "1"
@@ -75,7 +75,7 @@ def test_food_get_v1_call_and_unwrap(fs):
 def test_food_get_v5_call_and_unwrap(fs):
     payload = {"food": {"food_id": "5", "food_name": "Brand Apple"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_get_v5("5", region="US")
+        result = fs.foods.get_v5("5", region="US")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "food.get.v5"
@@ -90,7 +90,7 @@ def test_food_get_v5_call_and_unwrap(fs):
 def test_food_entries_get_v2_single_dict_coerced_to_list(fs):
     payload = {"food_entries": {"food_entry": {"food_entry_id": "10"}}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_entries_get_v2(food_entry_id="10")
+        result = fs.diary.entries_get_v2(food_entry_id="10")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entries.get.v2"
@@ -105,14 +105,14 @@ def test_food_entries_get_v2_list_passthrough(fs):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.food_entries_get_v2(food_entry_id="10")
+        result = fs.diary.entries_get_v2(food_entry_id="10")
     assert result == [{"food_entry_id": "10"}, {"food_entry_id": "11"}]
 
 
 def test_food_entries_get_v2_no_args_returns_empty(fs):
     # Without food_entry_id OR date the method short-circuits with []
     with patch.object(Fatsecret, "_call") as mock_call:
-        result = fs.food_entries_get_v2()
+        result = fs.diary.entries_get_v2()
     assert result == []
     mock_call.assert_not_called()
 
@@ -123,7 +123,7 @@ def test_food_entries_get_v2_no_args_returns_empty(fs):
 def test_image_recognition_v2_posts_to_url_with_json_body(fs):
     payload = {"food_response": [{"food_id": "x"}]}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.image_recognition_v2("BASE64IMG", include_food_data=True)
+        result = fs.native.image_recognition_v2("BASE64IMG", include_food_data=True)
 
     # All non-positional kwargs to _call
     kwargs = mock_call.call_args.kwargs
@@ -145,7 +145,7 @@ def test_image_recognition_v2_posts_to_url_with_json_body(fs):
 def test_profile_get_v1_unwraps_profile(fs):
     payload = {"profile": {"nickname": "alice"}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.profile_get_v1()
+        result = fs.profile.get_v1()
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "profile.get"
@@ -159,7 +159,7 @@ def test_recipe_add_favorite_v1_fixes_singular_bug(fs):
     """The legacy plural typo was `recipes.add_favorites`; v1 uses singular."""
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.recipe_add_favorite_v1("rid-1")
+        result = fs.recipes.add_favorite_v1("rid-1")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "recipe.add_favorite"
@@ -171,7 +171,7 @@ def test_recipe_add_favorite_v1_fixes_singular_bug(fs):
 def test_recipe_types_get_v1_unwraps_list(fs):
     payload = {"recipe_types": {"recipe_type": ["Breakfast", "Lunch"]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.recipe_types_get_v1()
+        result = fs.recipes.types_get_v1()
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "recipe_types.get"

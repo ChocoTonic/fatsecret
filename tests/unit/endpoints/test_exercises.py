@@ -37,7 +37,7 @@ REF_DAYS = (REF_DT - datetime.datetime(1970, 1, 1)).days
 def test_exercises_get_v1_happy_path_minimal(fs):
     payload = {"exercise_types": {"exercise": [{"name": "Running"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercises_get_v1()
+        result = fs.exercises.list_v1()
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "exercises.get"
@@ -51,7 +51,7 @@ def test_exercises_get_v1_premier_params_propagated(fs):
     """exercises.get carries the Premier-exclusive region/language params."""
     payload = {"exercise_types": {"exercise": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.exercises_get_v1(region="US", language="en")
+        fs.exercises.list_v1(region="US", language="en")
     params = mock_call.call_args.args[0]
     assert params["region"] == "US"
     assert params["language"] == "en"
@@ -60,20 +60,20 @@ def test_exercises_get_v1_premier_params_propagated(fs):
 def test_exercises_get_v1_single_dict_coerced_to_list(fs):
     payload = {"exercise_types": {"exercise": {"name": "Running"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.exercises_get_v1()
+        result = fs.exercises.list_v1()
     assert result == [{"name": "Running"}]
 
 
 def test_exercises_get_v1_empty_returns_empty_list(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        result = fs.exercises_get_v1()
+        result = fs.exercises.list_v1()
     assert result == []
 
 
 def test_exercises_get_v2_happy_path(fs):
     payload = {"exercise_types": {"exercise": [{"name": "Cycling"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercises_get_v2()
+        result = fs.exercises.list_v2()
     params = mock_call.call_args.args[0]
     assert params["method"] == "exercises.get.v2"
     assert "region" not in params and "language" not in params
@@ -83,7 +83,7 @@ def test_exercises_get_v2_happy_path(fs):
 def test_exercises_get_v2_premier_params_propagated(fs):
     payload = {"exercise_types": {"exercise": []}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.exercises_get_v2(region="GB", language="fr")
+        fs.exercises.list_v2(region="GB", language="fr")
     params = mock_call.call_args.args[0]
     assert params["region"] == "GB"
     assert params["language"] == "fr"
@@ -91,7 +91,7 @@ def test_exercises_get_v2_premier_params_propagated(fs):
 
 def test_exercises_get_v2_empty_returns_empty_list(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.exercises_get_v2() == []
+        assert fs.exercises.list_v2() == []
 
 
 # --------------------------- exercise_entries.get v1 / v2 ---------------------------
@@ -116,7 +116,7 @@ def test_exercise_entries_get_v1_happy_path_no_date(fs):
         "exercise_entries": {"exercise_entry": [{"exercise_entry_id": "1"}]}
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercise_entries_get_v1()
+        result = fs.exercises.entries_get_v1()
     params = mock_call.call_args.args[0]
     assert params["method"] == "exercise_entries.get"
     assert "date" not in params
@@ -126,25 +126,25 @@ def test_exercise_entries_get_v1_happy_path_no_date(fs):
 
 def test_exercise_entries_get_v1_with_date(fs):
     with patch.object(Fatsecret, "_call", return_value={}) as mock_call:
-        fs.exercise_entries_get_v1(date=REF_DT)
+        fs.exercises.entries_get_v1(date=REF_DT)
     params = mock_call.call_args.args[0]
     assert params["date"] == REF_DAYS
 
 
 def test_exercise_entries_get_v1_date_coercion(fs):
-    _date_calls_identical(fs, fs.exercise_entries_get_v1)
+    _date_calls_identical(fs, fs.exercises.entries_get_v1)
 
 
 def test_exercise_entries_get_v1_single_dict_coerced(fs):
     payload = {"exercise_entries": {"exercise_entry": {"exercise_entry_id": "9"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.exercise_entries_get_v1()
+        result = fs.exercises.entries_get_v1()
     assert result == [{"exercise_entry_id": "9"}]
 
 
 def test_exercise_entries_get_v1_empty_returns_empty_list(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.exercise_entries_get_v1() == []
+        assert fs.exercises.entries_get_v1() == []
 
 
 def test_exercise_entries_get_v2_happy_path(fs):
@@ -154,7 +154,7 @@ def test_exercise_entries_get_v2_happy_path(fs):
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercise_entries_get_v2()
+        result = fs.exercises.entries_get_v2()
     params = mock_call.call_args.args[0]
     assert params["method"] == "exercise_entries.get.v2"
     assert "date" not in params
@@ -163,24 +163,24 @@ def test_exercise_entries_get_v2_happy_path(fs):
 
 def test_exercise_entries_get_v2_with_date(fs):
     with patch.object(Fatsecret, "_call", return_value={}) as mock_call:
-        fs.exercise_entries_get_v2(date=REF_DATE)
+        fs.exercises.entries_get_v2(date=REF_DATE)
     params = mock_call.call_args.args[0]
     assert params["date"] == REF_DAYS
 
 
 def test_exercise_entries_get_v2_date_coercion(fs):
-    _date_calls_identical(fs, fs.exercise_entries_get_v2)
+    _date_calls_identical(fs, fs.exercises.entries_get_v2)
 
 
 def test_exercise_entries_get_v2_single_dict_coerced(fs):
     payload = {"exercise_entries": {"exercise_entry": {"exercise_entry_id": "9"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.exercise_entries_get_v2() == [{"exercise_entry_id": "9"}]
+        assert fs.exercises.entries_get_v2() == [{"exercise_entry_id": "9"}]
 
 
 def test_exercise_entries_get_v2_empty_returns_empty_list(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.exercise_entries_get_v2() == []
+        assert fs.exercises.entries_get_v2() == []
 
 
 # --------------------------- exercise_entries.get_month v1 / v2 ---------------------------
@@ -189,7 +189,7 @@ def test_exercise_entries_get_v2_empty_returns_empty_list(fs):
 def test_exercise_entries_get_month_v1_happy_path_no_date(fs):
     payload = {"month": {"day": [{"date_int": "1"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercise_entries_get_month_v1()
+        result = fs.exercises.entries_get_month_v1()
     params = mock_call.call_args.args[0]
     assert params["method"] == "exercise_entries.get_month"
     assert "date" not in params
@@ -199,29 +199,29 @@ def test_exercise_entries_get_month_v1_happy_path_no_date(fs):
 
 def test_exercise_entries_get_month_v1_with_date(fs):
     with patch.object(Fatsecret, "_call", return_value={}) as mock_call:
-        fs.exercise_entries_get_month_v1(date=REF_DT)
+        fs.exercises.entries_get_month_v1(date=REF_DT)
     assert mock_call.call_args.args[0]["date"] == REF_DAYS
 
 
 def test_exercise_entries_get_month_v1_date_coercion(fs):
-    _date_calls_identical(fs, fs.exercise_entries_get_month_v1)
+    _date_calls_identical(fs, fs.exercises.entries_get_month_v1)
 
 
 def test_exercise_entries_get_month_v1_single_day_coerced(fs):
     payload = {"month": {"day": {"date_int": "1"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.exercise_entries_get_month_v1() == [{"date_int": "1"}]
+        assert fs.exercises.entries_get_month_v1() == [{"date_int": "1"}]
 
 
 def test_exercise_entries_get_month_v1_empty_returns_empty(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.exercise_entries_get_month_v1() == []
+        assert fs.exercises.entries_get_month_v1() == []
 
 
 def test_exercise_entries_get_month_v2_happy_path(fs):
     payload = {"month": {"day": [{"date_int": "1"}, {"date_int": "2"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercise_entries_get_month_v2()
+        result = fs.exercises.entries_get_month_v2()
     params = mock_call.call_args.args[0]
     assert params["method"] == "exercise_entries.get_month.v2"
     assert "date" not in params
@@ -230,23 +230,23 @@ def test_exercise_entries_get_month_v2_happy_path(fs):
 
 def test_exercise_entries_get_month_v2_with_date(fs):
     with patch.object(Fatsecret, "_call", return_value={}) as mock_call:
-        fs.exercise_entries_get_month_v2(date=REF_DATE)
+        fs.exercises.entries_get_month_v2(date=REF_DATE)
     assert mock_call.call_args.args[0]["date"] == REF_DAYS
 
 
 def test_exercise_entries_get_month_v2_date_coercion(fs):
-    _date_calls_identical(fs, fs.exercise_entries_get_month_v2)
+    _date_calls_identical(fs, fs.exercises.entries_get_month_v2)
 
 
 def test_exercise_entries_get_month_v2_single_day_coerced(fs):
     payload = {"month": {"day": {"date_int": "1"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.exercise_entries_get_month_v2() == [{"date_int": "1"}]
+        assert fs.exercises.entries_get_month_v2() == [{"date_int": "1"}]
 
 
 def test_exercise_entries_get_month_v2_empty_returns_empty(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.exercise_entries_get_month_v2() == []
+        assert fs.exercises.entries_get_month_v2() == []
 
 
 # --------------------------- exercise_entry.edit v1 ---------------------------
@@ -255,7 +255,7 @@ def test_exercise_entries_get_month_v2_empty_returns_empty(fs):
 def test_exercise_entry_edit_v1_happy_path_required_only(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercise_entry_edit_v1(
+        result = fs.exercises.entry_edit_v1(
             shift_to_id="11", shift_from_id="22", minutes=30
         )
     params = mock_call.call_args.args[0]
@@ -273,7 +273,7 @@ def test_exercise_entry_edit_v1_happy_path_required_only(fs):
 def test_exercise_entry_edit_v1_all_optional_params_present(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.exercise_entry_edit_v1(
+        fs.exercises.entry_edit_v1(
             shift_to_id="11",
             shift_from_id="22",
             minutes=15,
@@ -293,7 +293,7 @@ def test_exercise_entry_edit_v1_date_coercion(fs):
     results = []
     for d in (REF_DT, REF_DATE, REF_TS, float(REF_TS)):
         with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-            fs.exercise_entry_edit_v1(
+            fs.exercises.entry_edit_v1(
                 shift_to_id="11", shift_from_id="22", minutes=10, date=d
             )
         results.append(mock_call.call_args.args[0])
@@ -305,7 +305,7 @@ def test_exercise_entry_edit_v1_date_coercion(fs):
 def test_exercise_entry_edit_v1_mutator_returns_true(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}):
         assert (
-            fs.exercise_entry_edit_v1(shift_to_id="1", shift_from_id="2", minutes=5)
+            fs.exercises.entry_edit_v1(shift_to_id="1", shift_from_id="2", minutes=5)
             is True
         )
 
@@ -316,7 +316,7 @@ def test_exercise_entry_edit_v1_mutator_returns_true(fs):
 def test_exercise_entries_commit_day_v1_happy_path_no_date(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercise_entries_commit_day_v1()
+        result = fs.exercises.entries_commit_day_v1()
     params = mock_call.call_args.args[0]
     assert params["method"] == "exercise_entries.commit_day"
     assert "date" not in params
@@ -326,7 +326,7 @@ def test_exercise_entries_commit_day_v1_happy_path_no_date(fs):
 
 def test_exercise_entries_commit_day_v1_with_date(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.exercise_entries_commit_day_v1(date=REF_DT)
+        fs.exercises.entries_commit_day_v1(date=REF_DT)
     assert mock_call.call_args.args[0]["date"] == REF_DAYS
 
 
@@ -334,7 +334,7 @@ def test_exercise_entries_commit_day_v1_date_coercion(fs):
     results = []
     for d in (REF_DT, REF_DATE, REF_TS, float(REF_TS)):
         with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-            fs.exercise_entries_commit_day_v1(date=d)
+            fs.exercises.entries_commit_day_v1(date=d)
         results.append(mock_call.call_args.args[0])
     for r in results[1:]:
         assert r == results[0]
@@ -343,7 +343,7 @@ def test_exercise_entries_commit_day_v1_date_coercion(fs):
 
 def test_exercise_entries_commit_day_v1_mutator_returns_true(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}):
-        assert fs.exercise_entries_commit_day_v1() is True
+        assert fs.exercises.entries_commit_day_v1() is True
 
 
 # --------------------------- exercise_entries.save_template v1 ---------------------------
@@ -352,7 +352,7 @@ def test_exercise_entries_commit_day_v1_mutator_returns_true(fs):
 def test_exercise_entries_save_template_v1_happy_path_required_only(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.exercise_entries_save_template_v1(days=3)
+        result = fs.exercises.entries_save_template_v1(days=3)
     params = mock_call.call_args.args[0]
     # Critical: assert the legacy copy/paste bug is fixed.
     assert params["method"] == "exercise_entries.save_template"
@@ -365,7 +365,7 @@ def test_exercise_entries_save_template_v1_happy_path_required_only(fs):
 
 def test_exercise_entries_save_template_v1_with_date(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.exercise_entries_save_template_v1(days=7, date=REF_DT)
+        fs.exercises.entries_save_template_v1(days=7, date=REF_DT)
     params = mock_call.call_args.args[0]
     assert params["date"] == REF_DAYS
     assert params["days"] == 7
@@ -374,7 +374,7 @@ def test_exercise_entries_save_template_v1_with_date(fs):
 def test_exercise_entries_save_template_v1_days_coerced_to_int(fs):
     """`days` is forced through int() in the source."""
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.exercise_entries_save_template_v1(days="5")  # type: ignore[arg-type]
+        fs.exercises.entries_save_template_v1(days="5")  # type: ignore[arg-type]
     assert mock_call.call_args.args[0]["days"] == 5
 
 
@@ -382,7 +382,7 @@ def test_exercise_entries_save_template_v1_date_coercion(fs):
     results = []
     for d in (REF_DT, REF_DATE, REF_TS, float(REF_TS)):
         with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-            fs.exercise_entries_save_template_v1(days=1, date=d)
+            fs.exercises.entries_save_template_v1(days=1, date=d)
         results.append(mock_call.call_args.args[0])
     for r in results[1:]:
         assert r == results[0]
@@ -391,4 +391,4 @@ def test_exercise_entries_save_template_v1_date_coercion(fs):
 
 def test_exercise_entries_save_template_v1_mutator_returns_true(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}):
-        assert fs.exercise_entries_save_template_v1(days=1) is True
+        assert fs.exercises.entries_save_template_v1(days=1) is True

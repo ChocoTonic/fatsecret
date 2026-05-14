@@ -33,7 +33,7 @@ def fs():
 def test_food_entry_create_v1_happy_path(fs):
     payload = {"food_entries": {"food_entry": {"food_entry_id": "42"}}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_entry_create_v1(
+        result = fs.diary.entry_create_v1(
             food_id="1",
             food_entry_name="Apple",
             serving_id="s1",
@@ -61,7 +61,7 @@ def test_food_entry_create_v1_returns_new_food_entry_id(fs):
     # coerced as a single-element list.
     payload = {"food_entry_id": {"value": "12345"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.food_entry_create_v1(
+        result = fs.diary.entry_create_v1(
             food_id="1",
             food_entry_name="Apple",
             serving_id="s1",
@@ -75,7 +75,7 @@ def test_food_entry_create_v1_returns_new_food_entry_id(fs):
 def test_food_entry_create_v1_date_optional_omitted_when_none(fs):
     payload = {"food_entries": {"food_entry": [{"food_entry_id": "1"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_entry_create_v1("1", "n", "s", 1.0, "dinner", date=None)
+        fs.diary.entry_create_v1("1", "n", "s", 1.0, "dinner", date=None)
     params = mock_call.call_args.args[0]
     assert "date" not in params
 
@@ -93,14 +93,14 @@ def test_food_entry_create_v1_date_coercion(fs, value):
     expected = Fatsecret.unix_time_v2(value)
     payload = {"food_entries": {"food_entry": [{"food_entry_id": "1"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_entry_create_v1("1", "n", "s", 1.0, "snacks", date=value)
+        fs.diary.entry_create_v1("1", "n", "s", 1.0, "snacks", date=value)
     params = mock_call.call_args.args[0]
     assert params["date"] == expected
 
 
 def test_food_entry_create_v1_empty_response_returns_empty_list(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        result = fs.food_entry_create_v1("1", "n", "s", 1.0, "breakfast")
+        result = fs.diary.entry_create_v1("1", "n", "s", 1.0, "breakfast")
     assert result == []
 
 
@@ -111,7 +111,7 @@ def test_food_entry_create_v1_empty_response_returns_empty_list(fs):
 
 def test_food_entry_edit_v1_happy_path(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        result = fs.food_entry_edit_v1("fe1")
+        result = fs.diary.entry_edit_v1("fe1")
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entry.edit"
     assert params["food_entry_id"] == "fe1"
@@ -121,7 +121,7 @@ def test_food_entry_edit_v1_happy_path(fs):
 
 def test_food_entry_edit_v1_all_optionals_present(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.food_entry_edit_v1(
+        fs.diary.entry_edit_v1(
             "fe1",
             food_entry_name="Pear",
             serving_id="s9",
@@ -137,7 +137,7 @@ def test_food_entry_edit_v1_all_optionals_present(fs):
 
 def test_food_entry_edit_v1_omits_optionals_when_none(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.food_entry_edit_v1("fe1")
+        fs.diary.entry_edit_v1("fe1")
     params = mock_call.call_args.args[0]
     assert "food_entry_name" not in params
     assert "serving_id" not in params
@@ -147,12 +147,12 @@ def test_food_entry_edit_v1_omits_optionals_when_none(fs):
 
 def test_food_entry_edit_v1_success_string(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": "1"}):
-        assert fs.food_entry_edit_v1("fe1") is True
+        assert fs.diary.entry_edit_v1("fe1") is True
 
 
 def test_food_entry_edit_v1_passes_through_non_success_payload(fs):
     with patch.object(Fatsecret, "_call", return_value={"other": "data"}):
-        assert fs.food_entry_edit_v1("fe1") == {"other": "data"}
+        assert fs.diary.entry_edit_v1("fe1") == {"other": "data"}
 
 
 # ============================================================================
@@ -162,7 +162,7 @@ def test_food_entry_edit_v1_passes_through_non_success_payload(fs):
 
 def test_food_entry_delete_v1_happy_path(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        result = fs.food_entry_delete_v1("fe-9")
+        result = fs.diary.entry_delete_v1("fe-9")
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entry.delete"
     assert params["food_entry_id"] == "fe-9"
@@ -172,7 +172,7 @@ def test_food_entry_delete_v1_happy_path(fs):
 
 def test_food_entry_delete_v1_success_zero_returns_false(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 0}):
-        assert fs.food_entry_delete_v1("fe-9") is False
+        assert fs.diary.entry_delete_v1("fe-9") is False
 
 
 # ============================================================================
@@ -183,7 +183,7 @@ def test_food_entry_delete_v1_success_zero_returns_false(fs):
 def test_food_entries_get_v1_by_food_entry_id(fs):
     payload = {"food_entries": {"food_entry": [{"food_entry_id": "10"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_entries_get_v1(food_entry_id="10")
+        result = fs.diary.entries_get_v1(food_entry_id="10")
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entries.get"
     assert params["food_entry_id"] == "10"
@@ -198,7 +198,7 @@ def test_food_entries_get_v1_by_date(fs):
     d = datetime.date(2021, 6, 1)
     expected = Fatsecret.unix_time_v2(d)
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_entries_get_v1(date=d)
+        fs.diary.entries_get_v1(date=d)
     params = mock_call.call_args.args[0]
     assert params["date"] == expected
     assert "food_entry_id" not in params
@@ -207,19 +207,19 @@ def test_food_entries_get_v1_by_date(fs):
 def test_food_entries_get_v1_single_dict_coerced_to_list(fs):
     payload = {"food_entries": {"food_entry": {"food_entry_id": "10"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.food_entries_get_v1(food_entry_id="10")
+        result = fs.diary.entries_get_v1(food_entry_id="10")
     assert result == [{"food_entry_id": "10"}]
 
 
 def test_food_entries_get_v1_no_args_short_circuits(fs):
     with patch.object(Fatsecret, "_call") as mock_call:
-        assert fs.food_entries_get_v1() == []
+        assert fs.diary.entries_get_v1() == []
     mock_call.assert_not_called()
 
 
 def test_food_entries_get_v1_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.food_entries_get_v1(food_entry_id="x") == []
+        assert fs.diary.entries_get_v1(food_entry_id="x") == []
 
 
 @pytest.mark.parametrize(
@@ -234,7 +234,7 @@ def test_food_entries_get_v1_empty_response(fs):
 def test_food_entries_get_v1_date_coercion(fs, value):
     expected = Fatsecret.unix_time_v2(value)
     with patch.object(Fatsecret, "_call", return_value={}) as mock_call:
-        fs.food_entries_get_v1(date=value)
+        fs.diary.entries_get_v1(date=value)
     assert mock_call.call_args.args[0]["date"] == expected
 
 
@@ -246,7 +246,7 @@ def test_food_entries_get_v1_date_coercion(fs, value):
 def test_food_entries_get_v2_by_food_entry_id(fs):
     payload = {"food_entries": {"food_entry": [{"food_entry_id": "55"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_entries_get_v2(food_entry_id="55")
+        result = fs.diary.entries_get_v2(food_entry_id="55")
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entries.get.v2"
     assert params["food_entry_id"] == "55"
@@ -258,7 +258,7 @@ def test_food_entries_get_v2_by_date(fs):
     expected = Fatsecret.unix_time_v2(d)
     payload = {"food_entries": {"food_entry": [{"food_entry_id": "1"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_entries_get_v2(date=d)
+        fs.diary.entries_get_v2(date=d)
     params = mock_call.call_args.args[0]
     assert params["date"] == expected
 
@@ -266,25 +266,25 @@ def test_food_entries_get_v2_by_date(fs):
 def test_food_entries_get_v2_single_dict_coerced(fs):
     payload = {"food_entries": {"food_entry": {"food_entry_id": "1"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.food_entries_get_v2(food_entry_id="1") == [{"food_entry_id": "1"}]
+        assert fs.diary.entries_get_v2(food_entry_id="1") == [{"food_entry_id": "1"}]
 
 
 def test_food_entries_get_v2_list_passthrough(fs):
     payload = {"food_entries": {"food_entry": [{"food_entry_id": "1"}, {"food_entry_id": "2"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.food_entries_get_v2(food_entry_id="1")
+        result = fs.diary.entries_get_v2(food_entry_id="1")
     assert result == [{"food_entry_id": "1"}, {"food_entry_id": "2"}]
 
 
 def test_food_entries_get_v2_no_args_short_circuits(fs):
     with patch.object(Fatsecret, "_call") as mock_call:
-        assert fs.food_entries_get_v2() == []
+        assert fs.diary.entries_get_v2() == []
     mock_call.assert_not_called()
 
 
 def test_food_entries_get_v2_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.food_entries_get_v2(food_entry_id="x") == []
+        assert fs.diary.entries_get_v2(food_entry_id="x") == []
 
 
 @pytest.mark.parametrize(
@@ -299,7 +299,7 @@ def test_food_entries_get_v2_empty_response(fs):
 def test_food_entries_get_v2_date_coercion(fs, value):
     expected = Fatsecret.unix_time_v2(value)
     with patch.object(Fatsecret, "_call", return_value={}) as mock_call:
-        fs.food_entries_get_v2(date=value)
+        fs.diary.entries_get_v2(date=value)
     assert mock_call.call_args.args[0]["date"] == expected
 
 
@@ -311,7 +311,7 @@ def test_food_entries_get_v2_date_coercion(fs, value):
 def test_food_entries_get_month_v1_no_date(fs):
     payload = {"month": {"day": [{"date_int": "1"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_entries_get_month_v1()
+        result = fs.diary.entries_get_month_v1()
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entries.get_month"
     assert "date" not in params
@@ -323,7 +323,7 @@ def test_food_entries_get_month_v1_with_date(fs):
     expected = Fatsecret.unix_time_v2(d)
     payload = {"month": {"day": [{"date_int": "1"}, {"date_int": "2"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_entries_get_month_v1(date=d)
+        result = fs.diary.entries_get_month_v1(date=d)
     assert mock_call.call_args.args[0]["date"] == expected
     assert result == [{"date_int": "1"}, {"date_int": "2"}]
 
@@ -331,12 +331,12 @@ def test_food_entries_get_month_v1_with_date(fs):
 def test_food_entries_get_month_v1_single_day_coerced(fs):
     payload = {"month": {"day": {"date_int": "1"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.food_entries_get_month_v1() == [{"date_int": "1"}]
+        assert fs.diary.entries_get_month_v1() == [{"date_int": "1"}]
 
 
 def test_food_entries_get_month_v1_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.food_entries_get_month_v1() == []
+        assert fs.diary.entries_get_month_v1() == []
 
 
 @pytest.mark.parametrize(
@@ -351,7 +351,7 @@ def test_food_entries_get_month_v1_empty_response(fs):
 def test_food_entries_get_month_v1_date_coercion(fs, value):
     expected = Fatsecret.unix_time_v2(value)
     with patch.object(Fatsecret, "_call", return_value={}) as mock_call:
-        fs.food_entries_get_month_v1(date=value)
+        fs.diary.entries_get_month_v1(date=value)
     assert mock_call.call_args.args[0]["date"] == expected
 
 
@@ -363,7 +363,7 @@ def test_food_entries_get_month_v1_date_coercion(fs, value):
 def test_food_entries_get_month_v2_no_date(fs):
     payload = {"month": {"day": [{"date_int": "1"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.food_entries_get_month_v2()
+        result = fs.diary.entries_get_month_v2()
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entries.get_month.v2"
     assert "date" not in params
@@ -375,19 +375,19 @@ def test_food_entries_get_month_v2_with_date(fs):
     expected = Fatsecret.unix_time_v2(d)
     payload = {"month": {"day": [{"date_int": "1"}]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.food_entries_get_month_v2(date=d)
+        fs.diary.entries_get_month_v2(date=d)
     assert mock_call.call_args.args[0]["date"] == expected
 
 
 def test_food_entries_get_month_v2_single_day_coerced(fs):
     payload = {"month": {"day": {"date_int": "1"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.food_entries_get_month_v2() == [{"date_int": "1"}]
+        assert fs.diary.entries_get_month_v2() == [{"date_int": "1"}]
 
 
 def test_food_entries_get_month_v2_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
-        assert fs.food_entries_get_month_v2() == []
+        assert fs.diary.entries_get_month_v2() == []
 
 
 @pytest.mark.parametrize(
@@ -402,7 +402,7 @@ def test_food_entries_get_month_v2_empty_response(fs):
 def test_food_entries_get_month_v2_date_coercion(fs, value):
     expected = Fatsecret.unix_time_v2(value)
     with patch.object(Fatsecret, "_call", return_value={}) as mock_call:
-        fs.food_entries_get_month_v2(date=value)
+        fs.diary.entries_get_month_v2(date=value)
     assert mock_call.call_args.args[0]["date"] == expected
 
 
@@ -415,7 +415,7 @@ def test_food_entries_copy_v1_happy_path(fs):
     from_d = datetime.date(2024, 1, 1)
     to_d = datetime.date(2024, 1, 2)
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        result = fs.food_entries_copy_v1(from_d, to_d)
+        result = fs.diary.entries_copy_v1(from_d, to_d)
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entries.copy"
     assert params["from_date"] == Fatsecret.unix_time_v2(from_d)
@@ -427,13 +427,13 @@ def test_food_entries_copy_v1_happy_path(fs):
 
 def test_food_entries_copy_v1_with_meal(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.food_entries_copy_v1(0, 1, meal="lunch")
+        fs.diary.entries_copy_v1(0, 1, meal="lunch")
     assert mock_call.call_args.args[0]["meal"] == "lunch"
 
 
 def test_food_entries_copy_v1_meal_none_omitted(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.food_entries_copy_v1(0, 1, meal=None)
+        fs.diary.entries_copy_v1(0, 1, meal=None)
     assert "meal" not in mock_call.call_args.args[0]
 
 
@@ -449,7 +449,7 @@ def test_food_entries_copy_v1_meal_none_omitted(fs):
 def test_food_entries_copy_v1_from_date_coercion(fs, value):
     expected = Fatsecret.unix_time_v2(value)
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.food_entries_copy_v1(value, 0)
+        fs.diary.entries_copy_v1(value, 0)
     assert mock_call.call_args.args[0]["from_date"] == expected
 
 
@@ -465,13 +465,13 @@ def test_food_entries_copy_v1_from_date_coercion(fs, value):
 def test_food_entries_copy_v1_to_date_coercion(fs, value):
     expected = Fatsecret.unix_time_v2(value)
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.food_entries_copy_v1(0, value)
+        fs.diary.entries_copy_v1(0, value)
     assert mock_call.call_args.args[0]["to_date"] == expected
 
 
 def test_food_entries_copy_v1_success_zero_returns_false(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 0}):
-        assert fs.food_entries_copy_v1(0, 1) is False
+        assert fs.diary.entries_copy_v1(0, 1) is False
 
 
 # ============================================================================
@@ -481,7 +481,7 @@ def test_food_entries_copy_v1_success_zero_returns_false(fs):
 
 def test_food_entries_copy_saved_meal_v1_happy_path(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        result = fs.food_entries_copy_saved_meal_v1("sm-1", "dinner")
+        result = fs.diary.entries_copy_saved_meal_v1("sm-1", "dinner")
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entries.copy_saved_meal"
     assert params["saved_meal_id"] == "sm-1"
@@ -493,7 +493,7 @@ def test_food_entries_copy_saved_meal_v1_happy_path(fs):
 
 def test_food_entries_copy_saved_meal_v1_date_none_omitted(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.food_entries_copy_saved_meal_v1("sm-1", "dinner", date=None)
+        fs.diary.entries_copy_saved_meal_v1("sm-1", "dinner", date=None)
     assert "date" not in mock_call.call_args.args[0]
 
 
@@ -509,15 +509,15 @@ def test_food_entries_copy_saved_meal_v1_date_none_omitted(fs):
 def test_food_entries_copy_saved_meal_v1_date_coercion(fs, value):
     expected = Fatsecret.unix_time_v2(value)
     with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
-        fs.food_entries_copy_saved_meal_v1("sm-1", "dinner", date=value)
+        fs.diary.entries_copy_saved_meal_v1("sm-1", "dinner", date=value)
     assert mock_call.call_args.args[0]["date"] == expected
 
 
 def test_food_entries_copy_saved_meal_v1_success_zero_returns_false(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": 0}):
-        assert fs.food_entries_copy_saved_meal_v1("sm", "lunch") is False
+        assert fs.diary.entries_copy_saved_meal_v1("sm", "lunch") is False
 
 
 def test_food_entries_copy_saved_meal_v1_success_string(fs):
     with patch.object(Fatsecret, "_call", return_value={"success": "1"}):
-        assert fs.food_entries_copy_saved_meal_v1("sm", "lunch") is True
+        assert fs.diary.entries_copy_saved_meal_v1("sm", "lunch") is True

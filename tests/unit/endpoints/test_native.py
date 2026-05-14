@@ -2,10 +2,10 @@
 
 Covers four method-version pairs, all Premier-exclusive REST-URL POST endpoints:
 
-  * natural.language.processing  v1  -> ``natural_language_processing_v1``
-  * image.recognition            v1  -> ``image_recognition_v1``
-  * image.recognition            v2  -> ``image_recognition_v2``
-  * feedback                     v1  -> ``feedback_v1``
+  * natural.language.processing  v1  -> ``native.natural_language_processing_v1``
+  * image.recognition            v1  -> ``native.image_recognition_v1``
+  * image.recognition            v2  -> ``native.image_recognition_v2``
+  * feedback                     v1  -> ``feedback.submit_v1``
 
 These differ from the rest of the SDK in three important ways, all of which
 this file exercises:
@@ -48,6 +48,13 @@ from fatsecret import Fatsecret, PremierRequiredError, ScopeRequiredError
 # Fixtures / constants
 # ---------------------------------------------------------------------------
 
+def _resolve(obj, dotted_path):
+    """Walk a dotted attribute path (e.g. 'native.image_recognition_v1')."""
+    for part in dotted_path.split("."):
+        obj = getattr(obj, part)
+    return obj
+
+
 NLP_URL = "https://platform.fatsecret.com/rest/natural-language-processing/v1"
 IMG_V1_URL = "https://platform.fatsecret.com/rest/image-recognition/v1"
 IMG_V2_URL = "https://platform.fatsecret.com/rest/image-recognition/v2"
@@ -80,7 +87,7 @@ def _assert_url_post_call(mock_call, expected_url):
 def test_nlp_v1_happy_path_minimal(fs):
     payload = {"food_response": [{"food_id": "1", "food_entry_name": "apple"}]}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = fs.natural_language_processing_v1("I ate an apple")
+        result = fs.native.natural_language_processing_v1("I ate an apple")
 
     kwargs = _assert_url_post_call(mock_call, NLP_URL)
     body = kwargs["json_body"]
@@ -94,7 +101,7 @@ def test_nlp_v1_happy_path_minimal(fs):
 def test_nlp_v1_all_optionals_present_when_supplied(fs):
     payload = {"food_response": []}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.natural_language_processing_v1(
+        fs.native.natural_language_processing_v1(
             "two eggs and toast",
             include_food_data=True,
             eaten_foods=[{"food_id": "42"}],
@@ -122,7 +129,7 @@ def test_nlp_v1_all_optionals_present_when_supplied(fs):
 def test_nlp_v1_each_optional_individually(fs, kwarg, value):
     payload = {"food_response": []}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.natural_language_processing_v1("hello", **{kwarg: value})
+        fs.native.natural_language_processing_v1("hello", **{kwarg: value})
     body = mock_call.call_args.kwargs["json_body"]
     assert body[kwarg] == value
     others = {"include_food_data", "eaten_foods", "region", "language"} - {kwarg}
@@ -133,7 +140,7 @@ def test_nlp_v1_each_optional_individually(fs, kwarg, value):
 def test_nlp_v1_omits_optionals_when_none(fs):
     payload = {"food_response": []}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.natural_language_processing_v1(
+        fs.native.natural_language_processing_v1(
             "x",
             include_food_data=None,
             eaten_foods=None,
@@ -152,7 +159,7 @@ def test_nlp_v1_response_with_list_passthrough(fs):
         ]
     }
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = fs.natural_language_processing_v1("apple and egg")
+        result = fs.native.natural_language_processing_v1("apple and egg")
     assert result == [
         {"food_id": "1", "food_entry_name": "apple"},
         {"food_id": "2", "food_entry_name": "egg"},
@@ -163,7 +170,7 @@ def test_nlp_v1_response_with_empty_list_returns_empty(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"food_response": []}
     ):
-        result = fs.natural_language_processing_v1("nothing")
+        result = fs.native.natural_language_processing_v1("nothing")
     assert result == []
 
 
@@ -172,7 +179,7 @@ def test_nlp_v1_response_without_food_response_passes_through(fs):
     # the raw payload (defensive against future schema changes).
     raw = {"something_else": "value"}
     with patch.object(Fatsecret, "_call", return_value=raw):
-        result = fs.natural_language_processing_v1("x")
+        result = fs.native.natural_language_processing_v1("x")
     assert result == raw
 
 
@@ -182,7 +189,7 @@ def test_nlp_v1_propagates_premier_required(fs):
         side_effect=PremierRequiredError(207, "Premier required"),
     ):
         with pytest.raises(PremierRequiredError):
-            fs.natural_language_processing_v1("x")
+            fs.native.natural_language_processing_v1("x")
 
 
 def test_nlp_v1_propagates_scope_required(fs):
@@ -191,7 +198,7 @@ def test_nlp_v1_propagates_scope_required(fs):
         side_effect=ScopeRequiredError(208, "nlp scope required"),
     ):
         with pytest.raises(ScopeRequiredError):
-            fs.natural_language_processing_v1("x")
+            fs.native.natural_language_processing_v1("x")
 
 
 # ===========================================================================
@@ -199,8 +206,8 @@ def test_nlp_v1_propagates_scope_required(fs):
 # ===========================================================================
 
 IMG_VERSIONS = [
-    ("image_recognition_v1", IMG_V1_URL),
-    ("image_recognition_v2", IMG_V2_URL),
+    ("native.image_recognition_v1", IMG_V1_URL),
+    ("native.image_recognition_v2", IMG_V2_URL),
 ]
 
 
@@ -208,7 +215,7 @@ IMG_VERSIONS = [
 def test_image_recognition_happy_path_minimal(fs, method_name, expected_url):
     payload = {"food_response": [{"food_id": "9", "food_entry_name": "pizza"}]}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        result = getattr(fs, method_name)("BASE64IMG")
+        result = _resolve(fs, method_name)("BASE64IMG")
 
     kwargs = _assert_url_post_call(mock_call, expected_url)
     body = kwargs["json_body"]
@@ -232,7 +239,7 @@ def test_image_recognition_image_b64_is_passed_through_verbatim(
     ]
     for raw in samples:
         with patch.object(Fatsecret, "_call", return_value={"food_response": []}) as mc:
-            getattr(fs, method_name)(raw)
+            _resolve(fs, method_name)(raw)
         assert mc.call_args.kwargs["json_body"]["image_b64"] == raw
 
 
@@ -243,7 +250,7 @@ def test_image_recognition_v2_accepts_webp_style_payload(fs):
     with patch.object(
         Fatsecret, "_call", return_value={"food_response": []}
     ) as mc:
-        fs.image_recognition_v2(webp_b64)
+        fs.native.image_recognition_v2(webp_b64)
     assert mc.call_args.kwargs["json_body"]["image_b64"] == webp_b64
 
 
@@ -253,7 +260,7 @@ def test_image_recognition_all_optionals_present_when_supplied(
 ):
     payload = {"food_response": []}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(
+        _resolve(fs, method_name)(
             "IMGB64",
             include_food_data=True,
             eaten_foods=[{"food_id": "1"}, {"food_id": "2"}],
@@ -284,7 +291,7 @@ def test_image_recognition_each_optional_individually(
 ):
     payload = {"food_response": []}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)("IMG", **{kwarg: value})
+        _resolve(fs, method_name)("IMG", **{kwarg: value})
     body = mock_call.call_args.kwargs["json_body"]
     assert body[kwarg] == value
     others = {"include_food_data", "eaten_foods", "region", "language"} - {kwarg}
@@ -296,7 +303,7 @@ def test_image_recognition_each_optional_individually(
 def test_image_recognition_omits_optionals_when_none(fs, method_name, _url):
     payload = {"food_response": []}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        getattr(fs, method_name)(
+        _resolve(fs, method_name)(
             "IMG",
             include_food_data=None,
             eaten_foods=None,
@@ -316,7 +323,7 @@ def test_image_recognition_response_list_passthrough(fs, method_name, _url):
         ]
     }
     with patch.object(Fatsecret, "_call", return_value=payload):
-        result = getattr(fs, method_name)("IMG")
+        result = _resolve(fs, method_name)("IMG")
     assert result == [{"food_id": "a"}, {"food_id": "b"}]
 
 
@@ -327,7 +334,7 @@ def test_image_recognition_empty_food_response_returns_empty(
     with patch.object(
         Fatsecret, "_call", return_value={"food_response": []}
     ):
-        result = getattr(fs, method_name)("IMG")
+        result = _resolve(fs, method_name)("IMG")
     assert result == []
 
 
@@ -337,7 +344,7 @@ def test_image_recognition_response_without_food_response_passes_through(
 ):
     raw = {"unknown_top_level": [1, 2, 3]}
     with patch.object(Fatsecret, "_call", return_value=raw):
-        result = getattr(fs, method_name)("IMG")
+        result = _resolve(fs, method_name)("IMG")
     assert result == raw
 
 
@@ -348,7 +355,7 @@ def test_image_recognition_propagates_premier_required(fs, method_name, _url):
         side_effect=PremierRequiredError(207, "Premier required"),
     ):
         with pytest.raises(PremierRequiredError):
-            getattr(fs, method_name)("IMG")
+            _resolve(fs, method_name)("IMG")
 
 
 @pytest.mark.parametrize("method_name,_url", IMG_VERSIONS)
@@ -358,7 +365,7 @@ def test_image_recognition_propagates_scope_required(fs, method_name, _url):
         side_effect=ScopeRequiredError(208, "image-recognition scope required"),
     ):
         with pytest.raises(ScopeRequiredError):
-            getattr(fs, method_name)("IMG")
+            _resolve(fs, method_name)("IMG")
 
 
 # ===========================================================================
@@ -380,7 +387,7 @@ def test_feedback_v1_happy_path_minimal(fs):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        result = fs.feedback_v1(issue_type_id=1, external_id="ext-42")
+        result = fs.feedback.submit_v1(issue_type_id=1, external_id="ext-42")
 
     kwargs = _assert_url_post_call(mock_call, FEEDBACK_URL)
     body = kwargs["json_body"]
@@ -409,7 +416,7 @@ def test_feedback_v1_all_simple_optionals_present(fs):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        fs.feedback_v1(
+        fs.feedback.submit_v1(
             issue_type_id=2,
             external_id="ext-1",
             barcode=12345678,
@@ -447,7 +454,7 @@ def test_feedback_v1_each_simple_optional_individually(fs, kwarg, value):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        fs.feedback_v1(issue_type_id=99, external_id="e", **{kwarg: value})
+        fs.feedback.submit_v1(issue_type_id=99, external_id="e", **{kwarg: value})
     body = mock_call.call_args.kwargs["json_body"]
     assert body[kwarg] == value
     others = {
@@ -467,7 +474,7 @@ def test_feedback_v1_omits_simple_optionals_when_none(fs):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        fs.feedback_v1(
+        fs.feedback.submit_v1(
             issue_type_id=1,
             external_id="e",
             barcode=None,
@@ -487,7 +494,7 @@ def test_feedback_v1_returned_food_built_from_food_id_only(fs):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        fs.feedback_v1(
+        fs.feedback.submit_v1(
             issue_type_id=2,
             external_id="e",
             returned_food_id=555,
@@ -500,7 +507,7 @@ def test_feedback_v1_returned_food_built_from_serving_id_only(fs):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        fs.feedback_v1(
+        fs.feedback.submit_v1(
             issue_type_id=2,
             external_id="e",
             returned_serving_id=777,
@@ -513,7 +520,7 @@ def test_feedback_v1_returned_food_built_from_both_ids(fs):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        fs.feedback_v1(
+        fs.feedback.submit_v1(
             issue_type_id=2,
             external_id="e",
             returned_food_id=555,
@@ -527,7 +534,7 @@ def test_feedback_v1_returned_food_absent_when_both_none(fs):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        fs.feedback_v1(issue_type_id=1, external_id="e")
+        fs.feedback.submit_v1(issue_type_id=1, external_id="e")
     assert "returned_food" not in mock_call.call_args.kwargs["json_body"]
 
 
@@ -539,7 +546,7 @@ def test_feedback_v1_accepts_documented_issue_type_ids(fs, issue_type_id):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ) as mock_call:
-        fs.feedback_v1(issue_type_id=issue_type_id, external_id="e")
+        fs.feedback.submit_v1(issue_type_id=issue_type_id, external_id="e")
     assert mock_call.call_args.kwargs["json_body"]["issue_type_id"] == issue_type_id
 
 
@@ -549,7 +556,7 @@ def test_feedback_v1_returns_raw_payload_shape(fs):
     with patch.object(
         Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
     ):
-        result = fs.feedback_v1(issue_type_id=1, external_id="e")
+        result = fs.feedback.submit_v1(issue_type_id=1, external_id="e")
     assert set(result.keys()) == {
         "barcode",
         "packaging",
@@ -564,7 +571,7 @@ def test_feedback_v1_propagates_premier_required(fs):
         side_effect=PremierRequiredError(207, "Premier required"),
     ):
         with pytest.raises(PremierRequiredError):
-            fs.feedback_v1(issue_type_id=1, external_id="e")
+            fs.feedback.submit_v1(issue_type_id=1, external_id="e")
 
 
 def test_feedback_v1_propagates_scope_required(fs):
@@ -573,4 +580,4 @@ def test_feedback_v1_propagates_scope_required(fs):
         side_effect=ScopeRequiredError(208, "feedback scope required"),
     ):
         with pytest.raises(ScopeRequiredError):
-            fs.feedback_v1(issue_type_id=1, external_id="e")
+            fs.feedback.submit_v1(issue_type_id=1, external_id="e")
