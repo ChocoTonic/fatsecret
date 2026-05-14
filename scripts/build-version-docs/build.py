@@ -52,7 +52,7 @@ PYPI_PROJECT = "fatsecret"
 
 # Minimal Sphinx pin. Modern Sphinx builds old .rst trees fine as long as we
 # disable autodoc so it never tries to import the package.
-SPHINX_REQUIREMENTS = ["sphinx==7.4.7", "sphinx-rtd-theme==2.0.0"]
+SPHINX_REQUIREMENTS = ["sphinx==7.4.7", "furo==2024.8.6"]
 
 
 @dataclass
