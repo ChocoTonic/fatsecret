@@ -4,6 +4,8 @@ from .errors import (
     BaseFatsecretError,
     GeneralError,
     ParameterError,
+    PremierRequiredError,
+    ScopeRequiredError,
 )
 from .fatsecret import Fatsecret
 
@@ -14,4 +16,6 @@ __all__ = [
     "Fatsecret",
     "GeneralError",
     "ParameterError",
+    "PremierRequiredError",
+    "ScopeRequiredError",
 ]
