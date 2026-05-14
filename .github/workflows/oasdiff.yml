@@ -1,0 +1,124 @@
+name: OAS Semver Gate
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "docs/api-spec/openapi.yaml"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  oasdiff:
+    name: oasdiff breaking-change semver gate
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OASDIFF_VERSION: "1.11.7"
+      SPEC_PATH: "docs/api-spec/openapi.yaml"
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          path: head
+          fetch-depth: 1
+
+      - name: Checkout master base
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          path: master
+          fetch-depth: 1
+
+      - name: Install oasdiff
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/oasdiff.tgz \
+            "https://github.com/oasdiff/oasdiff/releases/download/v${OASDIFF_VERSION}/oasdiff_${OASDIFF_VERSION}_linux_amd64.tar.gz"
+          tar -xzf /tmp/oasdiff.tgz -C /tmp
+          sudo install -m 0755 /tmp/oasdiff /usr/local/bin/oasdiff
+          oasdiff --version
+
+      - name: Detect any spec diff
+        id: diff
+        run: |
+          set -euo pipefail
+          if diff -q "master/${SPEC_PATH}" "head/${SPEC_PATH}" >/dev/null 2>&1; then
+            echo "changed=false" >>"$GITHUB_OUTPUT"
+            echo "No OAS diff detected."
+          else
+            echo "changed=true" >>"$GITHUB_OUTPUT"
+            echo "OAS spec changed."
+          fi
+
+      - name: Run oasdiff breaking
+        id: breaking
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          set +e
+          oasdiff breaking "master/${SPEC_PATH}" "head/${SPEC_PATH}" --fail-on ERR
+          rc=$?
+          set -e
+          echo "exit_code=${rc}" >>"$GITHUB_OUTPUT"
+          if [ "${rc}" -eq 0 ]; then
+            echo "breaking=false" >>"$GITHUB_OUTPUT"
+          else
+            echo "breaking=true" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Inspect PR for breaking-change signal
+        id: signal
+        if: steps.breaking.outputs.breaking == 'true'
+        run: |
+          set -euo pipefail
+          pr_number="${{ github.event.pull_request.number }}"
+          repo="${{ github.repository }}"
+
+          title=$(gh pr view "${pr_number}" --repo "${repo}" --json title --jq '.title')
+          echo "PR title: ${title}"
+
+          headlines=$(gh pr view "${pr_number}" --repo "${repo}" --json commits --jq '.commits[].messageHeadline')
+          echo "Commit headlines:"
+          echo "${headlines}"
+
+          bodies=$(gh pr view "${pr_number}" --repo "${repo}" --json commits --jq '.commits[].messageBody')
+
+          ok="false"
+
+          # 1. PR title with feat!: prefix
+          if printf '%s' "${title}" | grep -Eq '^feat!:'; then
+            ok="true"
+            echo "Match: PR title uses feat!: prefix."
+          fi
+
+          # 2. Any commit subject with <type>!: prefix (conventional commits)
+          if [ "${ok}" = "false" ] && printf '%s\n' "${headlines}" | grep -Eq '^[a-zA-Z]+(\([^)]*\))?!:'; then
+            ok="true"
+            echo "Match: a commit subject uses <type>!: prefix."
+          fi
+
+          # 3. Any commit body contains BREAKING CHANGE: footer
+          if [ "${ok}" = "false" ] && printf '%s' "${bodies}" | grep -q 'BREAKING CHANGE:'; then
+            ok="true"
+            echo "Match: a commit body contains BREAKING CHANGE: footer."
+          fi
+
+          if [ "${ok}" = "true" ]; then
+            echo "ok=true" >>"$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Fail when breaking change lacks semver signal
+        if: steps.breaking.outputs.breaking == 'true' && steps.signal.outputs.ok != 'true'
+        run: |
+          echo "::error title=OAS breaking change without semver signal::oasdiff detected a breaking change in ${SPEC_PATH}, but neither the PR title nor any commit subject uses a '<type>!:' prefix and no commit body contains a 'BREAKING CHANGE:' footer. Either rewrite the change to be non-breaking, or mark it as breaking via conventional commits (e.g. 'feat!: ...' or a 'BREAKING CHANGE:' footer)."
+          exit 1
+
+      - name: Warn on non-breaking spec change
+        if: steps.diff.outputs.changed == 'true' && steps.breaking.outputs.breaking == 'false'
+        run: |
+          echo "::warning title=OAS changed::OAS changed; consider whether semver impact is captured."

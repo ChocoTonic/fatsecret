@@ -69,7 +69,7 @@ check: lint test  ## Run lint and tests
 # -----------------------------
 # OAS pipeline
 # -----------------------------
-.PHONY: oas-regen-check
+.PHONY: oas-regen-check oasdiff
 
 oas-regen-check:  ## Verify pipeline output matches committed files
 	@md5sum docs/api-spec/raw/*.yaml docs/api-spec/openapi.yaml src/fatsecret/resources/_generated/*.py > /tmp/before.md5
@@ -81,6 +81,9 @@ oas-regen-check:  ## Verify pipeline output matches committed files
 	  done
 	@md5sum docs/api-spec/raw/*.yaml docs/api-spec/openapi.yaml src/fatsecret/resources/_generated/*.py > /tmp/after.md5
 	@diff /tmp/before.md5 /tmp/after.md5 && echo "✓ pipeline output matches committed files" || (echo "✗ DRIFT — re-run the pipeline locally and commit the diffs"; exit 1)
+
+oasdiff:  ## Diff openapi.yaml against origin/master
+	@oasdiff breaking <(git show origin/master:docs/api-spec/openapi.yaml) docs/api-spec/openapi.yaml --fail-on ERR
 
 # -----------------------------
 # Packaging
