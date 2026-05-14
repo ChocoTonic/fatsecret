@@ -9,6 +9,7 @@ import typer
 from .assemble import assemble as assemble_openapi
 from .discover import discover, group_by_category
 from .emit import emit_inventory, emit_openapi, emit_raw_yaml
+from .emit_resource import emit_resource
 from .http import fetch
 from .models import MethodRef
 from .parse import parse_page
@@ -94,6 +95,17 @@ def parse_cmd(url: str, verbose: bool = typer.Option(False, "--verbose", "-v")) 
     html = fetch(ref.url)
     spec = parse_page(ref, html)
     typer.echo(yaml.safe_dump(spec.to_dict(), sort_keys=True, default_flow_style=False))
+
+
+@app.command(name="emit-resource")
+def emit_resource_cmd(
+    tag: str = typer.Argument(..., help="OAS tag to emit (e.g., 'Foods')."),
+    verbose: bool = typer.Option(False, "--verbose", "-v"),
+) -> None:
+    """Generate the Python resource module for one OAS tag."""
+    _configure_logging(verbose)
+    out = emit_resource(tag)
+    typer.echo(f"wrote {out}")
 
 
 if __name__ == "__main__":

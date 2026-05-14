@@ -338,25 +338,46 @@ components:
       additionalProperties: true
       type: object
     FoodFindIdForBarcodeV1Response:
-      additionalProperties: true
+      properties:
+        food_id:
+          additionalProperties: true
+          type: object
       type: object
     FoodFindIdForBarcodeV2Response:
-      additionalProperties: true
+      properties:
+        food:
+          additionalProperties: true
+          type: object
       type: object
     FoodGetV1Response:
-      additionalProperties: true
+      properties:
+        food:
+          additionalProperties: true
+          type: object
       type: object
     FoodGetV2Response:
-      additionalProperties: true
+      properties:
+        food:
+          additionalProperties: true
+          type: object
       type: object
     FoodGetV3Response:
-      additionalProperties: true
+      properties:
+        food:
+          additionalProperties: true
+          type: object
       type: object
     FoodGetV4Response:
-      additionalProperties: true
+      properties:
+        food:
+          additionalProperties: true
+          type: object
       type: object
     FoodGetV5Response:
-      additionalProperties: true
+      properties:
+        food:
+          additionalProperties: true
+          type: object
       type: object
     FoodSubCategoriesGetV1Response:
       additionalProperties: true
@@ -365,10 +386,26 @@ components:
       additionalProperties: true
       type: object
     FoodsAutocompleteV1Response:
-      additionalProperties: true
+      properties:
+        suggestions:
+          properties:
+            suggestion:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsAutocompleteV2Response:
-      additionalProperties: true
+      properties:
+        suggestions:
+          properties:
+            suggestion:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsGetFavoritesV1Response:
       additionalProperties: true
@@ -389,19 +426,71 @@ components:
       additionalProperties: true
       type: object
     FoodsSearchV1Response:
-      additionalProperties: true
+      properties:
+        foods:
+          properties:
+            food:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsSearchV2Response:
-      additionalProperties: true
+      properties:
+        foods_search:
+          properties:
+            results:
+              properties:
+                food:
+                  items:
+                    additionalProperties: true
+                    type: object
+                  type: array
+              type: object
+          type: object
       type: object
     FoodsSearchV3Response:
-      additionalProperties: true
+      properties:
+        foods_search:
+          properties:
+            results:
+              properties:
+                food:
+                  items:
+                    additionalProperties: true
+                    type: object
+                  type: array
+              type: object
+          type: object
       type: object
     FoodsSearchV4Response:
-      additionalProperties: true
+      properties:
+        foods_search:
+          properties:
+            results:
+              properties:
+                food:
+                  items:
+                    additionalProperties: true
+                    type: object
+                  type: array
+              type: object
+          type: object
       type: object
     FoodsSearchV5Response:
-      additionalProperties: true
+      properties:
+        foods_search:
+          properties:
+            results:
+              properties:
+                food:
+                  items:
+                    additionalProperties: true
+                    type: object
+                  type: array
+              type: object
+          type: object
       type: object
     ImageRecognitionV1Response:
       additionalProperties: true
@@ -1044,6 +1133,24 @@ paths:
           enum:
           - food.find_id_for_barcode
           type: string
+      - description: GTIN-13 barcode (left-padded with zeros).
+        in: query
+        name: barcode
+        required: true
+        schema:
+          type: string
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1072,6 +1179,48 @@ paths:
         schema:
           enum:
           - food.find_id_for_barcode.v2
+          type: string
+      - description: GTIN-13 barcode (left-padded with zeros).
+        in: query
+        name: barcode
+        required: true
+        schema:
+          type: string
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Include food images.
+        in: query
+        name: include_food_images
+        required: false
+        schema:
+          type: boolean
+      - description: Include food attributes (allergens / preferences).
+        in: query
+        name: include_food_attributes
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1103,6 +1252,36 @@ paths:
           enum:
           - food.get
           type: string
+      - description: FatSecret food identifier.
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: string
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1132,6 +1311,24 @@ paths:
         schema:
           enum:
           - food.get.v2
+          type: string
+      - description: FatSecret food identifier.
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: string
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1163,6 +1360,36 @@ paths:
           enum:
           - food.get.v3
           type: string
+      - description: FatSecret food identifier.
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: string
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1193,6 +1420,48 @@ paths:
           enum:
           - food.get.v4
           type: string
+      - description: FatSecret food identifier.
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: string
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Include food images.
+        in: query
+        name: include_food_images
+        required: false
+        schema:
+          type: boolean
+      - description: Include food attributes (allergens / preferences).
+        in: query
+        name: include_food_attributes
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1221,6 +1490,48 @@ paths:
         schema:
           enum:
           - food.get.v5
+          type: string
+      - description: FatSecret food identifier.
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: string
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Include food images.
+        in: query
+        name: include_food_images
+        required: false
+        schema:
+          type: boolean
+      - description: Include food attributes (allergens / preferences).
+        in: query
+        name: include_food_attributes
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1663,6 +1974,24 @@ paths:
           enum:
           - foods.autocomplete
           type: string
+      - description: Autocomplete prefix expression.
+        in: query
+        name: expression
+        required: true
+        schema:
+          type: string
+      - description: Maximum results per page.
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1691,6 +2020,24 @@ paths:
         schema:
           enum:
           - foods.autocomplete.v2
+          type: string
+      - description: Autocomplete prefix expression.
+        in: query
+        name: expression
+        required: true
+        schema:
+          type: string
+      - description: Maximum results per page.
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1898,6 +2245,42 @@ paths:
           enum:
           - foods.search
           type: string
+      - description: Search expression.
+        in: query
+        name: search_expression
+        required: true
+        schema:
+          type: string
+      - description: Zero-based page index.
+        in: query
+        name: page_number
+        required: false
+        schema:
+          type: integer
+      - description: Maximum results per page.
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: Filter on generic_description.
+        in: query
+        name: generic_description
+        required: false
+        schema:
+          type: string
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1927,6 +2310,48 @@ paths:
         schema:
           enum:
           - foods.search.v2
+          type: string
+      - description: Search expression.
+        in: query
+        name: search_expression
+        required: true
+        schema:
+          type: string
+      - description: Zero-based page index.
+        in: query
+        name: page_number
+        required: false
+        schema:
+          type: integer
+      - description: Maximum results per page.
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1958,6 +2383,60 @@ paths:
           enum:
           - foods.search.v3
           type: string
+      - description: Search expression.
+        in: query
+        name: search_expression
+        required: true
+        schema:
+          type: string
+      - description: Zero-based page index.
+        in: query
+        name: page_number
+        required: false
+        schema:
+          type: integer
+      - description: Maximum results per page.
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Include food images.
+        in: query
+        name: include_food_images
+        required: false
+        schema:
+          type: boolean
+      - description: Include food attributes (allergens / preferences).
+        in: query
+        name: include_food_attributes
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1988,6 +2467,60 @@ paths:
           enum:
           - foods.search.v4
           type: string
+      - description: Search expression.
+        in: query
+        name: search_expression
+        required: true
+        schema:
+          type: string
+      - description: Zero-based page index.
+        in: query
+        name: page_number
+        required: false
+        schema:
+          type: integer
+      - description: Maximum results per page.
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Include food images.
+        in: query
+        name: include_food_images
+        required: false
+        schema:
+          type: boolean
+      - description: Include food attributes (allergens / preferences).
+        in: query
+        name: include_food_attributes
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2016,6 +2549,66 @@ paths:
         schema:
           enum:
           - foods.search.v5
+          type: string
+      - description: Search expression.
+        in: query
+        name: search_expression
+        required: true
+        schema:
+          type: string
+      - description: Zero-based page index.
+        in: query
+        name: page_number
+        required: false
+        schema:
+          type: integer
+      - description: Maximum results per page.
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: Include food sub-categories.
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Include food images.
+        in: query
+        name: include_food_images
+        required: false
+        schema:
+          type: boolean
+      - description: Include food attributes (allergens / preferences).
+        in: query
+        name: include_food_attributes
+        required: false
+        schema:
+          type: boolean
+      - description: Flag the default serving in the response.
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: One of 'generic'|'brand'|'none'.
+        in: query
+        name: food_type
+        required: false
+        schema:
+          type: string
+      - description: Region.
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: Language.
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':

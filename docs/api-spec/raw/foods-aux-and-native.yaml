@@ -33,20 +33,24 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/barcode/find-by-id/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food.find_id_for_barcode" (included with other parameters)'
-    name: String
+  - &id001
+    description: GTIN-13 barcode (left-padded with zeros).
+    name: barcode
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - &id002
+    description: Region.
+    name: region
+    required: false
+    type: String
+  - &id003
+    description: Language.
+    name: language
+    required: false
+    type: String
   premier: true
-  response: {}
+  response:
+    food_id: {}
   rest_url: null
   scope: basic
   version: v1
@@ -61,20 +65,28 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/barcode/find-by-id/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food.find_id_for_barcode.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id001
+  - description: Include food sub-categories.
+    name: include_sub_categories
+    required: false
+    type: Boolean
+  - description: Include food images.
+    name: include_food_images
+    required: false
+    type: Boolean
+  - description: Include food attributes (allergens / preferences).
+    name: include_food_attributes
+    required: false
+    type: Boolean
+  - description: Flag the default serving in the response.
+    name: flag_default_serving
+    required: false
+    type: Boolean
+  - *id002
+  - *id003
   premier: true
-  response: {}
+  response:
+    food: {}
   rest_url: null
   scope: basic
   version: v2
@@ -202,7 +214,8 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-sub-categories/v1"HTTP "GET"'
+    description: '"https://platform.fatsecret.com/rest/food-sub-categories/v1"HTTP
+      "GET"'
     name: N/A
     required: true
     type: null
@@ -230,7 +243,8 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-sub-categories/v2"HTTP "GET"'
+    description: '"https://platform.fatsecret.com/rest/food-sub-categories/v2"HTTP
+      "GET"'
     name: N/A
     required: true
     type: null
@@ -257,20 +271,22 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/autocomplete/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.autocomplete" (included with other parameters)'
-    name: String
+  - &id004
+    description: Autocomplete prefix expression.
+    name: expression
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - &id005
+    description: Maximum results per page.
+    name: max_results
+    required: false
+    type: Int
+  - *id002
   premier: true
-  response: {}
+  response:
+    suggestions:
+      suggestion:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -285,20 +301,14 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/food/autocomplete/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"foods.autocomplete.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - *id004
+  - *id005
+  - *id002
   premier: true
-  response: {}
+  response:
+    suggestions:
+      suggestion:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -360,7 +370,8 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/natural-language-processing/v1"HTTP "POST"'
+    description: '"https://platform.fatsecret.com/rest/natural-language-processing/v1"HTTP
+      "POST"'
     name: N/A
     required: true
     type: null
