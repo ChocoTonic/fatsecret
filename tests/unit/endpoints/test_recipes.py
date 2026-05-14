@@ -15,7 +15,7 @@ empty-response defaults, version-exclusive params (v3 recipe_types, v2 grams_per
 favorite singular-name bug fix, and Premier propagation via kwargs.
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 

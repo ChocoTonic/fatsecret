@@ -37,7 +37,7 @@ image_recognition specifics:
     we just verify the same call shape works for a WebP-like payload.
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 

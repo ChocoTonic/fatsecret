@@ -5,7 +5,7 @@ and that the result is unwrapped correctly. Pattern is consistent across
 ~80 versioned methods; sampling 8-10 representative ones is sufficient.
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 

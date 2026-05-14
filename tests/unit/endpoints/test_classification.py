@@ -13,7 +13,7 @@ For each method-version we assert:
   5. ``PremierRequiredError`` raised by `_call` propagates to the caller.
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 

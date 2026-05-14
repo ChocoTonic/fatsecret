@@ -24,7 +24,7 @@ For each method-version we assert:
      adds ``added_sugars``, ``vitamin_d``).
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 

@@ -19,7 +19,7 @@ For each method-version we assert:
   6. Get-list endpoints: single-dict coerced, list passed through, empty → [].
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
