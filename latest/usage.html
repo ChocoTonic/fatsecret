@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Migrating from 0.x &mdash; fatsecret 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Documentation" href="api.html" />
+    <link rel="prev" title="FatSecret" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            fatsecret
+          </a>
+              <div class="version">
+                1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Migrating from 0.x</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#oauth2-client-credentials">OAuth2 (client-credentials)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#oauth1-3-legged-examples">OAuth1 (3-legged) examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#web-application">Web Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cli-application">CLI Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-new-profiles-for-your-app">Use New Profiles for Your App</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fatsecret</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Migrating from 0.x</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="migrating-from-0-x">
+<span id="usage"></span><h1>Migrating from 0.x<a class="headerlink" href="#migrating-from-0-x" title="Link to this heading"></a></h1>
+<p>In v1.0, every wrapper method has an explicit version suffix matching the
+upstream API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Before (0.x):</span>
+<span class="n">foods</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">foods_search</span><span class="p">(</span><span class="s2">&quot;Tacos&quot;</span><span class="p">)</span>
+
+<span class="c1"># After (1.0):</span>
+<span class="n">foods</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">foods_search_v5</span><span class="p">(</span><span class="s2">&quot;Tacos&quot;</span><span class="p">)</span>        <span class="c1"># latest upstream</span>
+<span class="c1"># or, to preserve the 0.x response shape exactly:</span>
+<span class="n">foods</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">foods_search_v1</span><span class="p">(</span><span class="s2">&quot;Tacos&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The unsuffixed names still exist as deprecation aliases that delegate to
+their <code class="docutils literal notranslate"><span class="pre">_v1</span></code> replacements and will be removed in v2.0. To surface the
+warnings during development:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">W</span> <span class="n">default</span><span class="p">::</span><span class="ne">DeprecationWarning</span><span class="p">:</span><span class="n">fatsecret</span>
+</pre></div>
+</div>
+</section>
+<section id="oauth2-client-credentials">
+<h1>OAuth2 (client-credentials)<a class="headerlink" href="#oauth2-client-credentials" title="Link to this heading"></a></h1>
+<p>Public, non-delegated endpoints (food search, food.get, recipes, plus the
+Native APIs and Premier-only methods) can be called via OAuth2 by passing
+<code class="docutils literal notranslate"><span class="pre">auth=&quot;oauth2&quot;</span></code> and the scopes you need:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fatsecret</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fatsecret</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="n">Fatsecret</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="p">,</span>
+    <span class="n">client_secret</span><span class="p">,</span>
+    <span class="n">auth</span><span class="o">=</span><span class="s2">&quot;oauth2&quot;</span><span class="p">,</span>
+    <span class="n">scopes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span> <span class="s2">&quot;premier&quot;</span><span class="p">,</span> <span class="s2">&quot;image-recognition&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">foods</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">foods_search_v5</span><span class="p">(</span><span class="s2">&quot;Tacos&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="oauth1-3-legged-examples">
+<h1>OAuth1 (3-legged) examples<a class="headerlink" href="#oauth1-3-legged-examples" title="Link to this heading"></a></h1>
+<p>Fatsecret supports 3-legged OAuth authentication. You can also authenticate to a profile that your application
+created.</p>
+<section id="web-application">
+<h2>Web Application<a class="headerlink" href="#web-application" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fatsecret</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fatsecret</span>
+
+<span class="n">consumer_key</span> <span class="o">=</span> <span class="s1">&#39;Replace with your key&#39;</span>
+<span class="n">consumer_secret</span> <span class="o">=</span> <span class="s1">&#39;Replace with your key&#39;</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="n">Fatsecret</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;oauth_verifier&#39;</span><span class="p">):</span>
+
+        <span class="n">verifier_pin</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;oauth_verifier&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Store token as desired. The session is now authenticated</span>
+        <span class="n">session_token</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">verifier_pin</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;a href=</span><span class="si">{0}</span><span class="s2">&gt;Authenticate Access Here&lt;/a&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;authenticate&#39;</span><span class="p">))</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/auth&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">authenticate</span><span class="p">():</span>
+
+    <span class="n">auth_url</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">get_authorize_url</span><span class="p">(</span><span class="n">callback_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:5000&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">auth_url</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/profile&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">profile</span><span class="p">():</span>
+    <span class="n">food</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">foods_get_most_eaten</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="s2">&quot;&lt;h1&gt;Profile&lt;/h1&gt;&lt;div&gt;&lt;strong&gt;Most Eaten Foods&lt;/strong&gt;&lt;br&gt;</span><span class="si">{}</span><span class="s2">&lt;/div&gt;&quot;</span>\
+        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">food</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="cli-application">
+<h2>CLI Application<a class="headerlink" href="#cli-application" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fatsecret</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fatsecret</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="n">Fatsecret</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">)</span>
+
+<span class="n">auth_url</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">get_authorize_url</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Browse to the following URL in your browser to authorize access:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>\
+    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">auth_url</span><span class="p">)</span>
+
+<span class="n">pin</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter the PIN provided by FatSecret: &quot;</span><span class="p">)</span>
+<span class="n">session_token</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+
+<span class="n">foods</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">foods_get_most_eaten</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Most Eaten Food Results: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">foods</span><span class="p">)))</span>
+</pre></div>
+</div>
+</section>
+<section id="use-new-profiles-for-your-app">
+<h2>Use New Profiles for Your App<a class="headerlink" href="#use-new-profiles-for-your-app" title="Link to this heading"></a></h2>
+<p>You’re able to directly authenticate to any profile that your app has created</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fatsecret</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fatsecret</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="n">Fatsecret</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">secret_key</span><span class="p">)</span>
+
+<span class="n">session_token</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">profile_create</span><span class="p">(</span><span class="s1">&#39;new_user_001&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Fatsecret states that each <code class="docutils literal notranslate"><span class="pre">session_token</span></code> persists indefinitely for profiles created by your app
+so you can store it and use it later as needed.</p>
+<p><strong>Note</strong>: Using a <code class="docutils literal notranslate"><span class="pre">session_token</span></code> from a previously authorized session for a Fatsecret user profile
+is also possible but Fatsecret isn’t as clear about the lifetime of those tokens.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">session_token</span> <span class="o">=</span> <span class="c1"># retrieve from your database</span>
+</pre></div>
+</div>
+<p>Or you can save the <code class="docutils literal notranslate"><span class="pre">user_id</span></code> instead and get the <code class="docutils literal notranslate"><span class="pre">session_token</span></code> from Fatsecret each time. Keep in mind that
+this will only work for profiles created by your application. You’ll still need to go through the 3-legged OAuth
+process for profiles you didn’t create.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">session_token</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">profile_get_auth</span><span class="p">(</span><span class="s1">&#39;new_user_001&#39;</span><span class="p">)</span>
+
+<span class="n">new_session</span> <span class="o">=</span> <span class="n">Fatsecret</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">secret_key</span><span class="p">,</span> <span class="n">session_token</span><span class="o">=</span><span class="n">session_token</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="FatSecret" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
