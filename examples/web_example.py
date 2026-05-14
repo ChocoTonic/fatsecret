@@ -15,7 +15,7 @@ fs = Fatsecret(consumer_key, consumer_secret)
 def index():
     if request.args.get("oauth_verifier"):
 
-        session_token = fs.authenticate(request.args.get("oauth_verifier"))
+        fs.authenticate(request.args.get("oauth_verifier"))
 
         return redirect(url_for("profile"))
 

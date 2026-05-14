@@ -86,8 +86,8 @@ release: build  ## Publish to PyPI using uv
 # -----------------------------
 .PHONY: help all example docs docs-serve
 
-example: fmt lint  ## Run the CLI example with API credentials from environment
-	@PYTHONPATH=src uv run python examples/cli_example.py
+example: fmt lint  ## Run the CLI example end-to-end against the live FatSecret API (.env required)
+	@PYTHONPATH=src uv run python examples/main.py
 
 docs:  ## Build Sphinx documentation
 	@rm -rf $(DOCS_DIR)/_build
