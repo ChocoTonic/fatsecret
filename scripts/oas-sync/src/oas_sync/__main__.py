@@ -6,6 +6,7 @@ import logging
 
 import typer
 
+from .assemble import assemble as assemble_openapi
 from .discover import discover, group_by_category
 from .emit import emit_inventory, emit_openapi, emit_raw_yaml
 from .http import fetch
@@ -43,6 +44,21 @@ def sync(
 
     all_specs = [s for specs in specs_by_category.values() for s in specs]
     emit_openapi(all_specs)
+    assemble_openapi(lint=True)
+
+
+@app.command(name="assemble")
+def assemble_cmd(
+    verbose: bool = typer.Option(False, "--verbose", "-v"),
+    no_lint: bool = typer.Option(False, "--no-lint", help="Skip redocly lint even if installed"),
+) -> None:
+    """Assemble docs/api-spec/openapi.yaml from the per-category raw YAMLs.
+
+    Deterministic: same inputs → byte-identical output. No network calls.
+    """
+    _configure_logging(verbose)
+    path = assemble_openapi(lint=not no_lint)
+    typer.echo(f"wrote {path}")
 
 
 @app.command(name="discover")
