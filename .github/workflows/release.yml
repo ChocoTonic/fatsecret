@@ -39,7 +39,35 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
+      - name: Check if release should run
+        id: should_release
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+
+          # Only dep files changed?
+          if echo "$CHANGED_FILES" | grep -qvE '^(uv\.lock|pyproject\.toml)$'; then
+            IS_DEP_BUMP=false
+          else
+            IS_DEP_BUMP=true
+          fi
+
+          # CVE/security mentioned?
+          if echo "$COMMIT_MSG" | grep -qi "CVE\|security\|vulnerability"; then
+            HAS_CVE=true
+          else
+            HAS_CVE=false
+          fi
+
+          if [ "$IS_DEP_BUMP" = "true" ] && [ "$HAS_CVE" = "false" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Skipping: dependency bump without CVE"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Extract version from pyproject.toml
+        if: steps.should_release.outputs.skip == 'false'
         id: version
         run: |
           VERSION=$(python -c "import tomllib; print(tomllib.loads(open('pyproject.toml').read())['project']['version'])")
@@ -47,6 +75,7 @@ jobs:
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
       - name: Check if tag already exists
+        if: steps.should_release.outputs.skip == 'false'
         id: tag_check
         run: |
           if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
@@ -56,7 +85,7 @@ jobs:
           fi
 
       - name: Create git tag
-        if: steps.tag_check.outputs.exists == 'false'
+        if: steps.should_release.outputs.skip == 'false' && steps.tag_check.outputs.exists == 'false'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -64,7 +93,7 @@ jobs:
           git push origin "${{ steps.version.outputs.tag }}"
 
       - name: Create GitHub Release
-        if: steps.tag_check.outputs.exists == 'false'
+        if: steps.should_release.outputs.skip == 'false' && steps.tag_check.outputs.exists == 'false'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -74,6 +103,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to PyPI
+        if: steps.should_release.outputs.skip == 'false'
         run: make release
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
