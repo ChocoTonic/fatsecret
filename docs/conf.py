@@ -19,4 +19,4 @@ extensions = [
 exclude_patterns = ["_build"]
 add_module_names = False
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
