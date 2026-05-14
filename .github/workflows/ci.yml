@@ -12,8 +12,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  test:
+  test-pr:
+    if: github.event_name == 'pull_request'
     uses: ./.github/workflows/test.yml
     secrets: inherit
     with:
-      test-type: ${{ github.event_name == 'pull_request' && 'unit' || 'all' }}
+      test-type: 'unit'
+
+  test-master:
+    if: github.event_name == 'push'
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+    with:
+      test-type: 'all'
