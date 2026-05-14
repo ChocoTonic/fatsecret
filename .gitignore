@@ -19,3 +19,4 @@ coverage.xml
 
 # Environment files
 .env
+scripts/.cache/*.html
