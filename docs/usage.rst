@@ -1,7 +1,49 @@
 .. _usage:
 
-OAuth Examples
-==============
+Migrating from 0.x
+==================
+
+In v1.0, every wrapper method has an explicit version suffix matching the
+upstream API:
+
+.. code-block:: python
+
+    # Before (0.x):
+    foods = fs.foods_search("Tacos")
+
+    # After (1.0):
+    foods = fs.foods_search_v5("Tacos")        # latest upstream
+    # or, to preserve the 0.x response shape exactly:
+    foods = fs.foods_search_v1("Tacos")
+
+The unsuffixed names still exist as deprecation aliases that delegate to
+their ``_v1`` replacements and will be removed in v2.0. To surface the
+warnings during development::
+
+    python -W default::DeprecationWarning:fatsecret
+
+OAuth2 (client-credentials)
+===========================
+
+Public, non-delegated endpoints (food search, food.get, recipes, plus the
+Native APIs and Premier-only methods) can be called via OAuth2 by passing
+``auth="oauth2"`` and the scopes you need:
+
+.. code-block:: python
+
+    from fatsecret import Fatsecret
+
+    fs = Fatsecret(
+        client_id,
+        client_secret,
+        auth="oauth2",
+        scopes=["basic", "premier", "image-recognition"],
+    )
+
+    foods = fs.foods_search_v5("Tacos")
+
+OAuth1 (3-legged) examples
+==========================
 
 Fatsecret supports 3-legged OAuth authentication. You can also authenticate to a profile that your application
 created.
