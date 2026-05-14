@@ -97,7 +97,7 @@ class FoodsResource(BaseResource):
 
     def get_v1(
         self,
-        food_id: str,
+        food_id: int,
         include_sub_categories: Optional[bool] = None,
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
@@ -120,7 +120,9 @@ class FoodsResource(BaseResource):
 
     def get_v2(
         self,
-        food_id: str,
+        food_id: int,
+        include_sub_categories: Optional[bool] = None,
+        flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
@@ -130,6 +132,8 @@ class FoodsResource(BaseResource):
         self._client._set_optional(
             params,
             [
+                ("include_sub_categories", include_sub_categories),
+                ("flag_default_serving", flag_default_serving),
                 ("region", region),
                 ("language", language),
             ],
@@ -139,7 +143,7 @@ class FoodsResource(BaseResource):
 
     def get_v3(
         self,
-        food_id: str,
+        food_id: int,
         include_sub_categories: Optional[bool] = None,
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
@@ -162,7 +166,7 @@ class FoodsResource(BaseResource):
 
     def get_v4(
         self,
-        food_id: str,
+        food_id: int,
         include_sub_categories: Optional[bool] = None,
         include_food_images: Optional[bool] = None,
         include_food_attributes: Optional[bool] = None,
@@ -189,7 +193,7 @@ class FoodsResource(BaseResource):
 
     def get_v5(
         self,
-        food_id: str,
+        food_id: int,
         include_sub_categories: Optional[bool] = None,
         include_food_images: Optional[bool] = None,
         include_food_attributes: Optional[bool] = None,
@@ -216,7 +220,7 @@ class FoodsResource(BaseResource):
 
     def search_v1(
         self,
-        search_expression: str,
+        search_expression: Optional[str] = None,
         page_number: Optional[int] = None,
         max_results: Optional[int] = None,
         generic_description: Optional[str] = None,
@@ -225,10 +229,10 @@ class FoodsResource(BaseResource):
     ) -> list:
         """foods.search (v1). Premier-only."""
         params: dict[str, Any] = {"method": "foods.search"}
-        params["search_expression"] = search_expression
         self._client._set_optional(
             params,
             [
+                ("search_expression", search_expression),
                 ("page_number", page_number),
                 ("max_results", max_results),
                 ("generic_description", generic_description),
@@ -241,7 +245,7 @@ class FoodsResource(BaseResource):
 
     def search_v2(
         self,
-        search_expression: str,
+        search_expression: Optional[str] = None,
         page_number: Optional[int] = None,
         max_results: Optional[int] = None,
         include_sub_categories: Optional[bool] = None,
@@ -251,10 +255,10 @@ class FoodsResource(BaseResource):
     ) -> list:
         """foods.search (v2). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.search.v2"}
-        params["search_expression"] = search_expression
         self._client._set_optional(
             params,
             [
+                ("search_expression", search_expression),
                 ("page_number", page_number),
                 ("max_results", max_results),
                 ("include_sub_categories", include_sub_categories),
@@ -268,7 +272,7 @@ class FoodsResource(BaseResource):
 
     def search_v3(
         self,
-        search_expression: str,
+        search_expression: Optional[str] = None,
         page_number: Optional[int] = None,
         max_results: Optional[int] = None,
         include_sub_categories: Optional[bool] = None,
@@ -280,10 +284,10 @@ class FoodsResource(BaseResource):
     ) -> list:
         """foods.search (v3). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.search.v3"}
-        params["search_expression"] = search_expression
         self._client._set_optional(
             params,
             [
+                ("search_expression", search_expression),
                 ("page_number", page_number),
                 ("max_results", max_results),
                 ("include_sub_categories", include_sub_categories),
@@ -299,7 +303,7 @@ class FoodsResource(BaseResource):
 
     def search_v4(
         self,
-        search_expression: str,
+        search_expression: Optional[str] = None,
         page_number: Optional[int] = None,
         max_results: Optional[int] = None,
         include_sub_categories: Optional[bool] = None,
@@ -311,10 +315,10 @@ class FoodsResource(BaseResource):
     ) -> list:
         """foods.search (v4). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.search.v4"}
-        params["search_expression"] = search_expression
         self._client._set_optional(
             params,
             [
+                ("search_expression", search_expression),
                 ("page_number", page_number),
                 ("max_results", max_results),
                 ("include_sub_categories", include_sub_categories),
@@ -330,7 +334,7 @@ class FoodsResource(BaseResource):
 
     def search_v5(
         self,
-        search_expression: str,
+        search_expression: Optional[str] = None,
         page_number: Optional[int] = None,
         max_results: Optional[int] = None,
         include_sub_categories: Optional[bool] = None,
@@ -343,10 +347,10 @@ class FoodsResource(BaseResource):
     ) -> list:
         """foods.search (v5). Premier-only."""
         params: dict[str, Any] = {"method": "foods.search.v5"}
-        params["search_expression"] = search_expression
         self._client._set_optional(
             params,
             [
+                ("search_expression", search_expression),
                 ("page_number", page_number),
                 ("max_results", max_results),
                 ("include_sub_categories", include_sub_categories),

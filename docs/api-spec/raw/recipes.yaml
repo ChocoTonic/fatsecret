@@ -3,7 +3,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/recipe.add_favorite
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: recipe.add_favorite
   notes: ''
   oauth:
@@ -11,19 +11,14 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/recipe/favorites/v1"HTTP "POST"'
-    name: N/A
+    description: Unique recipe identifier
+    name: recipe_id
     required: true
-    type: null
-  - default: null
-    description: '"recipe.add_favorite" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -31,7 +26,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/recipe.delete_favorite
   exists: true
-  http_verb: GET
+  http_verb: DELETE
   method: recipe.delete_favorite
   notes: ''
   oauth:
@@ -39,19 +34,14 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/recipe/favorites/v1"HTTP "DELETE"'
-    name: N/A
+    description: Unique recipe identifier
+    name: recipe_id
     required: true
-    type: null
-  - default: null
-    description: '"recipe.delete_favorite" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -67,19 +57,21 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/recipe/v1"HTTP "GET"'
-    name: N/A
+    description: Unique recipe identifier
+    name: recipe_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"recipe.get" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    recipe: {}
   rest_url: null
   scope: basic
   version: v1
@@ -95,19 +87,21 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/recipe/v2"HTTP "GET"'
-    name: N/A
+    description: Unique recipe identifier
+    name: recipe_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"recipe.get.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    recipe: {}
   rest_url: null
   scope: basic
   version: v2
@@ -121,21 +115,14 @@ endpoints:
   oauth:
   - oauth1
   - oauth2
-  parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/recipe-types/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"recipe_types.get" (included with other parameters)'
-    name: String
-    required: true
-    type: String
+  parameters: []
   parse_warnings:
-  - could not detect api method= param or REST URL
+  - no parameters table found
   premier: true
-  response: {}
+  response:
+    recipe_types:
+      recipe_type:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -151,19 +138,24 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/recipe-types/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"recipe_types.get.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    recipe_types:
+      recipe_type:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -177,21 +169,14 @@ endpoints:
   oauth:
   - oauth1
   - oauth2
-  parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/recipe/favorites/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"recipe.get_favorites" (included with other parameters)'
-    name: String
-    required: true
-    type: String
+  parameters: []
   parse_warnings:
-  - could not detect api method= param or REST URL
+  - no parameters table found
   premier: true
-  response: {}
+  response:
+    recipes:
+      recipe:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -205,21 +190,14 @@ endpoints:
   oauth:
   - oauth1
   - oauth2
-  parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/recipe/favorites/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"recipe.get_favorites.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
+  parameters: []
   parse_warnings:
-  - could not detect api method= param or REST URL
+  - no parameters table found
   premier: true
-  response: {}
+  response:
+    recipes:
+      recipe:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -235,19 +213,32 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/recipes/search/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"recipes.search" (included with other parameters)'
-    name: String
-    required: true
+    description: Search expression to match on food names
+    name: search_expression
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: 'Recipe type E.G.: "Appetizer"'
+    name: recipe_type
+    required: false
+    type: String
+  - default: null
+    description: Zero-based offset into the results for the query
+    name: page_number
+    required: false
+    type: Int
+  - default: null
+    description: Maximum number of results to return (default value is 20). This number cannot be greater
+      than 50
+    name: max_results
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    recipes:
+      recipe:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -263,19 +254,95 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/recipes/search/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"recipes.search.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: Search expression to match on food names
+    name: search_expression
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: This option will restrict results to recipes with at least one image
+    name: must_have_images
+    required: false
+    type: Bool
+  - default: null
+    description: Minimum calories that are contained in the recipe
+    name: calories.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum calories that are contained in the recipe
+    name: calories.to
+    required: false
+    type: Long
+  - default: null
+    description: Minimum percentage of the calories composed of carbohydrate
+    name: carb_percentage.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum percentage of the calories composed of carbohydrate
+    name: carb_percentage.to
+    required: false
+    type: Long
+  - default: null
+    description: Minimum percentage of the calories composed of protein
+    name: protein_percentage.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum percentage of the calories composed of protein
+    name: protein_percentage.to
+    required: false
+    type: Long
+  - default: null
+    description: Minimum percentage of the calories composed of fat
+    name: fat_percentage.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum percentage of the calories composed of fat
+    name: fat_percentage.to
+    required: false
+    type: Long
+  - default: null
+    description: Minimum preparation and cook time in minutes required to create the recipe
+    name: prep_time.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum preparation and cook time in minutes required to create the recipe
+    name: prep_time.to
+    required: false
+    type: Long
+  - default: null
+    description: Zero-based offset into the results for the query
+    name: page_number
+    required: false
+    type: Int
+  - default: null
+    description: Maximum number of results to return (default value is 20). This number cannot be greater
+      than 50
+    name: max_results
+    required: false
+    type: Int
+  - default: null
+    description: 'This option will order results. Valid options include: newest, oldest, caloriesPerServingAscending,
+      caloriesPerServingDescending. When not explicitly set, the ordering will be returned by newest'
+    name: sort_by
+    required: false
+    type: String
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    recipes:
+      recipe:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -291,19 +358,108 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/recipes/search/v3"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"recipes.search.v3" (included with other parameters)'
-    name: String
-    required: true
+    description: 'This option filters by specified recipe types and should be provided as a comma separated
+      string of recipe type names. The values are provided via the api: Recipe Types Get All'
+    name: recipe_types
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: 'This option will affect recipe type filters. If true, a recipe must match all provided
+      recipe types, if false (default) then recipes matching any of the supplied types will be returned,
+      The values are provided via the api: Recipe Types Get All'
+    name: recipe_types_matchall
+    required: false
+    type: Bool
+  - default: null
+    description: Search expression to match on food names
+    name: search_expression
+    required: false
+    type: String
+  - default: null
+    description: This option will restrict results to recipes with at least one image
+    name: must_have_images
+    required: false
+    type: Bool
+  - default: null
+    description: Minimum calories that are contained in the recipe
+    name: calories.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum calories that are contained in the recipe
+    name: calories.to
+    required: false
+    type: Long
+  - default: null
+    description: Minimum percentage of the calories composed of carbohydrate
+    name: carb_percentage.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum percentage of the calories composed of carbohydrate
+    name: carb_percentage.to
+    required: false
+    type: Long
+  - default: null
+    description: Minimum percentage of the calories composed of protein
+    name: protein_percentage.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum percentage of the calories composed of protein
+    name: protein_percentage.to
+    required: false
+    type: Long
+  - default: null
+    description: Minimum percentage of the calories composed of fat
+    name: fat_percentage.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum percentage of the calories composed of fat
+    name: fat_percentage.to
+    required: false
+    type: Long
+  - default: null
+    description: Minimum preparation and cook time in minutes required to create the recipe
+    name: prep_time.from
+    required: false
+    type: Long
+  - default: null
+    description: Maximum preparation and cook time in minutes required to create the recipe
+    name: prep_time.to
+    required: false
+    type: Long
+  - default: null
+    description: Zero-based offset into the results for the query
+    name: page_number
+    required: false
+    type: Int
+  - default: null
+    description: Maximum number of results to return (default value is 20). This number cannot be greater
+      than 50
+    name: max_results
+    required: false
+    type: Int
+  - default: null
+    description: 'This option will order results. Valid options include: newest, oldest, caloriesPerServingAscending,
+      caloriesPerServingDescending. When not explicitly set, the ordering will be returned by newest'
+    name: sort_by
+    required: false
+    type: String
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    recipes:
+      recipe:
+      - {}
   rest_url: null
   scope: basic
   version: v3

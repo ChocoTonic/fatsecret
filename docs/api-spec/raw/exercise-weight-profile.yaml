@@ -3,7 +3,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/exercise_entries.commit_day
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: exercise_entries.commit_day
   notes: ''
   oauth:
@@ -11,19 +11,14 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercise-entries/day/v1"HTTP "POST"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"exercise_entries.commit_day" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -39,19 +34,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercise-entries/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"exercise_entries.get" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    exercise_entries:
+      exercise_entry:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -67,19 +59,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercise-entries/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"exercise_entries.get.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    exercise_entries:
+      exercise_entry:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -95,19 +84,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercise-entries/month/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"exercise_entries.get_month" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    month:
+      day:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -123,19 +109,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercise-entries/month/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"exercise_entries.get_month.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    month:
+      day:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -143,7 +126,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/exercise_entries.save_template
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: exercise_entries.save_template
   notes: ''
   oauth:
@@ -151,19 +134,22 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercise-entries/template/v1"HTTP "POST"'
-    name: N/A
+    description: The days of the week specified as bits with Sunday being the 1st bit and Saturday being
+      the last and then converted to an Int. For example Tuesday and Thursday would be represented as
+      00010100 in bits or 20 in Int where Tuesday is the 3rd bit from the right and Thursday being the
+      5th. Must be between 0 and 128
+    name: days
     required: true
-    type: null
+    type: Int
   - default: null
-    description: '"exercise_entries.save_template" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -171,7 +157,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/exercise_entry.edit
   exists: true
-  http_verb: GET
+  http_verb: PUT
   method: exercise_entry.edit
   notes: ''
   oauth:
@@ -179,19 +165,47 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercise-entries/template/v1"HTTP "PUT"'
-    name: N/A
+    description: ID of the exercise type to shift to
+    name: shift_to_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"exercise_entry.edit" (included with other parameters)'
-    name: String
+    description: ID of the exercise type to shift from
+    name: shift_from_id
     required: true
+    type: Long
+  - default: null
+    description: Duration in minutes
+    name: minutes
+    required: true
+    type: Int
+  - default: null
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  - default: null
+    description: Only required if shift_to_id is 0 (exercise type "Other"). This is the name of the new
+      custom exercise type to shift to
+    name: shift_to_name
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Only required if shift_from_id is 0 (exercise type "Other"). This is the name of the
+      custom exercise type to shift from
+    name: shift_from_name
+    required: false
+    type: String
+  - default: null
+    description: Only required if shift_to_id is 0 (exercise type "Other"). This is the total number of
+      kcals burned for this exercise
+    name: kcal
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -207,19 +221,24 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercises/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"exercises.get" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    exercise_types:
+      exercise:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -235,19 +254,24 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/exercises/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"exercises.get.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    exercise_types:
+      exercise:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -255,7 +279,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/profile.create
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: profile.create
   notes: ''
   oauth:
@@ -263,19 +287,15 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/profile/v1"HTTP "POST"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"profile.create" (included with other parameters)'
-    name: String
+    description: You can set your own ID for the newly created profile if you do not wish to store the
+      auth_token and auth_secret
+    name: user_id
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    profile: {}
   rest_url: null
   scope: basic
   version: v1
@@ -289,21 +309,12 @@ endpoints:
   oauth:
   - oauth1
   - oauth2
-  parameters:
-  - default: null
-    description: '"https://platform.fatsecret.com/rest/profile/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"profile.get" (included with other parameters)'
-    name: String
-    required: true
-    type: String
+  parameters: []
   parse_warnings:
-  - could not detect api method= param or REST URL
+  - no parameters table found
   premier: true
-  response: {}
+  response:
+    profile: {}
   rest_url: null
   scope: basic
   version: v1
@@ -319,19 +330,15 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/profile/auth/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"profile.get" (included with other parameters)'
-    name: String
-    required: true
+    description: You can set your own ID for the newly created profile if you do not wish to store the
+      auth_token and auth_secret
+    name: user_id
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    profile: {}
   rest_url: null
   scope: basic
   version: v1
@@ -339,7 +346,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/weight.update
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: weight.update
   notes: ''
   oauth:
@@ -347,19 +354,47 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/weight/v1"HTTP "POST"'
-    name: N/A
+    description: Current weight of the user in kilograms
+    name: current_weight_kg
     required: true
-    type: null
+    type: Decimal
   - default: null
-    description: '"weight.update" (included with other parameters)'
-    name: String
-    required: true
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  - default: null
+    description: Weight measurement type for this user profile. Valid types are "kg" and "lb" (default
+      value is "kg")
+    name: weight_type
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Height measurement type for this user profile. Valid types are "cm" and "inch" (default
+      value is "cm")
+    name: height_type
+    required: false
+    type: String
+  - default: null
+    description: User's goal weight in kilograms
+    name: goal_weight_kg
+    required: false
+    type: Decimal
+  - default: null
+    description: Current height of the user in centimetres. This is required for the first weigh-in. You
+      can only set this for the first time
+    name: current_height_cm
+    required: false
+    type: Decimal
+  - default: null
+    description: A comment for this weigh-in
+    name: comment
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -375,19 +410,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/weight/month/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"weights.get_month" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    month:
+      day:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -403,19 +435,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/weight/month/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"weights.get_month.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    month:
+      day:
+      - {}
   rest_url: null
   scope: basic
   version: v2

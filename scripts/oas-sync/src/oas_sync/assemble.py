@@ -45,11 +45,15 @@ CATEGORY_DEFAULT_TAG = {
 # extract these (its regex was foiled by the rendered HTML), so we encode
 # them here. Same inputs → same output, so this is still deterministic.
 NATIVE_REST_URLS: dict[tuple[str, str], str] = {
-    ("natural.language.processing", "v1"): "/rest/natural-language-processing/v1",
-    ("image.recognition", "v1"): "/rest/image-recognition/v1",
-    ("image.recognition", "v2"): "/rest/image-recognition/v2",
-    ("feedback", "v1"): "/rest/feedback/v1",
-    ("food_entries.get", "v2"): "/rest/food-entries/v2",
+    ("natural.language.processing", "v1"): "https://platform.fatsecret.com/rest/natural-language-processing/v1",
+    ("image.recognition", "v1"): "https://platform.fatsecret.com/rest/image-recognition/v1",
+    ("image.recognition", "v2"): "https://platform.fatsecret.com/rest/image-recognition/v2",
+    ("feedback", "v1"): "https://platform.fatsecret.com/rest/feedback/v1",
+    # food_entries.get.v2 was historically routed through the REST URL
+    # /rest/food-entries/v2, but the hand-written resource calls it
+    # method-style ("method": "food_entries.get.v2") and the test suite
+    # asserts method-style.  Removed so the assembler classifies it
+    # method-style as well.
 }
 
 # Methods that POST a JSON body when invoked over the REST-URL style.
@@ -383,7 +387,17 @@ def _response_schema_from_block(block: Any) -> dict[str, Any]:
             else:
                 properties[str(key)] = {"items": {"type": "string"}, "type": "array"}
         else:
-            properties[str(key)] = {"type": "string"}
+            # Type leaf scalars by their Python value so codegen's
+            # ``derive_unwrap`` can spot the integer ``success`` flag that marks
+            # a mutator endpoint.  All other scalar shapes stay as ``string``.
+            if isinstance(value, bool):
+                properties[str(key)] = {"type": "boolean"}
+            elif isinstance(value, int):
+                properties[str(key)] = {"type": "integer"}
+            elif isinstance(value, float):
+                properties[str(key)] = {"type": "number"}
+            else:
+                properties[str(key)] = {"type": "string"}
     return {"properties": properties, "type": "object"}
 
 

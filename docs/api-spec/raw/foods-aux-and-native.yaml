@@ -3,7 +3,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/feedback
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: feedback
   notes: ''
   oauth:
@@ -11,15 +11,66 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/feedback/v1"HTTP "POST"'
-    name: N/A
+    description: A barcode where a food is associated incorrectly. Required when issue_type_id is 1
+    name: barcode
     required: true
-    type: null
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: Int
+  - default: null
+    description: The type ID for the request. Valid options are 1 (Wrong Name/Brand), 2 (Wrong Nutrition
+      Info), 3 (Missing Serving Size), 4 (Barcode not found), 99 (Other)
+    name: issue_type_id
+    required: true
+    type: Int
+  - default: null
+    description: Issue description. This is to be provided when the issue_type_id is 99 (Other)
+    name: issue_type
+    required: false
+    type: String
+  - default: null
+    description: Custom notes regarding the issue
+    name: notes
+    required: false
+    type: String
+  - default: null
+    description: Custom identifier for external use. E.g an external unique user identifier
+    name: external_id
+    required: true
+    type: String
+  - default: null
+    description: A food ID that is related to the issue (i.e. barcode incorrect food attached). Required
+      when issue_type_id is 1, 2 or 3
+    name: returned_food.food_id
+    required: false
+    type: Int
+  - default: null
+    description: A foods serving ID that is related to the issue (i.e. incorrect nutrient information).
+      Required when issue_type_id is 2 or 3
+    name: returned_food.serving_id
+    required: false
+    type: Int
+  - default: null
+    description: The image file extension in which the signed uploads will be generated using. Accepts
+      jpg, jpeg, png and tiff. Defaulted to jpg if not provided
+    name: image_file_extension
+    required: false
+    type: String
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response: {}
-  rest_url: null
+  rest_url: https://platform.fatsecret.com/rest/feedback/v1
   scope: barcode
   version: v1
 - api_method_param: null
@@ -33,24 +84,28 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - &id001
-    description: GTIN-13 barcode (left-padded with zeros).
+  - default: null
+    description: 13-digit GTIN-13 formatted sequence of digits representing the barcode to search against
     name: barcode
     required: true
     type: String
-  - &id002
-    description: Region.
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
     name: region
     required: false
     type: String
-  - &id003
-    description: Language.
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
     name: language
     required: false
     type: String
+  parse_warnings: []
   premier: true
   response:
-    food_id: {}
+    food_id: ''
   rest_url: null
   scope: basic
   version: v1
@@ -65,25 +120,48 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id001
-  - description: Include food sub-categories.
+  - default: null
+    description: 13-digit GTIN-13 formatted sequence of digits representing the barcode to search against
+    name: barcode
+    required: true
+    type: String
+  - default: null
+    description: Response will include the names of all sub categories associated with the food
     name: include_sub_categories
     required: false
     type: Boolean
-  - description: Include food images.
+  - default: null
+    description: Response will include food image in the response. (Requires separate premier offering,
+      please contact us in order for this feature to be enabled for your account)
     name: include_food_images
     required: false
     type: Boolean
-  - description: Include food attributes (allergens / preferences).
+  - default: null
+    description: Response will include food dietary preferences and allergens if available. (Requires
+      separate premier offering, please contact us in order for this feature to be enabled for your account)
     name: include_food_attributes
     required: false
     type: Boolean
-  - description: Flag the default serving in the response.
+  - default: null
+    description: Either "true" or "false" - the response will flag one of the servings as the default
+      serving (the suggested or most commonly chosen option)
     name: flag_default_serving
     required: false
     type: Boolean
-  - *id002
-  - *id003
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     food: {}
@@ -102,19 +180,36 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/brands/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food_brands.get" (included with other parameters)'
-    name: String
+    description: Food brands that begin with the first letter is returned. The "*" will return all food
+      brands beginning with a numeric character. If this is not specified then the most popular food brands
+      at the time is returned
+    name: starts_with
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+    name: brand_type
+    required: false
+    type: String
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_brands:
+      food_brand:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -130,19 +225,36 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/brands/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food_brands.get.v2" (included with other parameters)'
-    name: String
+    description: Food brands that begin with the first letter is returned. The "*" will return all food
+      brands beginning with a numeric character. If this is not specified then the most popular food brands
+      at the time is returned
+    name: starts_with
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+    name: brand_type
+    required: false
+    type: String
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_brands:
+      food_brand:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -158,19 +270,24 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-categories/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food_categories.get" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_categories:
+      food_category:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -186,19 +303,24 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-categories/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food_categories.get.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_categories:
+      food_category:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -214,20 +336,29 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-sub-categories/v1"HTTP
-      "GET"'
-    name: N/A
+    description: Unique identifier of the food category entry
+    name: food_category_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"food_sub_categories.get" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_sub_categories:
+      food_sub_category:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -243,20 +374,29 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-sub-categories/v2"HTTP
-      "GET"'
-    name: N/A
+    description: Unique identifier of the food category entry
+    name: food_category_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"food_sub_categories.get.v2" (included with other parameters)'
-    name: String
-    required: true
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_sub_categories:
+      food_sub_category:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -271,17 +411,26 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - &id004
-    description: Autocomplete prefix expression.
+  - default: null
+    description: 'Suggestions for the given expression is returned. E.G.: "chic" will return up to four
+      of the best suggestions that contains "chic"'
     name: expression
     required: true
     type: String
-  - &id005
-    description: Maximum results per page.
+  - default: null
+    description: Maximum number of results to return (default value is 4). This number cannot be greater
+      than 10
     name: max_results
     required: false
     type: Int
-  - *id002
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     suggestions:
@@ -301,9 +450,26 @@ endpoints:
   - oauth1
   - oauth2
   parameters:
-  - *id004
-  - *id005
-  - *id002
+  - default: null
+    description: 'Suggestions for the given expression is returned. E.G.: "chic" will return up to four
+      of the best suggestions that contains "chic"'
+    name: expression
+    required: true
+    type: String
+  - default: null
+    description: Maximum number of results to return (default value is 4). This number cannot be greater
+      than 10
+    name: max_results
+    required: false
+    type: Int
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
   response:
     suggestions:
@@ -316,7 +482,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/image.recognition
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: image.recognition
   notes: ''
   oauth:
@@ -324,22 +490,72 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/image-recognition/v1"HTTP "POST"'
-    name: N/A
+    description: A Base64 image of one or more foods. This field is limited to 999,982 characters
+    name: image_b64
     required: true
-    type: null
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: String
+  - default: null
+    description: Include full food data in the response (see our food.get API)
+    name: include_food_data
+    required: false
+    type: Bool
+  - default: null
+    description: An array of previously consumed foods. This may be provided to assist with more accurate
+      matching of foods identified in the input with previously consumed foods
+    name: eaten_foods
+    required: false
+    type: Array
+  - default: null
+    description: The ID of the food that has been previously consumed
+    name: eaten_foods.food_id
+    required: true
+    type: Long
+  - default: null
+    description: The name of the food that has been previously consumed
+    name: eaten_foods.food_name
+    required: true
+    type: String
+  - default: null
+    description: The brand name of the food that has been previously consumed
+    name: eaten_foods.food_brand
+    required: false
+    type: String
+  - default: null
+    description: The serving description of the food that has been previously consumed
+    name: eaten_foods.serving_description
+    required: false
+    type: String
+  - default: null
+    description: The serving size of the food that has been previously consumed
+    name: eaten_foods.serving_size
+    required: false
+    type: String
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
-  rest_url: null
+  response:
+    food_response:
+    - {}
+  rest_url: https://platform.fatsecret.com/rest/image-recognition/v1
   scope: basic
   version: v1
 - api_method_param: null
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v2/image.recognition
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: image.recognition
   notes: ''
   oauth:
@@ -347,22 +563,72 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/image-recognition/v2"HTTP "POST"'
-    name: N/A
+    description: A Base64 image of one or more foods. This field is limited to 999,982 characters
+    name: image_b64
     required: true
-    type: null
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: String
+  - default: null
+    description: Include full food data in the response (see our food.get API)
+    name: include_food_data
+    required: false
+    type: Bool
+  - default: null
+    description: An array of previously consumed foods. This may be provided to assist with more accurate
+      matching of foods identified in the input with previously consumed foods
+    name: eaten_foods
+    required: false
+    type: Array
+  - default: null
+    description: The ID of the food that has been previously consumed
+    name: eaten_foods.food_id
+    required: true
+    type: Long
+  - default: null
+    description: The name of the food that has been previously consumed
+    name: eaten_foods.food_name
+    required: true
+    type: String
+  - default: null
+    description: The brand name of the food that has been previously consumed
+    name: eaten_foods.food_brand
+    required: false
+    type: String
+  - default: null
+    description: The serving description of the food that has been previously consumed
+    name: eaten_foods.serving_description
+    required: false
+    type: String
+  - default: null
+    description: The serving size of the food that has been previously consumed
+    name: eaten_foods.serving_size
+    required: false
+    type: String
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
-  rest_url: null
+  response:
+    food_response:
+    - {}
+  rest_url: https://platform.fatsecret.com/rest/image-recognition/v2
   scope: basic
   version: v2
 - api_method_param: null
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/natural.language.processing
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: natural.language.processing
   notes: ''
   oauth:
@@ -370,15 +636,65 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/natural-language-processing/v1"HTTP
-      "POST"'
-    name: N/A
+    description: A description of what a user has eaten. May contain multiple items. e.g. "A toast with
+      ham and cheese, an apple, a banana and a cappuccino". This field is limited to 1000 characters
+    name: user_input
     required: true
-    type: null
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: String
+  - default: null
+    description: Include full food data in the response (see our food.get API)
+    name: include_food_data
+    required: false
+    type: Bool
+  - default: null
+    description: An array of previously consumed foods. This may be provided to assist with more accurate
+      matching of foods identified in the input with previously consumed foods
+    name: eaten_foods
+    required: false
+    type: Array
+  - default: null
+    description: The ID of the food that has been previously consumed
+    name: eaten_foods.food_id
+    required: true
+    type: Long
+  - default: null
+    description: The name of the food that has been previously consumed
+    name: eaten_foods.food_name
+    required: true
+    type: String
+  - default: null
+    description: The brand name of the food that has been previously consumed
+    name: eaten_foods.food_brand
+    required: false
+    type: String
+  - default: null
+    description: The serving description of the food that has been previously consumed
+    name: eaten_foods.serving_description
+    required: false
+    type: String
+  - default: null
+    description: The serving size of the food that has been previously consumed
+    name: eaten_foods.serving_size
+    required: false
+    type: String
+  - default: null
+    description: "Results will be filtered by region. E.G.: \"FR\" returns results from France. If not\
+      \ specified this will default to \"US\" (United States).\n                    Click here for full\
+      \ documentation on localization."
+    name: region
+    required: false
+    type: String
+  - default: null
+    description: '(Ignored unless region is also specified) Results will be in the specified language.
+      E.G.: "fr" returns results in French'
+    name: language
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
-  rest_url: null
+  response:
+    food_response:
+    - {}
+  rest_url: https://platform.fatsecret.com/rest/natural-language-processing/v1
   scope: basic
   version: v1

@@ -3,7 +3,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/food_entries.copy
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: food_entries.copy
   notes: ''
   oauth:
@@ -11,19 +11,25 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/copy/v1"HTTP "POST"'
-    name: N/A
+    description: Date to copy food entries from expressed in the number of days since January 1, 1970
+    name: from_date
     required: true
-    type: null
+    type: Int
   - default: null
-    description: '"food_entries.copy" (included with other parameters)'
-    name: String
+    description: Date to copy food entries to expressed in the number of days since January 1, 1970 (default
+      value is the current day)
+    name: to_date
     required: true
+    type: Int
+  - default: null
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -31,7 +37,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/food_entries.copy_saved_meal
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: food_entries.copy_saved_meal
   notes: ''
   oauth:
@@ -39,19 +45,24 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/copy/saved-meal/v1"HTTP "POST"'
-    name: N/A
+    description: Unique saved meal identifier
+    name: saved_meal_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"food_entries.copy_saved_meal" (included with other parameters)'
-    name: String
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -67,19 +78,21 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
   - default: null
-    description: '"food_entries.get" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Unique identifier of the food diary entry
+    name: food_entry_id
+    required: false
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_entries:
+      food_entry:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -95,19 +108,21 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/v2"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
   - default: null
-    description: '"food_entries.get.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Unique identifier of the food diary entry
+    name: food_entry_id
+    required: false
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_entries:
+      food_entry:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -123,19 +138,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/month/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food_entries.get_month" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    month:
+      day:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -151,19 +163,16 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/month/v1"HTTP "GET"'
-    name: N/A
-    required: true
-    type: null
-  - default: null
-    description: '"food_entries.get_month.v2" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    month:
+      day:
+      - {}
   rest_url: null
   scope: basic
   version: v2
@@ -171,7 +180,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/food_entry.create
   exists: true
-  http_verb: GET
+  http_verb: POST
   method: food_entry.create
   notes: ''
   oauth:
@@ -179,19 +188,45 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/v1"HTTP "POST"'
-    name: N/A
+    description: Unique food identifier
+    name: food_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"food_entry.create" (included with other parameters)'
-    name: String
+    description: 'A description of the food item as entered by the user; typically the name of the food.
+      E.G.: "Instant Oatmeal"'
+    name: food_entry_name
     required: true
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Unique serving identifier
+    name: serving_id
+    required: true
+    type: Long
+  - default: null
+    description: Number of units in this standard serving size. For instance, if the serving description
+      is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of
+      units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for
+      "Brand" the number of units will always be "1"
+    name: number_of_units
+    required: true
+    type: Decimal
+  - default: null
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: true
+    type: String
+  - default: null
+    description: Number of days since January 1, 1970 (default value is the current day)
+    name: date
+    required: false
+    type: Int
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    food_entries:
+      food_entry:
+      - {}
   rest_url: null
   scope: basic
   version: v1
@@ -199,7 +234,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/food_entry.delete
   exists: true
-  http_verb: GET
+  http_verb: DELETE
   method: food_entry.delete
   notes: ''
   oauth:
@@ -207,19 +242,14 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/v1"HTTP "DELETE"'
-    name: N/A
+    description: Unique identifier of the food diary entry
+    name: food_entry_id
     required: true
-    type: null
-  - default: null
-    description: '"food_entry.delete" (included with other parameters)'
-    name: String
-    required: true
-    type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+    type: Long
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1
@@ -227,7 +257,7 @@ endpoints:
   deprecated: false
   doc_url: https://platform.fatsecret.com/docs/v1/food_entry.edit
   exists: true
-  http_verb: GET
+  http_verb: PUT
   method: food_entry.edit
   notes: ''
   oauth:
@@ -235,19 +265,38 @@ endpoints:
   - oauth2
   parameters:
   - default: null
-    description: '"https://platform.fatsecret.com/rest/food-entries/v1"HTTP "PUT"'
-    name: N/A
+    description: Unique identifier of the food diary entry
+    name: food_entry_id
     required: true
-    type: null
+    type: Long
   - default: null
-    description: '"food_entry.edit" (included with other parameters)'
-    name: String
-    required: true
+    description: 'A description of the food item as entered by the user; typically the name of the food.
+      E.G.: "Instant Oatmeal"'
+    name: food_entry_name
+    required: false
     type: String
-  parse_warnings:
-  - could not detect api method= param or REST URL
+  - default: null
+    description: Unique serving identifier
+    name: serving_id
+    required: false
+    type: Long
+  - default: null
+    description: Number of units in this standard serving size. For instance, if the serving description
+      is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of
+      units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for
+      "Brand" the number of units will always be "1"
+    name: number_of_units
+    required: false
+    type: Decimal
+  - default: null
+    description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+    name: meal
+    required: false
+    type: String
+  parse_warnings: []
   premier: true
-  response: {}
+  response:
+    success: 1
   rest_url: null
   scope: basic
   version: v1

@@ -257,91 +257,232 @@ components:
       description: FatSecret error envelope. The `error.code` is one of 36 documented codes; see examples.
   schemas:
     ExerciseEntriesCommitDayV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     ExerciseEntriesGetMonthV1Response:
-      additionalProperties: true
+      properties:
+        month:
+          properties:
+            day:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     ExerciseEntriesGetMonthV2Response:
-      additionalProperties: true
+      properties:
+        month:
+          properties:
+            day:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     ExerciseEntriesGetV1Response:
-      additionalProperties: true
+      properties:
+        exercise_entries:
+          properties:
+            exercise_entry:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     ExerciseEntriesGetV2Response:
-      additionalProperties: true
+      properties:
+        exercise_entries:
+          properties:
+            exercise_entry:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     ExerciseEntriesSaveTemplateV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     ExerciseEntryEditV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     ExercisesGetV1Response:
-      additionalProperties: true
+      properties:
+        exercise_types:
+          properties:
+            exercise:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     ExercisesGetV2Response:
-      additionalProperties: true
+      properties:
+        exercise_types:
+          properties:
+            exercise:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FeedbackV1Response:
       additionalProperties: true
       type: object
     FoodAddFavoriteV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     FoodBrandsGetV1Response:
-      additionalProperties: true
+      properties:
+        food_brands:
+          properties:
+            food_brand:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodBrandsGetV2Response:
-      additionalProperties: true
+      properties:
+        food_brands:
+          properties:
+            food_brand:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodCategoriesGetV1Response:
-      additionalProperties: true
+      properties:
+        food_categories:
+          properties:
+            food_category:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodCategoriesGetV2Response:
-      additionalProperties: true
+      properties:
+        food_categories:
+          properties:
+            food_category:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodCreateV1Response:
-      additionalProperties: true
+      properties:
+        food_id:
+          type: string
       type: object
     FoodCreateV2Response:
-      additionalProperties: true
+      properties:
+        food_id:
+          type: string
       type: object
     FoodDeleteFavoriteV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     FoodEntriesCopySavedMealV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     FoodEntriesCopyV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     FoodEntriesGetMonthV1Response:
-      additionalProperties: true
+      properties:
+        month:
+          properties:
+            day:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodEntriesGetMonthV2Response:
-      additionalProperties: true
+      properties:
+        month:
+          properties:
+            day:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodEntriesGetV1Response:
-      additionalProperties: true
+      properties:
+        food_entries:
+          properties:
+            food_entry:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodEntriesGetV2Response:
-      additionalProperties: true
+      properties:
+        food_entries:
+          properties:
+            food_entry:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodEntryCreateV1Response:
-      additionalProperties: true
+      properties:
+        food_entries:
+          properties:
+            food_entry:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodEntryDeleteV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     FoodEntryEditV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     FoodFindIdForBarcodeV1Response:
       properties:
         food_id:
-          additionalProperties: true
-          type: object
+          type: string
       type: object
     FoodFindIdForBarcodeV2Response:
       properties:
@@ -380,10 +521,26 @@ components:
           type: object
       type: object
     FoodSubCategoriesGetV1Response:
-      additionalProperties: true
+      properties:
+        food_sub_categories:
+          properties:
+            food_sub_category:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodSubCategoriesGetV2Response:
-      additionalProperties: true
+      properties:
+        food_sub_categories:
+          properties:
+            food_sub_category:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsAutocompleteV1Response:
       properties:
@@ -408,22 +565,70 @@ components:
           type: object
       type: object
     FoodsGetFavoritesV1Response:
-      additionalProperties: true
+      properties:
+        foods:
+          properties:
+            food:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsGetFavoritesV2Response:
-      additionalProperties: true
+      properties:
+        foods:
+          properties:
+            food:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsGetMostEatenV1Response:
-      additionalProperties: true
+      properties:
+        foods:
+          properties:
+            food:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsGetMostEatenV2Response:
-      additionalProperties: true
+      properties:
+        foods:
+          properties:
+            food:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsGetRecentlyEatenV1Response:
-      additionalProperties: true
+      properties:
+        foods:
+          properties:
+            food:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsGetRecentlyEatenV2Response:
-      additionalProperties: true
+      properties:
+        foods:
+          properties:
+            food:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     FoodsSearchV1Response:
       properties:
@@ -493,94 +698,246 @@ components:
           type: object
       type: object
     ImageRecognitionV1Response:
-      additionalProperties: true
+      properties:
+        food_response:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
       type: object
     ImageRecognitionV2Response:
-      additionalProperties: true
+      properties:
+        food_response:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
       type: object
     NaturalLanguageProcessingV1Response:
-      additionalProperties: true
+      properties:
+        food_response:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
       type: object
     ProfileCreateV1Response:
-      additionalProperties: true
+      properties:
+        profile:
+          additionalProperties: true
+          type: object
       type: object
     ProfileGetAuthV1Response:
-      additionalProperties: true
+      properties:
+        profile:
+          additionalProperties: true
+          type: object
       type: object
     ProfileGetV1Response:
-      additionalProperties: true
+      properties:
+        profile:
+          additionalProperties: true
+          type: object
       type: object
     RecipeAddFavoriteV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     RecipeDeleteFavoriteV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     RecipeGetV1Response:
-      additionalProperties: true
+      properties:
+        recipe:
+          additionalProperties: true
+          type: object
       type: object
     RecipeGetV2Response:
-      additionalProperties: true
+      properties:
+        recipe:
+          additionalProperties: true
+          type: object
       type: object
     RecipeTypesGetV1Response:
-      additionalProperties: true
+      properties:
+        recipe_types:
+          properties:
+            recipe_type:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     RecipeTypesGetV2Response:
-      additionalProperties: true
+      properties:
+        recipe_types:
+          properties:
+            recipe_type:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     RecipesGetFavoritesV1Response:
-      additionalProperties: true
+      properties:
+        recipes:
+          properties:
+            recipe:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     RecipesGetFavoritesV2Response:
-      additionalProperties: true
+      properties:
+        recipes:
+          properties:
+            recipe:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     RecipesSearchV1Response:
-      additionalProperties: true
+      properties:
+        recipes:
+          properties:
+            recipe:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     RecipesSearchV2Response:
-      additionalProperties: true
+      properties:
+        recipes:
+          properties:
+            recipe:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     RecipesSearchV3Response:
-      additionalProperties: true
+      properties:
+        recipes:
+          properties:
+            recipe:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     SavedMealCreateV1Response:
-      additionalProperties: true
+      properties:
+        saved_meal_id:
+          type: string
       type: object
     SavedMealDeleteV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     SavedMealEditV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     SavedMealItemAddV1Response:
-      additionalProperties: true
+      properties:
+        saved_meal_item_id:
+          type: string
       type: object
     SavedMealItemDeleteV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     SavedMealItemEditV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     SavedMealItemsGetV1Response:
-      additionalProperties: true
+      properties:
+        saved_meal_items:
+          properties:
+            saved_meal_item:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     SavedMealItemsGetV2Response:
-      additionalProperties: true
+      properties:
+        saved_meal_items:
+          properties:
+            saved_meal_item:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     SavedMealsGetV1Response:
-      additionalProperties: true
+      properties:
+        saved_meals:
+          properties:
+            saved_meal:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     SavedMealsGetV2Response:
-      additionalProperties: true
+      properties:
+        saved_meals:
+          properties:
+            saved_meal:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     WeightUpdateV1Response:
-      additionalProperties: true
+      properties:
+        success:
+          type: integer
       type: object
     WeightsGetMonthV1Response:
-      additionalProperties: true
+      properties:
+        month:
+          properties:
+            day:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
     WeightsGetMonthV2Response:
-      additionalProperties: true
+      properties:
+        month:
+          properties:
+            day:
+              items:
+                additionalProperties: true
+                type: object
+              type: array
+          type: object
       type: object
   securitySchemes:
     oauth1:
@@ -612,136 +969,8 @@ info:
   version: '2026.01'
 openapi: 3.1.0
 paths:
-  /rest/feedback/v1:
-    post:
-      operationId: feedback_v1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              additionalProperties: true
-              type: object
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FeedbackV1Response'
-          description: Successful response.
-        default:
-          $ref: '#/components/responses/Error'
-      security:
-      - oauth2:
-        - barcode
-      - oauth1: []
-      summary: feedback (v1)
-      tags:
-      - Feedback
-      x-fatsecret-premier: true
-  /rest/food-entries/v2:
-    get:
-      operationId: food_entries_get_v2
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FoodEntriesGetV2Response'
-          description: Successful response.
-        default:
-          $ref: '#/components/responses/Error'
-      security:
-      - oauth2:
-        - basic
-      - oauth1: []
-      summary: food_entries.get (v2)
-      tags:
-      - Food Diary
-      x-fatsecret-premier: true
-  /rest/image-recognition/v1:
-    post:
-      operationId: image_recognition_v1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              additionalProperties: true
-              type: object
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImageRecognitionV1Response'
-          description: Successful response.
-        default:
-          $ref: '#/components/responses/Error'
-      security:
-      - oauth2:
-        - basic
-      - oauth1: []
-      summary: image.recognition (v1)
-      tags:
-      - Native APIs
-      x-fatsecret-premier: true
-  /rest/image-recognition/v2:
-    post:
-      operationId: image_recognition_v2
-      requestBody:
-        content:
-          application/json:
-            schema:
-              additionalProperties: true
-              type: object
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImageRecognitionV2Response'
-          description: Successful response.
-        default:
-          $ref: '#/components/responses/Error'
-      security:
-      - oauth2:
-        - basic
-      - oauth1: []
-      summary: image.recognition (v2)
-      tags:
-      - Native APIs
-      x-fatsecret-premier: true
-  /rest/natural-language-processing/v1:
-    post:
-      operationId: natural_language_processing_v1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              additionalProperties: true
-              type: object
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NaturalLanguageProcessingV1Response'
-          description: Successful response.
-        default:
-          $ref: '#/components/responses/Error'
-      security:
-      - oauth2:
-        - basic
-      - oauth1: []
-      summary: natural.language.processing (v1)
-      tags:
-      - Native APIs
-      x-fatsecret-premier: true
   /rest/server.api#exercise_entries.commit_day:
-    get:
+    post:
       operationId: exercise_entries_commit_day_v1
       parameters:
       - description: FatSecret API method selector.
@@ -752,6 +981,12 @@ paths:
           enum:
           - exercise_entries.commit_day
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -782,6 +1017,12 @@ paths:
           enum:
           - exercise_entries.get
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -811,6 +1052,12 @@ paths:
           enum:
           - exercise_entries.get.v2
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -841,6 +1088,12 @@ paths:
           enum:
           - exercise_entries.get_month
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -870,6 +1123,12 @@ paths:
           enum:
           - exercise_entries.get_month.v2
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -888,7 +1147,7 @@ paths:
       - Exercise Diary
       x-fatsecret-premier: true
   /rest/server.api#exercise_entries.save_template:
-    get:
+    post:
       operationId: exercise_entries_save_template_v1
       parameters:
       - description: FatSecret API method selector.
@@ -899,6 +1158,21 @@ paths:
           enum:
           - exercise_entries.save_template
           type: string
+      - description: The days of the week specified as bits with Sunday being the 1st bit and Saturday
+          being the last and then converted to an Int. For example Tuesday and Thursday would be represented
+          as 00010100 in bits or 20 in Int where Tuesday is the 3rd bit from the right and Thursday being
+          the 5th. Must be between 0 and 128
+        in: query
+        name: days
+        required: true
+        schema:
+          type: integer
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -917,7 +1191,7 @@ paths:
       - Exercise Diary
       x-fatsecret-premier: true
   /rest/server.api#exercise_entry.edit:
-    get:
+    put:
       operationId: exercise_entry_edit_v1
       parameters:
       - description: FatSecret API method selector.
@@ -928,6 +1202,51 @@ paths:
           enum:
           - exercise_entry.edit
           type: string
+      - description: ID of the exercise type to shift to
+        in: query
+        name: shift_to_id
+        required: true
+        schema:
+          type: integer
+      - description: ID of the exercise type to shift from
+        in: query
+        name: shift_from_id
+        required: true
+        schema:
+          type: integer
+      - description: Duration in minutes
+        in: query
+        name: minutes
+        required: true
+        schema:
+          type: integer
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
+      - description: Only required if shift_to_id is 0 (exercise type "Other"). This is the name of the
+          new custom exercise type to shift to
+        in: query
+        name: shift_to_name
+        required: false
+        schema:
+          type: string
+      - description: Only required if shift_from_id is 0 (exercise type "Other"). This is the name of
+          the custom exercise type to shift from
+        in: query
+        name: shift_from_name
+        required: false
+        schema:
+          type: string
+      - description: Only required if shift_to_id is 0 (exercise type "Other"). This is the total number
+          of kcals burned for this exercise
+        in: query
+        name: kcal
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -958,6 +1277,20 @@ paths:
           enum:
           - exercises.get
           type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -987,6 +1320,20 @@ paths:
           enum:
           - exercises.get.v2
           type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1005,7 +1352,7 @@ paths:
       - Exercise Diary
       x-fatsecret-premier: true
   /rest/server.api#food.add_favorite:
-    get:
+    post:
       operationId: food_add_favorite_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1016,6 +1363,27 @@ paths:
           enum:
           - food.add_favorite
           type: string
+      - description: Unique food identifier
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: integer
+      - description: Unique serving identifier
+        in: query
+        name: serving_id
+        required: false
+        schema:
+          type: integer
+      - description: Number of units in this standard serving size. For instance, if the serving description
+          is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number
+          of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas
+          for "Brand" the number of units will always be "1"
+        in: query
+        name: number_of_units
+        required: false
+        schema:
+          type: number
       responses:
         '200':
           content:
@@ -1034,7 +1402,7 @@ paths:
       - Profile Foods
       x-fatsecret-premier: true
   /rest/server.api#food.create:
-    get:
+    post:
       deprecated: true
       operationId: food_create_v1
       parameters:
@@ -1045,6 +1413,173 @@ paths:
         schema:
           enum:
           - food.create
+          type: string
+      - description: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+        in: query
+        name: brand_type
+        required: false
+        schema:
+          type: string
+      - description: 'Brand name, only when food_type is "Brand". E.G.: "Quaker"'
+        in: query
+        name: brand_name
+        required: true
+        schema:
+          type: string
+      - description: 'Name of the food, not including the brand name. E.G.: "Instant Oatmeal"'
+        in: query
+        name: food_name
+        required: true
+        schema:
+          type: string
+      - description: 'Full description of the serving size. E.G.: "1 serving"'
+        in: query
+        name: serving_size
+        required: true
+        schema:
+          type: string
+      - description: Energy content in kcal
+        in: query
+        name: calories
+        required: true
+        schema:
+          type: number
+      - description: Total fat content in grams
+        in: query
+        name: fat
+        required: true
+        schema:
+          type: number
+      - description: Total carbohydrate content in grams
+        in: query
+        name: carbohydrate
+        required: true
+        schema:
+          type: number
+      - description: Protein content in grams
+        in: query
+        name: protein
+        required: true
+        schema:
+          type: number
+      - description: The quantity combined with serving_amount_unit to derive the total standardized quantity
+          of the serving
+        in: query
+        name: serving_amount
+        required: false
+        schema:
+          type: string
+      - description: The metric unit of measure for the serving size – either "g" or "ml" or "oz" – combined
+          with metric_serving_amount to derive the total standardized quantity of the serving (default
+          value is "g")
+        in: query
+        name: serving_amount_unit
+        required: false
+        schema:
+          type: string
+      - description: The energy content in kcal from fat
+        in: query
+        name: calories_from_fat
+        required: false
+        schema:
+          type: number
+      - description: Saturated fat content in grams (where available)
+        in: query
+        name: saturated_fat
+        required: false
+        schema:
+          type: number
+      - description: Polyunsaturated fat content in grams (where available)
+        in: query
+        name: polyunsaturated_fat
+        required: false
+        schema:
+          type: number
+      - description: Monounsaturated fat content in grams (where available)
+        in: query
+        name: monounsaturated_fat
+        required: false
+        schema:
+          type: number
+      - description: Trans fat content in grams (where available)
+        in: query
+        name: trans_fat
+        required: false
+        schema:
+          type: number
+      - description: Cholesterol content in milligrams (where available)
+        in: query
+        name: cholesterol
+        required: false
+        schema:
+          type: number
+      - description: Sodium content in milligrams (where available)
+        in: query
+        name: sodium
+        required: false
+        schema:
+          type: number
+      - description: Potassium content in milligrams (where available)
+        in: query
+        name: potassium
+        required: false
+        schema:
+          type: number
+      - description: Fiber content in grams (where available)
+        in: query
+        name: fiber
+        required: false
+        schema:
+          type: number
+      - description: Sugar content in grams (where available)
+        in: query
+        name: sugar
+        required: false
+        schema:
+          type: number
+      - description: The other carbohydrate content in grams
+        in: query
+        name: other_carbohydrate
+        required: false
+        schema:
+          type: number
+      - description: Percentage of daily recommended Vitamin A, based on a 2000 calorie diet (where available)
+        in: query
+        name: vitamin_a
+        required: false
+        schema:
+          type: number
+      - description: Percentage of daily recommended Vitamin C, based on a 2000 calorie diet (where available)
+        in: query
+        name: vitamin_c
+        required: false
+        schema:
+          type: number
+      - description: Percentage of daily recommended Calcium, based on a 2000 calorie diet (where available)
+        in: query
+        name: calcium
+        required: false
+        schema:
+          type: number
+      - description: Percentage of daily recommended Iron, based on a 2000 calorie diet (where available)
+        in: query
+        name: iron
+        required: false
+        schema:
+          type: number
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1064,7 +1599,7 @@ paths:
       - Profile Foods
       x-fatsecret-premier: true
   /rest/server.api#food.create.v2:
-    get:
+    post:
       operationId: food_create_v2
       parameters:
       - description: FatSecret API method selector.
@@ -1074,6 +1609,179 @@ paths:
         schema:
           enum:
           - food.create.v2
+          type: string
+      - description: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+        in: query
+        name: brand_type
+        required: false
+        schema:
+          type: string
+      - description: 'Brand name, only when food_type is "Brand". E.G.: "Quaker"'
+        in: query
+        name: brand_name
+        required: true
+        schema:
+          type: string
+      - description: 'Name of the food, not including the brand name. E.G.: "Instant Oatmeal"'
+        in: query
+        name: food_name
+        required: true
+        schema:
+          type: string
+      - description: 'Full description of the serving size. E.G.: "1 serving"'
+        in: query
+        name: serving_size
+        required: true
+        schema:
+          type: string
+      - description: Energy content in kcal
+        in: query
+        name: calories
+        required: true
+        schema:
+          type: number
+      - description: Total fat content in grams
+        in: query
+        name: fat
+        required: true
+        schema:
+          type: number
+      - description: Total carbohydrate content in grams
+        in: query
+        name: carbohydrate
+        required: true
+        schema:
+          type: number
+      - description: Protein content in grams
+        in: query
+        name: protein
+        required: true
+        schema:
+          type: number
+      - description: The quantity combined with serving_amount_unit to derive the total standardized quantity
+          of the serving
+        in: query
+        name: serving_amount
+        required: false
+        schema:
+          type: string
+      - description: The metric unit of measure for the serving size – either "g" or "ml" or "oz" – combined
+          with metric_serving_amount to derive the total standardized quantity of the serving (default
+          value is "g")
+        in: query
+        name: serving_amount_unit
+        required: false
+        schema:
+          type: string
+      - description: The energy content in kcal from fat
+        in: query
+        name: calories_from_fat
+        required: false
+        schema:
+          type: number
+      - description: Saturated fat content in grams (where available)
+        in: query
+        name: saturated_fat
+        required: false
+        schema:
+          type: number
+      - description: Polyunsaturated fat content in grams (where available)
+        in: query
+        name: polyunsaturated_fat
+        required: false
+        schema:
+          type: number
+      - description: Monounsaturated fat content in grams (where available)
+        in: query
+        name: monounsaturated_fat
+        required: false
+        schema:
+          type: number
+      - description: Trans fat content in grams (where available)
+        in: query
+        name: trans_fat
+        required: false
+        schema:
+          type: number
+      - description: Cholesterol content in milligrams (where available)
+        in: query
+        name: cholesterol
+        required: false
+        schema:
+          type: number
+      - description: Sodium content in milligrams (where available)
+        in: query
+        name: sodium
+        required: false
+        schema:
+          type: number
+      - description: Potassium content in milligrams (where available)
+        in: query
+        name: potassium
+        required: false
+        schema:
+          type: number
+      - description: Fiber content in grams (where available)
+        in: query
+        name: fiber
+        required: false
+        schema:
+          type: number
+      - description: Sugar content in grams (where available)
+        in: query
+        name: sugar
+        required: false
+        schema:
+          type: number
+      - description: Added Sugars content in grams (where available)
+        in: query
+        name: added_sugars
+        required: false
+        schema:
+          type: number
+      - description: Vitamin D content in micrograms (where available)
+        in: query
+        name: vitamin_d
+        required: false
+        schema:
+          type: number
+      - description: Vitamin A content in micrograms (where available)
+        in: query
+        name: vitamin_a
+        required: false
+        schema:
+          type: number
+      - description: Vitamin C content in milligrams (where available)
+        in: query
+        name: vitamin_c
+        required: false
+        schema:
+          type: number
+      - description: Calcium content in milligrams (where available)
+        in: query
+        name: calcium
+        required: false
+        schema:
+          type: number
+      - description: Iron content in milligrams (where available)
+        in: query
+        name: iron
+        required: false
+        schema:
+          type: number
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1093,7 +1801,7 @@ paths:
       - Profile Foods
       x-fatsecret-premier: true
   /rest/server.api#food.delete_favorite:
-    get:
+    delete:
       operationId: food_delete_favorite_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1104,6 +1812,27 @@ paths:
           enum:
           - food.delete_favorite
           type: string
+      - description: Unique food identifier
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: integer
+      - description: Unique serving identifier
+        in: query
+        name: serving_id
+        required: false
+        schema:
+          type: integer
+      - description: Number of units in this standard serving size. For instance, if the serving description
+          is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number
+          of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas
+          for "Brand" the number of units will always be "1"
+        in: query
+        name: number_of_units
+        required: false
+        schema:
+          type: number
       responses:
         '200':
           content:
@@ -1133,19 +1862,22 @@ paths:
           enum:
           - food.find_id_for_barcode
           type: string
-      - description: GTIN-13 barcode (left-padded with zeros).
+      - description: 13-digit GTIN-13 formatted sequence of digits representing the barcode to search
+          against
         in: query
         name: barcode
         required: true
         schema:
           type: string
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -1180,43 +1912,50 @@ paths:
           enum:
           - food.find_id_for_barcode.v2
           type: string
-      - description: GTIN-13 barcode (left-padded with zeros).
+      - description: 13-digit GTIN-13 formatted sequence of digits representing the barcode to search
+          against
         in: query
         name: barcode
         required: true
         schema:
           type: string
-      - description: Include food sub-categories.
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Include food images.
+      - description: Response will include food image in the response. (Requires separate premier offering,
+          please contact us in order for this feature to be enabled for your account)
         in: query
         name: include_food_images
         required: false
         schema:
           type: boolean
-      - description: Include food attributes (allergens / preferences).
+      - description: Response will include food dietary preferences and allergens if available. (Requires
+          separate premier offering, please contact us in order for this feature to be enabled for your
+          account)
         in: query
         name: include_food_attributes
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -1252,31 +1991,34 @@ paths:
           enum:
           - food.get
           type: string
-      - description: FatSecret food identifier.
+      - description: Unique food identifier
         in: query
         name: food_id
         required: true
         schema:
-          type: string
-      - description: Include food sub-categories.
+          type: integer
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -1312,19 +2054,34 @@ paths:
           enum:
           - food.get.v2
           type: string
-      - description: FatSecret food identifier.
+      - description: Unique food identifier
         in: query
         name: food_id
         required: true
         schema:
-          type: string
-      - description: Region.
+          type: integer
+      - description: Response will include the names of all sub categories associated with the food
+        in: query
+        name: include_sub_categories
+        required: false
+        schema:
+          type: boolean
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
+        in: query
+        name: flag_default_serving
+        required: false
+        schema:
+          type: boolean
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -1360,31 +2117,34 @@ paths:
           enum:
           - food.get.v3
           type: string
-      - description: FatSecret food identifier.
+      - description: Unique food identifier
         in: query
         name: food_id
         required: true
         schema:
-          type: string
-      - description: Include food sub-categories.
+          type: integer
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -1420,43 +2180,49 @@ paths:
           enum:
           - food.get.v4
           type: string
-      - description: FatSecret food identifier.
+      - description: Unique food identifier
         in: query
         name: food_id
         required: true
         schema:
-          type: string
-      - description: Include food sub-categories.
+          type: integer
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Include food images.
+      - description: Response will include food image in the response. (Requires separate premier offering,
+          please contact us in order for this feature to be enabled for your account)
         in: query
         name: include_food_images
         required: false
         schema:
           type: boolean
-      - description: Include food attributes (allergens / preferences).
+      - description: Response will include food dietary preferences and allergens if available. (Requires
+          separate premier offering, please contact us in order for this feature to be enabled for your
+          account)
         in: query
         name: include_food_attributes
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -1491,43 +2257,49 @@ paths:
           enum:
           - food.get.v5
           type: string
-      - description: FatSecret food identifier.
+      - description: Unique food identifier
         in: query
         name: food_id
         required: true
         schema:
-          type: string
-      - description: Include food sub-categories.
+          type: integer
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Include food images.
+      - description: Response will include food image in the response. (Requires separate premier offering,
+          please contact us in order for this feature to be enabled for your account)
         in: query
         name: include_food_images
         required: false
         schema:
           type: boolean
-      - description: Include food attributes (allergens / preferences).
+      - description: Response will include food dietary preferences and allergens if available. (Requires
+          separate premier offering, please contact us in order for this feature to be enabled for your
+          account)
         in: query
         name: include_food_attributes
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -1563,6 +2335,34 @@ paths:
           enum:
           - food_brands.get
           type: string
+      - description: Food brands that begin with the first letter is returned. The "*" will return all
+          food brands beginning with a numeric character. If this is not specified then the most popular
+          food brands at the time is returned
+        in: query
+        name: starts_with
+        required: true
+        schema:
+          type: string
+      - description: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+        in: query
+        name: brand_type
+        required: false
+        schema:
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1591,6 +2391,34 @@ paths:
         schema:
           enum:
           - food_brands.get.v2
+          type: string
+      - description: Food brands that begin with the first letter is returned. The "*" will return all
+          food brands beginning with a numeric character. If this is not specified then the most popular
+          food brands at the time is returned
+        in: query
+        name: starts_with
+        required: true
+        schema:
+          type: string
+      - description: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+        in: query
+        name: brand_type
+        required: false
+        schema:
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1622,6 +2450,20 @@ paths:
           enum:
           - food_categories.get
           type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1651,6 +2493,20 @@ paths:
           enum:
           - food_categories.get.v2
           type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1669,7 +2525,7 @@ paths:
       - Food Classification
       x-fatsecret-premier: true
   /rest/server.api#food_entries.copy:
-    get:
+    post:
       operationId: food_entries_copy_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1679,6 +2535,25 @@ paths:
         schema:
           enum:
           - food_entries.copy
+          type: string
+      - description: Date to copy food entries from expressed in the number of days since January 1, 1970
+        in: query
+        name: from_date
+        required: true
+        schema:
+          type: integer
+      - description: Date to copy food entries to expressed in the number of days since January 1, 1970
+          (default value is the current day)
+        in: query
+        name: to_date
+        required: true
+        schema:
+          type: integer
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1698,7 +2573,7 @@ paths:
       - Food Diary
       x-fatsecret-premier: true
   /rest/server.api#food_entries.copy_saved_meal:
-    get:
+    post:
       operationId: food_entries_copy_saved_meal_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1709,6 +2584,24 @@ paths:
           enum:
           - food_entries.copy_saved_meal
           type: string
+      - description: Unique saved meal identifier
+        in: query
+        name: saved_meal_id
+        required: true
+        schema:
+          type: integer
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: true
+        schema:
+          type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -1739,6 +2632,18 @@ paths:
           enum:
           - food_entries.get
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
+      - description: Unique identifier of the food diary entry
+        in: query
+        name: food_entry_id
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -1756,6 +2661,47 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+  /rest/server.api#food_entries.get.v2:
+    get:
+      operationId: food_entries_get_v2
+      parameters:
+      - description: FatSecret API method selector.
+        in: query
+        name: method
+        required: true
+        schema:
+          enum:
+          - food_entries.get.v2
+          type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
+      - description: Unique identifier of the food diary entry
+        in: query
+        name: food_entry_id
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodEntriesGetV2Response'
+          description: Successful response.
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - oauth2:
+        - basic
+      - oauth1: []
+      summary: food_entries.get (v2)
+      tags:
+      - Food Diary
+      x-fatsecret-premier: true
   /rest/server.api#food_entries.get_month:
     get:
       deprecated: true
@@ -1769,6 +2715,12 @@ paths:
           enum:
           - food_entries.get_month
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -1798,6 +2750,12 @@ paths:
           enum:
           - food_entries.get_month.v2
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -1816,7 +2774,7 @@ paths:
       - Food Diary
       x-fatsecret-premier: true
   /rest/server.api#food_entry.create:
-    get:
+    post:
       operationId: food_entry_create_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1827,6 +2785,46 @@ paths:
           enum:
           - food_entry.create
           type: string
+      - description: Unique food identifier
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: integer
+      - description: 'A description of the food item as entered by the user; typically the name of the
+          food. E.G.: "Instant Oatmeal"'
+        in: query
+        name: food_entry_name
+        required: true
+        schema:
+          type: string
+      - description: Unique serving identifier
+        in: query
+        name: serving_id
+        required: true
+        schema:
+          type: integer
+      - description: Number of units in this standard serving size. For instance, if the serving description
+          is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number
+          of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas
+          for "Brand" the number of units will always be "1"
+        in: query
+        name: number_of_units
+        required: true
+        schema:
+          type: number
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: true
+        schema:
+          type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -1845,7 +2843,7 @@ paths:
       - Food Diary
       x-fatsecret-premier: true
   /rest/server.api#food_entry.delete:
-    get:
+    delete:
       operationId: food_entry_delete_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1856,6 +2854,12 @@ paths:
           enum:
           - food_entry.delete
           type: string
+      - description: Unique identifier of the food diary entry
+        in: query
+        name: food_entry_id
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -1874,7 +2878,7 @@ paths:
       - Food Diary
       x-fatsecret-premier: true
   /rest/server.api#food_entry.edit:
-    get:
+    put:
       operationId: food_entry_edit_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1884,6 +2888,40 @@ paths:
         schema:
           enum:
           - food_entry.edit
+          type: string
+      - description: Unique identifier of the food diary entry
+        in: query
+        name: food_entry_id
+        required: true
+        schema:
+          type: integer
+      - description: 'A description of the food item as entered by the user; typically the name of the
+          food. E.G.: "Instant Oatmeal"'
+        in: query
+        name: food_entry_name
+        required: false
+        schema:
+          type: string
+      - description: Unique serving identifier
+        in: query
+        name: serving_id
+        required: false
+        schema:
+          type: integer
+      - description: Number of units in this standard serving size. For instance, if the serving description
+          is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number
+          of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas
+          for "Brand" the number of units will always be "1"
+        in: query
+        name: number_of_units
+        required: false
+        schema:
+          type: number
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1915,6 +2953,26 @@ paths:
           enum:
           - food_sub_categories.get
           type: string
+      - description: Unique identifier of the food category entry
+        in: query
+        name: food_category_id
+        required: true
+        schema:
+          type: integer
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1943,6 +3001,26 @@ paths:
         schema:
           enum:
           - food_sub_categories.get.v2
+          type: string
+      - description: Unique identifier of the food category entry
+        in: query
+        name: food_category_id
+        required: true
+        schema:
+          type: integer
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -1974,19 +3052,22 @@ paths:
           enum:
           - foods.autocomplete
           type: string
-      - description: Autocomplete prefix expression.
+      - description: 'Suggestions for the given expression is returned. E.G.: "chic" will return up to
+          four of the best suggestions that contains "chic"'
         in: query
         name: expression
         required: true
         schema:
           type: string
-      - description: Maximum results per page.
+      - description: Maximum number of results to return (default value is 4). This number cannot be greater
+          than 10
         in: query
         name: max_results
         required: false
         schema:
           type: integer
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
@@ -2021,19 +3102,22 @@ paths:
           enum:
           - foods.autocomplete.v2
           type: string
-      - description: Autocomplete prefix expression.
+      - description: 'Suggestions for the given expression is returned. E.G.: "chic" will return up to
+          four of the best suggestions that contains "chic"'
         in: query
         name: expression
         required: true
         schema:
           type: string
-      - description: Maximum results per page.
+      - description: Maximum number of results to return (default value is 4). This number cannot be greater
+          than 10
         in: query
         name: max_results
         required: false
         schema:
           type: integer
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
@@ -2128,6 +3212,12 @@ paths:
           enum:
           - foods.get_most_eaten
           type: string
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2156,6 +3246,12 @@ paths:
         schema:
           enum:
           - foods.get_most_eaten.v2
+          type: string
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -2187,6 +3283,12 @@ paths:
           enum:
           - foods.get_recently_eaten
           type: string
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2215,6 +3317,12 @@ paths:
         schema:
           enum:
           - foods.get_recently_eaten.v2
+          type: string
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -2245,37 +3353,44 @@ paths:
           enum:
           - foods.search
           type: string
-      - description: Search expression.
+      - description: Search expression to match on food names
         in: query
         name: search_expression
-        required: true
+        required: false
         schema:
           type: string
-      - description: Zero-based page index.
+      - description: Zero-based offset into the results for the query
         in: query
         name: page_number
         required: false
         schema:
           type: integer
-      - description: Maximum results per page.
+      - description: Maximum number of results to return (default value is 20). This number cannot be
+          greater than 50
         in: query
         name: max_results
         required: false
         schema:
           type: integer
-      - description: Filter on generic_description.
+      - description: 'Either "weight" or "portion": Weight (default) - the summary description for key
+          nutritional values is displayed by weight (typically 100g); E.G.: "Per 100g". Portion - the
+          summary description for key nutritional values is displayed using the default portion size;
+          E.G.: "Per 1 Cup" Note that the summary nutrition description for "Brand" food items is always
+          shown using a "portion" based description'
         in: query
         name: generic_description
         required: false
         schema:
           type: string
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -2311,43 +3426,47 @@ paths:
           enum:
           - foods.search.v2
           type: string
-      - description: Search expression.
+      - description: Search expression to match on food names
         in: query
         name: search_expression
-        required: true
+        required: false
         schema:
           type: string
-      - description: Zero-based page index.
+      - description: Zero-based offset into the results for the query
         in: query
         name: page_number
         required: false
         schema:
           type: integer
-      - description: Maximum results per page.
+      - description: Maximum number of results to return (default value is 20). This number cannot be
+          greater than 50
         in: query
         name: max_results
         required: false
         schema:
           type: integer
-      - description: Include food sub-categories.
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -2383,55 +3502,62 @@ paths:
           enum:
           - foods.search.v3
           type: string
-      - description: Search expression.
+      - description: Search expression to match on food names
         in: query
         name: search_expression
-        required: true
+        required: false
         schema:
           type: string
-      - description: Zero-based page index.
+      - description: Zero-based offset into the results for the query
         in: query
         name: page_number
         required: false
         schema:
           type: integer
-      - description: Maximum results per page.
+      - description: Maximum number of results to return (default value is 20). This number cannot be
+          greater than 50
         in: query
         name: max_results
         required: false
         schema:
           type: integer
-      - description: Include food sub-categories.
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Include food images.
+      - description: Response will include food image in the response. (Requires separate premier offering,
+          please contact us in order for this feature to be enabled for your account)
         in: query
         name: include_food_images
         required: false
         schema:
           type: boolean
-      - description: Include food attributes (allergens / preferences).
+      - description: Response will include food dietary preferences and allergens if available. (Requires
+          separate premier offering, please contact us in order for this feature to be enabled for your
+          account)
         in: query
         name: include_food_attributes
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -2467,55 +3593,62 @@ paths:
           enum:
           - foods.search.v4
           type: string
-      - description: Search expression.
+      - description: Search expression to match on food names
         in: query
         name: search_expression
-        required: true
+        required: false
         schema:
           type: string
-      - description: Zero-based page index.
+      - description: Zero-based offset into the results for the query
         in: query
         name: page_number
         required: false
         schema:
           type: integer
-      - description: Maximum results per page.
+      - description: Maximum number of results to return (default value is 20). This number cannot be
+          greater than 50
         in: query
         name: max_results
         required: false
         schema:
           type: integer
-      - description: Include food sub-categories.
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Include food images.
+      - description: Response will include food image in the response. (Requires separate premier offering,
+          please contact us in order for this feature to be enabled for your account)
         in: query
         name: include_food_images
         required: false
         schema:
           type: boolean
-      - description: Include food attributes (allergens / preferences).
+      - description: Response will include food dietary preferences and allergens if available. (Requires
+          separate premier offering, please contact us in order for this feature to be enabled for your
+          account)
         in: query
         name: include_food_attributes
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -2550,61 +3683,69 @@ paths:
           enum:
           - foods.search.v5
           type: string
-      - description: Search expression.
+      - description: Search expression to match on food names
         in: query
         name: search_expression
-        required: true
+        required: false
         schema:
           type: string
-      - description: Zero-based page index.
+      - description: Zero-based offset into the results for the query
         in: query
         name: page_number
         required: false
         schema:
           type: integer
-      - description: Maximum results per page.
+      - description: Maximum number of results to return (default value is 20). This number cannot be
+          greater than 50
         in: query
         name: max_results
         required: false
         schema:
           type: integer
-      - description: Include food sub-categories.
+      - description: Response will include the names of all sub categories associated with the food
         in: query
         name: include_sub_categories
         required: false
         schema:
           type: boolean
-      - description: Include food images.
+      - description: Response will include food image in the response. (Requires separate premier offering,
+          please contact us in order for this feature to be enabled for your account)
         in: query
         name: include_food_images
         required: false
         schema:
           type: boolean
-      - description: Include food attributes (allergens / preferences).
+      - description: Response will include food dietary preferences and allergens if available. (Requires
+          separate premier offering, please contact us in order for this feature to be enabled for your
+          account)
         in: query
         name: include_food_attributes
         required: false
         schema:
           type: boolean
-      - description: Flag the default serving in the response.
+      - description: Either "true" or "false" - the response will flag one of the servings as the default
+          serving (the suggested or most commonly chosen option)
         in: query
         name: flag_default_serving
         required: false
         schema:
           type: boolean
-      - description: One of 'generic'|'brand'|'none'.
+      - description: Restricts search results to a specific type. Valid values are "none", "generic" or
+          "brand". Defaults to "none" i.e no filter
         in: query
         name: food_type
         required: false
         schema:
           type: string
-      - description: Region.
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
         in: query
         name: region
         required: false
         schema:
           type: string
-      - description: Language.
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
         in: query
         name: language
         required: false
@@ -2628,7 +3769,7 @@ paths:
       - Foods
       x-fatsecret-premier: true
   /rest/server.api#profile.create:
-    get:
+    post:
       operationId: profile_create_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2638,6 +3779,13 @@ paths:
         schema:
           enum:
           - profile.create
+          type: string
+      - description: You can set your own ID for the newly created profile if you do not wish to store
+          the auth_token and auth_secret
+        in: query
+        name: user_id
+        required: true
+        schema:
           type: string
       responses:
         '200':
@@ -2697,6 +3845,13 @@ paths:
           enum:
           - profile.get_auth
           type: string
+      - description: You can set your own ID for the newly created profile if you do not wish to store
+          the auth_token and auth_secret
+        in: query
+        name: user_id
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2715,7 +3870,7 @@ paths:
       - Profile Auth
       x-fatsecret-premier: true
   /rest/server.api#recipe.add_favorite:
-    get:
+    post:
       operationId: recipe_add_favorite_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2726,6 +3881,12 @@ paths:
           enum:
           - recipe.add_favorite
           type: string
+      - description: Unique recipe identifier
+        in: query
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -2744,7 +3905,7 @@ paths:
       - Recipes
       x-fatsecret-premier: true
   /rest/server.api#recipe.delete_favorite:
-    get:
+    delete:
       operationId: recipe_delete_favorite_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2755,6 +3916,12 @@ paths:
           enum:
           - recipe.delete_favorite
           type: string
+      - description: Unique recipe identifier
+        in: query
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -2785,6 +3952,19 @@ paths:
           enum:
           - recipe.get
           type: string
+      - description: Unique recipe identifier
+        in: query
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2813,6 +3993,19 @@ paths:
         schema:
           enum:
           - recipe.get.v2
+          type: string
+      - description: Unique recipe identifier
+        in: query
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -2872,6 +4065,20 @@ paths:
         schema:
           enum:
           - recipe_types.get.v2
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -2962,6 +4169,31 @@ paths:
           enum:
           - recipes.search
           type: string
+      - description: Search expression to match on food names
+        in: query
+        name: search_expression
+        required: false
+        schema:
+          type: string
+      - description: 'Recipe type E.G.: "Appetizer"'
+        in: query
+        name: recipe_type
+        required: false
+        schema:
+          type: string
+      - description: Zero-based offset into the results for the query
+        in: query
+        name: page_number
+        required: false
+        schema:
+          type: integer
+      - description: Maximum number of results to return (default value is 20). This number cannot be
+          greater than 50
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -2992,6 +4224,105 @@ paths:
           enum:
           - recipes.search.v2
           type: string
+      - description: Search expression to match on food names
+        in: query
+        name: search_expression
+        required: false
+        schema:
+          type: string
+      - description: This option will restrict results to recipes with at least one image
+        in: query
+        name: must_have_images
+        required: false
+        schema:
+          type: string
+      - description: Minimum calories that are contained in the recipe
+        in: query
+        name: calories.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum calories that are contained in the recipe
+        in: query
+        name: calories.to
+        required: false
+        schema:
+          type: integer
+      - description: Minimum percentage of the calories composed of carbohydrate
+        in: query
+        name: carb_percentage.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum percentage of the calories composed of carbohydrate
+        in: query
+        name: carb_percentage.to
+        required: false
+        schema:
+          type: integer
+      - description: Minimum percentage of the calories composed of protein
+        in: query
+        name: protein_percentage.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum percentage of the calories composed of protein
+        in: query
+        name: protein_percentage.to
+        required: false
+        schema:
+          type: integer
+      - description: Minimum percentage of the calories composed of fat
+        in: query
+        name: fat_percentage.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum percentage of the calories composed of fat
+        in: query
+        name: fat_percentage.to
+        required: false
+        schema:
+          type: integer
+      - description: Minimum preparation and cook time in minutes required to create the recipe
+        in: query
+        name: prep_time.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum preparation and cook time in minutes required to create the recipe
+        in: query
+        name: prep_time.to
+        required: false
+        schema:
+          type: integer
+      - description: Zero-based offset into the results for the query
+        in: query
+        name: page_number
+        required: false
+        schema:
+          type: integer
+      - description: Maximum number of results to return (default value is 20). This number cannot be
+          greater than 50
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: 'This option will order results. Valid options include: newest, oldest, caloriesPerServingAscending,
+          caloriesPerServingDescending. When not explicitly set, the ordering will be returned by newest'
+        in: query
+        name: sort_by
+        required: false
+        schema:
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -3021,6 +4352,121 @@ paths:
           enum:
           - recipes.search.v3
           type: string
+      - description: 'This option filters by specified recipe types and should be provided as a comma
+          separated string of recipe type names. The values are provided via the api: Recipe Types Get
+          All'
+        in: query
+        name: recipe_types
+        required: false
+        schema:
+          type: string
+      - description: 'This option will affect recipe type filters. If true, a recipe must match all provided
+          recipe types, if false (default) then recipes matching any of the supplied types will be returned,
+          The values are provided via the api: Recipe Types Get All'
+        in: query
+        name: recipe_types_matchall
+        required: false
+        schema:
+          type: string
+      - description: Search expression to match on food names
+        in: query
+        name: search_expression
+        required: false
+        schema:
+          type: string
+      - description: This option will restrict results to recipes with at least one image
+        in: query
+        name: must_have_images
+        required: false
+        schema:
+          type: string
+      - description: Minimum calories that are contained in the recipe
+        in: query
+        name: calories.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum calories that are contained in the recipe
+        in: query
+        name: calories.to
+        required: false
+        schema:
+          type: integer
+      - description: Minimum percentage of the calories composed of carbohydrate
+        in: query
+        name: carb_percentage.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum percentage of the calories composed of carbohydrate
+        in: query
+        name: carb_percentage.to
+        required: false
+        schema:
+          type: integer
+      - description: Minimum percentage of the calories composed of protein
+        in: query
+        name: protein_percentage.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum percentage of the calories composed of protein
+        in: query
+        name: protein_percentage.to
+        required: false
+        schema:
+          type: integer
+      - description: Minimum percentage of the calories composed of fat
+        in: query
+        name: fat_percentage.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum percentage of the calories composed of fat
+        in: query
+        name: fat_percentage.to
+        required: false
+        schema:
+          type: integer
+      - description: Minimum preparation and cook time in minutes required to create the recipe
+        in: query
+        name: prep_time.from
+        required: false
+        schema:
+          type: integer
+      - description: Maximum preparation and cook time in minutes required to create the recipe
+        in: query
+        name: prep_time.to
+        required: false
+        schema:
+          type: integer
+      - description: Zero-based offset into the results for the query
+        in: query
+        name: page_number
+        required: false
+        schema:
+          type: integer
+      - description: Maximum number of results to return (default value is 20). This number cannot be
+          greater than 50
+        in: query
+        name: max_results
+        required: false
+        schema:
+          type: integer
+      - description: 'This option will order results. Valid options include: newest, oldest, caloriesPerServingAscending,
+          caloriesPerServingDescending. When not explicitly set, the ordering will be returned by newest'
+        in: query
+        name: sort_by
+        required: false
+        schema:
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -3039,7 +4485,7 @@ paths:
       - Recipes
       x-fatsecret-premier: true
   /rest/server.api#saved_meal.create:
-    get:
+    post:
       operationId: saved_meal_create_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3049,6 +4495,24 @@ paths:
         schema:
           enum:
           - saved_meal.create
+          type: string
+      - description: New name of the saved meal
+        in: query
+        name: saved_meal_name
+        required: true
+        schema:
+          type: string
+      - description: New description of the saved meal
+        in: query
+        name: saved_meal_description
+        required: false
+        schema:
+          type: string
+      - description: Comma separated list of meals the saved meal is suitable for
+        in: query
+        name: meals
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -3068,7 +4532,7 @@ paths:
       - Saved Meals
       x-fatsecret-premier: true
   /rest/server.api#saved_meal.delete:
-    get:
+    delete:
       operationId: saved_meal_delete_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3079,6 +4543,12 @@ paths:
           enum:
           - saved_meal.delete
           type: string
+      - description: Unique saved meal identifier
+        in: query
+        name: saved_meal_id
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -3097,7 +4567,7 @@ paths:
       - Saved Meals
       x-fatsecret-premier: true
   /rest/server.api#saved_meal.edit:
-    get:
+    put:
       operationId: saved_meal_edit_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3107,6 +4577,30 @@ paths:
         schema:
           enum:
           - saved_meal.edit
+          type: string
+      - description: Unique saved meal identifier
+        in: query
+        name: saved_meal_id
+        required: true
+        schema:
+          type: integer
+      - description: New name of the saved meal
+        in: query
+        name: saved_meal_name
+        required: false
+        schema:
+          type: string
+      - description: New description of the saved meal
+        in: query
+        name: saved_meal_description
+        required: false
+        schema:
+          type: string
+      - description: Comma separated list of meals the saved meal is suitable for
+        in: query
+        name: meals
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -3126,7 +4620,7 @@ paths:
       - Saved Meals
       x-fatsecret-premier: true
   /rest/server.api#saved_meal_item.add:
-    get:
+    post:
       operationId: saved_meal_item_add_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3137,6 +4631,39 @@ paths:
           enum:
           - saved_meal_item.add
           type: string
+      - description: Unique saved meal identifier
+        in: query
+        name: saved_meal_id
+        required: true
+        schema:
+          type: integer
+      - description: Unique food identifier
+        in: query
+        name: food_id
+        required: true
+        schema:
+          type: integer
+      - description: New name of the saved meal item
+        in: query
+        name: saved_meal_item_name
+        required: true
+        schema:
+          type: string
+      - description: Unique serving identifier
+        in: query
+        name: serving_id
+        required: true
+        schema:
+          type: integer
+      - description: Number of units in this standard serving size. For instance, if the serving description
+          is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number
+          of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas
+          for "Brand" the number of units will always be "1"
+        in: query
+        name: number_of_units
+        required: true
+        schema:
+          type: number
       responses:
         '200':
           content:
@@ -3155,7 +4682,7 @@ paths:
       - Saved Meals
       x-fatsecret-premier: true
   /rest/server.api#saved_meal_item.delete:
-    get:
+    delete:
       operationId: saved_meal_item_delete_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3166,6 +4693,12 @@ paths:
           enum:
           - saved_meal_item.delete
           type: string
+      - description: Unique saved meal item identifier
+        in: query
+        name: saved_meal_item_id
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -3184,7 +4717,7 @@ paths:
       - Saved Meals
       x-fatsecret-premier: true
   /rest/server.api#saved_meal_item.edit:
-    get:
+    put:
       operationId: saved_meal_item_edit_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3195,6 +4728,27 @@ paths:
           enum:
           - saved_meal_item.edit
           type: string
+      - description: Unique saved meal item identifier
+        in: query
+        name: saved_meal_item_id
+        required: true
+        schema:
+          type: integer
+      - description: New name of the saved meal item
+        in: query
+        name: saved_meal_item_name
+        required: false
+        schema:
+          type: string
+      - description: Number of units in this standard serving size. For instance, if the serving description
+          is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number
+          of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas
+          for "Brand" the number of units will always be "1"
+        in: query
+        name: number_of_units
+        required: false
+        schema:
+          type: number
       responses:
         '200':
           content:
@@ -3225,6 +4779,12 @@ paths:
           enum:
           - saved_meal_items.get
           type: string
+      - description: Unique saved meal identifier
+        in: query
+        name: saved_meal_id
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -3254,6 +4814,12 @@ paths:
           enum:
           - saved_meal_items.get.v2
           type: string
+      - description: Unique saved meal identifier
+        in: query
+        name: saved_meal_id
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -3284,6 +4850,12 @@ paths:
           enum:
           - saved_meals.get
           type: string
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -3313,6 +4885,12 @@ paths:
           enum:
           - saved_meals.get.v2
           type: string
+      - description: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        in: query
+        name: meal
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -3331,7 +4909,7 @@ paths:
       - Saved Meals
       x-fatsecret-premier: true
   /rest/server.api#weight.update:
-    get:
+    post:
       operationId: weight_update_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3341,6 +4919,51 @@ paths:
         schema:
           enum:
           - weight.update
+          type: string
+      - description: Current weight of the user in kilograms
+        in: query
+        name: current_weight_kg
+        required: true
+        schema:
+          type: number
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
+      - description: Weight measurement type for this user profile. Valid types are "kg" and "lb" (default
+          value is "kg")
+        in: query
+        name: weight_type
+        required: false
+        schema:
+          type: string
+      - description: Height measurement type for this user profile. Valid types are "cm" and "inch" (default
+          value is "cm")
+        in: query
+        name: height_type
+        required: false
+        schema:
+          type: string
+      - description: User's goal weight in kilograms
+        in: query
+        name: goal_weight_kg
+        required: false
+        schema:
+          type: number
+      - description: Current height of the user in centimetres. This is required for the first weigh-in.
+          You can only set this for the first time
+        in: query
+        name: current_height_cm
+        required: false
+        schema:
+          type: number
+      - description: A comment for this weigh-in
+        in: query
+        name: comment
+        required: false
+        schema:
           type: string
       responses:
         '200':
@@ -3372,6 +4995,12 @@ paths:
           enum:
           - weights.get_month
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -3401,6 +5030,12 @@ paths:
           enum:
           - weights.get_month.v2
           type: string
+      - description: Number of days since January 1, 1970 (default value is the current day)
+        in: query
+        name: date
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -3417,6 +5052,375 @@ paths:
       summary: weights.get_month (v2)
       tags:
       - Weight Diary
+      x-fatsecret-premier: true
+  https://platform.fatsecret.com/rest/feedback/v1:
+    post:
+      operationId: feedback_v1
+      parameters:
+      - description: A barcode where a food is associated incorrectly. Required when issue_type_id is
+          1
+        in: query
+        name: barcode
+        required: true
+        schema:
+          type: integer
+      - description: The type ID for the request. Valid options are 1 (Wrong Name/Brand), 2 (Wrong Nutrition
+          Info), 3 (Missing Serving Size), 4 (Barcode not found), 99 (Other)
+        in: query
+        name: issue_type_id
+        required: true
+        schema:
+          type: integer
+      - description: Issue description. This is to be provided when the issue_type_id is 99 (Other)
+        in: query
+        name: issue_type
+        required: false
+        schema:
+          type: string
+      - description: Custom notes regarding the issue
+        in: query
+        name: notes
+        required: false
+        schema:
+          type: string
+      - description: Custom identifier for external use. E.g an external unique user identifier
+        in: query
+        name: external_id
+        required: true
+        schema:
+          type: string
+      - description: A food ID that is related to the issue (i.e. barcode incorrect food attached). Required
+          when issue_type_id is 1, 2 or 3
+        in: query
+        name: returned_food.food_id
+        required: false
+        schema:
+          type: integer
+      - description: A foods serving ID that is related to the issue (i.e. incorrect nutrient information).
+          Required when issue_type_id is 2 or 3
+        in: query
+        name: returned_food.serving_id
+        required: false
+        schema:
+          type: integer
+      - description: The image file extension in which the signed uploads will be generated using. Accepts
+          jpg, jpeg, png and tiff. Defaulted to jpg if not provided
+        in: query
+        name: image_file_extension
+        required: false
+        schema:
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: true
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackV1Response'
+          description: Successful response.
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - oauth2:
+        - barcode
+      - oauth1: []
+      summary: feedback (v1)
+      tags:
+      - Feedback
+      x-fatsecret-premier: true
+  https://platform.fatsecret.com/rest/image-recognition/v1:
+    post:
+      operationId: image_recognition_v1
+      parameters:
+      - description: A Base64 image of one or more foods. This field is limited to 999,982 characters
+        in: query
+        name: image_b64
+        required: true
+        schema:
+          type: string
+      - description: Include full food data in the response (see our food.get API)
+        in: query
+        name: include_food_data
+        required: false
+        schema:
+          type: string
+      - description: An array of previously consumed foods. This may be provided to assist with more accurate
+          matching of foods identified in the input with previously consumed foods
+        in: query
+        name: eaten_foods
+        required: false
+        schema:
+          type: string
+      - description: The ID of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_id
+        required: true
+        schema:
+          type: integer
+      - description: The name of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_name
+        required: true
+        schema:
+          type: string
+      - description: The brand name of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_brand
+        required: false
+        schema:
+          type: string
+      - description: The serving description of the food that has been previously consumed
+        in: query
+        name: eaten_foods.serving_description
+        required: false
+        schema:
+          type: string
+      - description: The serving size of the food that has been previously consumed
+        in: query
+        name: eaten_foods.serving_size
+        required: false
+        schema:
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: true
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageRecognitionV1Response'
+          description: Successful response.
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - oauth2:
+        - basic
+      - oauth1: []
+      summary: image.recognition (v1)
+      tags:
+      - Native APIs
+      x-fatsecret-premier: true
+  https://platform.fatsecret.com/rest/image-recognition/v2:
+    post:
+      operationId: image_recognition_v2
+      parameters:
+      - description: A Base64 image of one or more foods. This field is limited to 999,982 characters
+        in: query
+        name: image_b64
+        required: true
+        schema:
+          type: string
+      - description: Include full food data in the response (see our food.get API)
+        in: query
+        name: include_food_data
+        required: false
+        schema:
+          type: string
+      - description: An array of previously consumed foods. This may be provided to assist with more accurate
+          matching of foods identified in the input with previously consumed foods
+        in: query
+        name: eaten_foods
+        required: false
+        schema:
+          type: string
+      - description: The ID of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_id
+        required: true
+        schema:
+          type: integer
+      - description: The name of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_name
+        required: true
+        schema:
+          type: string
+      - description: The brand name of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_brand
+        required: false
+        schema:
+          type: string
+      - description: The serving description of the food that has been previously consumed
+        in: query
+        name: eaten_foods.serving_description
+        required: false
+        schema:
+          type: string
+      - description: The serving size of the food that has been previously consumed
+        in: query
+        name: eaten_foods.serving_size
+        required: false
+        schema:
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: true
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageRecognitionV2Response'
+          description: Successful response.
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - oauth2:
+        - basic
+      - oauth1: []
+      summary: image.recognition (v2)
+      tags:
+      - Native APIs
+      x-fatsecret-premier: true
+  https://platform.fatsecret.com/rest/natural-language-processing/v1:
+    post:
+      operationId: natural_language_processing_v1
+      parameters:
+      - description: A description of what a user has eaten. May contain multiple items. e.g. "A toast
+          with ham and cheese, an apple, a banana and a cappuccino". This field is limited to 1000 characters
+        in: query
+        name: user_input
+        required: true
+        schema:
+          type: string
+      - description: Include full food data in the response (see our food.get API)
+        in: query
+        name: include_food_data
+        required: false
+        schema:
+          type: string
+      - description: An array of previously consumed foods. This may be provided to assist with more accurate
+          matching of foods identified in the input with previously consumed foods
+        in: query
+        name: eaten_foods
+        required: false
+        schema:
+          type: string
+      - description: The ID of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_id
+        required: true
+        schema:
+          type: integer
+      - description: The name of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_name
+        required: true
+        schema:
+          type: string
+      - description: The brand name of the food that has been previously consumed
+        in: query
+        name: eaten_foods.food_brand
+        required: false
+        schema:
+          type: string
+      - description: The serving description of the food that has been previously consumed
+        in: query
+        name: eaten_foods.serving_description
+        required: false
+        schema:
+          type: string
+      - description: The serving size of the food that has been previously consumed
+        in: query
+        name: eaten_foods.serving_size
+        required: false
+        schema:
+          type: string
+      - description: 'Results will be filtered by region. E.G.: "FR" returns results from France. If not
+          specified this will default to "US" (United States). Click here for full documentation on localization.'
+        in: query
+        name: region
+        required: false
+        schema:
+          type: string
+      - description: '(Ignored unless region is also specified) Results will be in the specified language.
+          E.G.: "fr" returns results in French'
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: true
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NaturalLanguageProcessingV1Response'
+          description: Successful response.
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - oauth2:
+        - basic
+      - oauth1: []
+      summary: natural.language.processing (v1)
+      tags:
+      - Native APIs
       x-fatsecret-premier: true
 security:
 - oauth2:

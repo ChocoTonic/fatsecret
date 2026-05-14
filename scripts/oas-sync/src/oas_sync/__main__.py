@@ -8,7 +8,7 @@ import typer
 
 from .assemble import assemble as assemble_openapi
 from .discover import discover, group_by_category
-from .emit import emit_inventory, emit_openapi, emit_raw_yaml
+from .emit import emit_inventory, emit_raw_yaml
 from .emit_resource import emit_resource
 from .http import fetch
 from .models import MethodRef
@@ -43,8 +43,6 @@ def sync(
         specs_by_category[category] = specs
         emit_raw_yaml(category, specs)
 
-    all_specs = [s for specs in specs_by_category.values() for s in specs]
-    emit_openapi(all_specs)
     assemble_openapi(lint=True)
 
 
