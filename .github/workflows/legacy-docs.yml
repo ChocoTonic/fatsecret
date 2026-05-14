@@ -1,11 +1,12 @@
-# One-shot manual workflow that builds a static archive of pyfatsecret docs
-# for every released tag prior to v0.13.0 and publishes it to the `gh-pages`
-# branch under `/legacy/<tag>/`.
+# One-shot manual workflow that builds a static archive of fatsecret docs
+# for every released tag that RTD does not auto-build (anything < v1.4.0)
+# and publishes it to the `gh-pages` branch under `/legacy/<tag>/`.
 #
 # Why manual-only:
-#   * Read the Docs handles modern docs (v0.13.0+) automatically.
-#   * The legacy archive is frozen by intent — it covers tags that will never
-#     change, so rebuilding on every push would be pure waste.
+#   * Read the Docs auto-builds v1.4.0+ (every tag whose checkout carries
+#     a working `.readthedocs.yaml`).
+#   * The legacy archive is frozen by intent — it covers tags that will
+#     never change, so rebuilding on every push would be pure waste.
 #
 # Usage:
 #   gh workflow run legacy-docs.yml
@@ -50,4 +51,4 @@ jobs:
           # request keep_files so the modern RTD link / 404 page / etc. aren't
           # clobbered if anyone has placed them there.
           keep_files: true
-          commit_message: "docs: publish frozen legacy docs archive (pre-v0.13.0)"
+          commit_message: "docs: publish frozen legacy docs archive (< v1.4.0)"
