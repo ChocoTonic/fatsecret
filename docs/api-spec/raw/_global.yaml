@@ -1,0 +1,485 @@
+# Cross-cutting FatSecret Platform API context.
+# Sources: https://platform.fatsecret.com/docs/guides and child pages
+# (authentication, authentication/oauth2, authentication/oauth1,
+#  authentication/oauth1/three-legged, data-types, parameters,
+#  storable-data, error-codes, localization, libraries)
+
+overview:
+  description: >
+    FatSecret Platform REST API for food, nutrition, and wellness data.
+    Requires developer registration to obtain credentials. Supports two
+    integration styles: URL-path style (e.g. /food/v5) and method-parameter
+    style (POST/GET with a `method` query parameter to server.api).
+  capabilities:
+    - food search (search, autocomplete, barcode)
+    - recipes
+    - profile operations (food, exercise, weight diaries)
+    - saved meals and favorites
+  premier_marker: Endpoints flagged "Premier Exclusive" require premier scope/tier.
+
+base_url: https://platform.fatsecret.com/rest/server.api
+base_urls:
+  method_style: https://platform.fatsecret.com/rest/server.api
+  url_path_style: https://platform.fatsecret.com/rest/
+
+oauth2:
+  token_url: https://oauth.fatsecret.com/connect/token
+  grant_types:
+    - client_credentials
+  token_type: Bearer
+  token_format: JWT
+  expires_in_seconds: 86400  # 24 hours
+  credentials:
+    client_id: Application identifier
+    client_secret: Application secret (shown only once at issuance)
+  request_parameters:
+    grant_type: Must be "client_credentials"
+    client_id: Assigned client identifier
+    client_secret: Authentication credential
+    scope: Space-delimited list of requested scopes
+  authorization_header: "Authorization: Bearer <access_token>"
+  scopes:
+    basic: Core API access (food search, recipe lookup, etc.)
+    premier: Advanced/premium features and resources
+    barcode: Barcode scanning functionality
+    localization: Regional/language-specific API calls
+    nlp: Natural Language Processing (free-text food parsing) capabilities
+    image-recognition: Image-based food recognition features
+    feedback: Feedback-related endpoints
+  notes: >
+    OAuth 2.0 supports only signed requests (no delegated/user-context flow).
+    Tokens should be requested via a proxy server with whitelisted IPs to
+    avoid exposing client credentials from end-user devices.
+
+oauth1:
+  request_url: https://platform.fatsecret.com/rest/server.api
+  signature_method: HMAC-SHA1
+  version: "1.0"
+  credentials:
+    consumer_key: Application key (oauth_consumer_key)
+    shared_secret: Application shared secret (used in signing key)
+  required_parameters:
+    - oauth_consumer_key
+    - oauth_signature_method  # must be HMAC-SHA1
+    - oauth_timestamp         # seconds since 1970-01-01 GMT
+    - oauth_nonce             # random unique string per request
+    - oauth_version           # "1.0"
+    - oauth_signature         # computed HMAC-SHA1 signature
+  parameter_encoding:
+    pair_format: name=value
+    sort: lexicographic by name, then value
+    join: '&'
+    percent_encoding: RFC 3986
+  signing:
+    base_string_format: "<HTTP_METHOD>&<RFC3986(request_url)>&<RFC3986(normalized_params)>"
+    signing_key: "<consumer_secret>&<access_token_secret_or_empty>"
+    algorithm: HMAC-SHA1
+    output_encoding: base64, then RFC 3986 percent-encoded
+  request_types:
+    signed: App-level requests (not user-specific); e.g. food lookups.
+    signed_and_delegated: User-context requests requiring an access token (e.g. diary entries).
+  notes: >
+    OAuth 1.0 supports both signed and signed/delegated requests. Only
+    HMAC-SHA1 is accepted as a signature method; PLAINTEXT and RSA-SHA1 are rejected.
+
+three_legged:
+  request_token_url: https://authentication.fatsecret.com/oauth/request_token
+  authorize_url: https://authentication.fatsecret.com/oauth/authorize
+  access_token_url: https://authentication.fatsecret.com/oauth/access_token
+  signature_method: HMAC-SHA1
+  flow_steps:
+    - step: 1
+      name: Obtain request token
+      method: POST
+      url: https://authentication.fatsecret.com/oauth/request_token
+      parameters:
+        - oauth_consumer_key
+        - oauth_signature_method
+        - oauth_timestamp
+        - oauth_nonce
+        - oauth_version
+        - oauth_callback
+        - oauth_signature
+      response:
+        - oauth_token
+        - oauth_token_secret
+    - step: 2
+      name: User authorization
+      method: redirect (browser)
+      url: https://authentication.fatsecret.com/oauth/authorize
+      parameters:
+        - oauth_token  # the request token from step 1
+      result: >
+        User logs in and approves access. Browser is redirected to the
+        application's callback URL (or shown an out-of-band verifier code)
+        carrying oauth_token and oauth_verifier.
+    - step: 3
+      name: Exchange for access token
+      method: GET
+      url: https://authentication.fatsecret.com/oauth/access_token
+      parameters:
+        - oauth_consumer_key
+        - oauth_token
+        - oauth_signature_method
+        - oauth_timestamp
+        - oauth_nonce
+        - oauth_version
+        - oauth_verifier
+        - oauth_signature
+      response:
+        - oauth_token        # long-lived user access token
+        - oauth_token_secret # long-lived user access token secret
+  callback_handling: >
+    The app supplies oauth_callback in step 1. After approval the user is
+    redirected to that URL with oauth_token and oauth_verifier in the query
+    string. For out-of-band ("oob") flows the user is shown the verifier
+    code on screen and pastes it back into the app.
+  signing_key_after_token: "<consumer_secret>&<oauth_token_secret>"
+  notes: >
+    Store the (oauth_token, oauth_token_secret) pair securely and bind it
+    to the user account; the tokens are "storable indefinitely".
+
+data_types:
+  boolean:
+    description: A boolean specified as 'true' or 'false'.
+    values: [true, false]
+  decimal:
+    description: Numeric value permitting fractional components.
+  int:
+    description: 32-bit signed integer.
+  long:
+    description: Signed 64-bit integer. Usually used for IDs.
+  string:
+    description: Text value. UTF-8.
+  ternary:
+    description: Three-state enumeration.
+    values:
+      "1": True
+      "0": False
+      "-1": Unknown
+  enumerations:
+    brand_type:
+      values: [manufacturer, restaurant, supermarket]
+    food_type:
+      values: [Brand, Generic]
+    height_type:
+      values: [cm, inch]
+    meal:
+      values: [breakfast, lunch, dinner, other]
+    serving_amount_unit:
+      values: [g, ml, oz]
+    weight_type:
+      values: [kg, lb]
+  date_int:
+    description: >
+      FatSecret encodes calendar dates as the number of whole days elapsed
+      since the Unix epoch (1970-01-01 UTC). Used in `date` parameters on
+      diary/weight endpoints rather than ISO-8601 strings.
+    example:
+      value: 19723
+      iso_equivalent: "2024-01-01"
+    formula: floor(unix_timestamp_seconds / 86400)
+    notes: >
+      The data-types guide does not formally document this encoding, but
+      it is used throughout the diary/weight endpoints. Some application
+      errors (e.g. code 205) enforce a "within 2 days from today" window.
+  region_code:
+    format: ISO 3166-1 alpha-2
+    examples: [US, GB, FR, DE, JP, BR, CN, AU, CA, IN]
+  language_code:
+    format: ISO 639-1 (with regional variants where applicable)
+    examples: [en, fr, de, ja, pt, zh, es, ar]
+
+parameters:
+  # Per the parameters guide, the API documents identifier and nutrient fields
+  # centrally and leaves request-level parameters to individual endpoints.
+  # The cross-cutting common parameters in practice:
+  format:
+    type: enum
+    values: [xml, json]
+    default: xml
+    notes: Selects response serialization. JSON is recommended for modern clients.
+  method:
+    type: string
+    notes: Required for method-style requests against /rest/server.api.
+  region:
+    type: string
+    format: ISO 3166-1 alpha-2
+    notes: >
+      Premier/localization scope. When omitted defaults to US. When set the
+      response is filtered to that region; default language for the region
+      is used unless `language` is also specified.
+  language:
+    type: string
+    format: ISO 639-1
+    notes: >
+      Ignored unless `region` is also specified. Premier/localization scope.
+  max_results:
+    type: int
+    notes: Pagination size; per-endpoint default and max.
+  page_number:
+    type: int
+    notes: Zero-based page index for paginated endpoints.
+  oauth_token:
+    type: string
+    notes: OAuth 1.0 user access token for delegated requests.
+  unique_identifiers:
+    note: >
+      Documented centrally in the parameters guide. Common IDs include
+      food_id, exercise_id, user_id, recipe_id, serving_id, food_entry_id,
+      saved_meal_id, saved_meal_item_id, food_category_id.
+  common_nutrients:
+    note: >
+      Standard nutrient fields returned by food/recipe endpoints: calories,
+      protein, carbohydrate, fat, saturated_fat, polyunsaturated_fat,
+      monounsaturated_fat, trans_fat, cholesterol, sodium, potassium, fiber,
+      sugar, added_sugars, vitamin_a, vitamin_c, vitamin_d, calcium, iron.
+
+storable_data:
+  description: >
+    Per the Developer Terms of Service, user data may not be cached for
+    more than 24 hours. Only an explicit allowlist of fields may be
+    persisted indefinitely; everything else must be re-fetched from the API.
+  retention_default: 24 hours (cache only)
+  classification:
+    user_supplied: >
+      Diary entries, weights, meal selections, recipe submissions, and any
+      free-text or per-user numeric content are user-supplied and subject
+      to the 24-hour cache limit.
+    system_derived: >
+      Identifiers and authentication artifacts issued by FatSecret are
+      system-derived and storable indefinitely.
+  storable_indefinitely:
+    - auth_secret           # OAuth credential
+    - auth_token            # OAuth credential
+    - exercise_id
+    - food_category_id
+    - food_entry_id
+    - food_id
+    - recipe_id
+    - recipe_types          # comma-separated filter values
+    - saved_meal_id
+    - saved_meal_item_id
+    - serving_id
+
+errors:
+  envelope:
+    xml: |
+      <error xmlns="http://platform.fatsecret.com/api/1.0/">
+        <code>4</code>
+        <message>Invalid signature method: oauth_signature_method 'PLAINTEXT'</message>
+      </error>
+    json: |
+      {
+        "error": {
+          "code": "4",
+          "message": "Invalid signature method: oauth_signature_method 'PLAINTEXT'"
+        }
+      }
+    schema:
+      error:
+        code: integer (returned as string in JSON)
+        message: string  # may embed contextual '<details>' substring
+  codes:
+    - code: 1
+      type: General
+      message: "An unknown error occurred: '<details>'"
+    - code: 2
+      type: OAuth 1.0
+      message: "Missing required oauth parameter: '<details>'"
+    - code: 3
+      type: OAuth 1.0
+      message: "Unsupported oauth parameter: '<details>'"
+    - code: 4
+      type: OAuth 1.0
+      message: "Invalid signature method: '<details>'"
+    - code: 5
+      type: OAuth 1.0
+      message: "Invalid consumer key: '<details>'"
+    - code: 6
+      type: OAuth 1.0
+      message: "Invalid/expired timestamp: '<details>'"
+    - code: 7
+      type: OAuth 1.0
+      message: "Invalid/used nonce: '<details>'"
+    - code: 8
+      type: OAuth 1.0
+      message: "Invalid signature: '<details>'"
+    - code: 9
+      type: OAuth 1.0
+      message: "Invalid access token: '<details>'"
+    - code: 10
+      type: General
+      message: "Unknown method: '<details>'"
+    - code: 11
+      type: General
+      message: "Application request limit reached: '<details>'"
+    - code: 12
+      type: General
+      message: "User is performing too many actions: '<details>'"
+    - code: 13
+      type: OAuth 2.0
+      message: "Invalid token: '<details>'"
+    - code: 14
+      type: OAuth 2.0
+      message: "Missing scope: '<details>'"
+    - code: 20
+      type: General
+      message: "System temporarily unavailable: '<details>'"
+    - code: 21
+      type: General
+      message: "Invalid IP address detected: '<details>'"
+    - code: 22
+      type: General
+      message: "Invalid request: '<details>'"
+    - code: 23
+      type: General
+      message: "Api not found"
+    - code: 24
+      type: General
+      message: "A timeout has occurred"
+    - code: 101
+      type: Parameter
+      message: "Missing required parameter: '<details>'"
+    - code: 102
+      type: Parameter
+      message: "Invalid integer value: '<details>'"
+    - code: 103
+      type: Parameter
+      message: "Invalid double value: '<details>'"
+    - code: 104
+      type: Parameter
+      message: "Invalid decimal value: '<details>'"
+    - code: 105
+      type: Parameter
+      message: "Invalid long value: '<details>'"
+    - code: 106
+      type: Parameter
+      message: "Invalid ID: '<details>'"
+    - code: 107
+      type: Parameter
+      message: "Value out of range: '<details>'"
+    - code: 108
+      type: Parameter
+      message: "Invalid Type: '<details>'"
+    - code: 109
+      type: Parameter
+      message: "Character limit exceeded: '<details>'"
+    - code: 201
+      type: Application
+      message: "Activity not found: '<details>'"
+    - code: 202
+      type: Application
+      message: "Shift To and Shift From must be different: '<details>'"
+    - code: 203
+      type: Application
+      message: "Too many minutes: '<details>'"
+    - code: 204
+      type: Application
+      message: "Date selected does not have any activity to default: '<details>'"
+    - code: 205
+      type: Application
+      message: "Date must be within 2 days from today: '<details>'"
+    - code: 206
+      type: Application
+      message: "Cannot update weight for an earlier date: '<details>'"
+    - code: 207
+      type: Application
+      message: "Date selected does not have any food entries to copy: '<details>'"
+    - code: 208
+      type: Application
+      message: "Invalid region: '<details>'"
+    - code: 209
+      type: Application
+      message: "Activity cannot be modified: '<details>'"
+    - code: 210
+      type: Application
+      message: "User cannot have templates set: '<details>'"
+    - code: 211
+      type: Application
+      message: "No food item detected"
+
+localization:
+  scope_required: localization (premier feature)
+  parameters:
+    region:
+      format: ISO 3166-1 alpha-2
+      example: FR
+      notes: When omitted, defaults to US.
+    language:
+      format: ISO 639-1
+      notes: Only applied when `region` is also specified; otherwise ignored.
+  resolution_rules:
+    - condition: neither parameter specified
+      result: defaults to US region, English language
+    - condition: region only
+      result: uses that region's default language
+    - condition: both parameters specified
+      result: returns results in nominated region and language
+  supported_regions_count: 195
+  supported_regions_examples:
+    - { code: US, default_language: English }
+    - { code: GB, default_language: English }
+    - { code: FR, default_language: French }
+    - { code: DE, default_language: German }
+    - { code: JP, default_language: Japanese }
+    - { code: BR, default_language: Portuguese }
+    - { code: CN, default_language: Chinese }
+    - { code: AU, default_language: English }
+    - { code: CA, default_language: English }
+  supported_languages:
+    - Arabic
+    - Chinese
+    - Chinese (Traditional)
+    - Danish
+    - Dutch
+    - English
+    - English (Canada)
+    - English (Regional)
+    - Finnish
+    - French
+    - German
+    - Indonesian
+    - Italian
+    - Japanese
+    - Korean
+    - Norwegian
+    - Polish
+    - Portuguese
+    - Portuguese (Portugal)
+    - Russian
+    - Spanish
+    - Swedish
+    - Thai
+    - Turkish
+    - Ukrainian
+    - Vietnamese
+  notes: >
+    Localization is a premium feature only made available to select
+    accounts for specific languages and regions. The language parameter
+    is deliberately ignored unless region is simultaneously specified.
+
+libraries:
+  official:
+    - name: Postman
+      type: API testing / collection
+      walkthrough: https://github.com/fatsecret-group/postman-fatsecret-apis
+      workspace: https://www.postman.com/fatsecret/workspace/fatsecret-public-apis/collection/25958240-f307c228-34ed-42bb-8866-79dae97523a6
+  community:
+    - language: Python
+      name: pyfatsecret
+      url: https://github.com/walexnelson/pyfatsecret
+    - language: PHP
+      name: fatsecret-laravel
+      url: https://github.com/Braunson/fatsecret-laravel
+    - language: Swift
+      name: FatSecretSwift
+      url: https://github.com/NicholasBellucci/FatSecretSwift
+      warning: >
+        FatSecret notes this library is intended ONLY as a proof of concept
+        because it stores credentials in plain text; a proxy service is
+        recommended instead.
+  community_disclaimer: >
+    Community libraries are not affiliated with FatSecret; they are
+    maintained by the developer community.
+  support_forum: https://groups.google.com/g/fatsecret-platform-api

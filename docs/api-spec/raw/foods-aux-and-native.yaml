@@ -1,0 +1,373 @@
+endpoints:
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/feedback
+  exists: true
+  http_verb: GET
+  method: feedback
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/feedback/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: barcode
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/food.find_id_for_barcode
+  exists: true
+  http_verb: GET
+  method: food.find_id_for_barcode
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food/barcode/find-by-id/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food.find_id_for_barcode" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/food.find_id_for_barcode
+  exists: true
+  http_verb: GET
+  method: food.find_id_for_barcode
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food/barcode/find-by-id/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food.find_id_for_barcode.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/food_brands.get
+  exists: true
+  http_verb: GET
+  method: food_brands.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/brands/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food_brands.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/food_brands.get
+  exists: true
+  http_verb: GET
+  method: food_brands.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/brands/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food_brands.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/food_categories.get
+  exists: true
+  http_verb: GET
+  method: food_categories.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food-categories/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food_categories.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/food_categories.get
+  exists: true
+  http_verb: GET
+  method: food_categories.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food-categories/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food_categories.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/food_sub_categories.get
+  exists: true
+  http_verb: GET
+  method: food_sub_categories.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food-sub-categories/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food_sub_categories.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/food_sub_categories.get
+  exists: true
+  http_verb: GET
+  method: food_sub_categories.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food-sub-categories/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food_sub_categories.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/foods.autocomplete
+  exists: true
+  http_verb: GET
+  method: foods.autocomplete
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food/autocomplete/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"foods.autocomplete" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/foods.autocomplete
+  exists: true
+  http_verb: GET
+  method: foods.autocomplete
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food/autocomplete/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"foods.autocomplete.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/image.recognition
+  exists: true
+  http_verb: GET
+  method: image.recognition
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/image-recognition/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/image.recognition
+  exists: true
+  http_verb: GET
+  method: image.recognition
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/image-recognition/v2"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/natural.language.processing
+  exists: true
+  http_verb: GET
+  method: natural.language.processing
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/natural-language-processing/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1

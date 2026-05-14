@@ -1,0 +1,421 @@
+endpoints:
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/exercise_entries.commit_day
+  exists: true
+  http_verb: GET
+  method: exercise_entries.commit_day
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercise-entries/day/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercise_entries.commit_day" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/exercise_entries.get
+  exists: true
+  http_verb: GET
+  method: exercise_entries.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercise-entries/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercise_entries.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/exercise_entries.get
+  exists: true
+  http_verb: GET
+  method: exercise_entries.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercise-entries/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercise_entries.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/exercise_entries.get_month
+  exists: true
+  http_verb: GET
+  method: exercise_entries.get_month
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercise-entries/month/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercise_entries.get_month" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/exercise_entries.get_month
+  exists: true
+  http_verb: GET
+  method: exercise_entries.get_month
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercise-entries/month/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercise_entries.get_month.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/exercise_entries.save_template
+  exists: true
+  http_verb: GET
+  method: exercise_entries.save_template
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercise-entries/template/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercise_entries.save_template" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/exercise_entry.edit
+  exists: true
+  http_verb: GET
+  method: exercise_entry.edit
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercise-entries/template/v1"HTTP "PUT"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercise_entry.edit" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/exercises.get
+  exists: true
+  http_verb: GET
+  method: exercises.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercises/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercises.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/exercises.get
+  exists: true
+  http_verb: GET
+  method: exercises.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/exercises/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"exercises.get.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/profile.create
+  exists: true
+  http_verb: GET
+  method: profile.create
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/profile/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"profile.create" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/profile.get
+  exists: true
+  http_verb: GET
+  method: profile.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/profile/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"profile.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/profile.get_auth
+  exists: true
+  http_verb: GET
+  method: profile.get_auth
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/profile/auth/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"profile.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/weight.update
+  exists: true
+  http_verb: GET
+  method: weight.update
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/weight/v1"HTTP "POST"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"weight.update" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/weights.get_month
+  exists: true
+  http_verb: GET
+  method: weights.get_month
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/weight/month/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"weights.get_month" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v2/weights.get_month
+  exists: true
+  http_verb: GET
+  method: weights.get_month
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/weight/month/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"weights.get_month.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
