@@ -1,0 +1,310 @@
+endpoints:
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v1/food.get
+  exists: true
+  http_verb: GET
+  method: food.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food.get" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v2/food.get
+  exists: true
+  http_verb: GET
+  method: food.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: "The Vitamin A value is the raw value in micrograms (mcg).\n                \n      \
+      \          It is up to the developer to calculate the %DV (Percent Daily Value)"
+    name: "The Vitamin A value is the percentage of daily recommended.\n                \n           \
+      \     It is based on a 2000 calorie diet."
+    required: false
+    type: null
+  - default: null
+    description: "The Vitamin C value is the raw value in milligrams (mg).\n                \n       \
+      \         It is up to the developer to calculate the %DV"
+    name: "The Vitamin C value is the percentage of daily recommended.\n                \n           \
+      \     It is based on a 2000 calorie diet."
+    required: false
+    type: null
+  - default: null
+    description: "The Calcium value is the raw value in milligrams (mg).\n                \n         \
+      \       It is up to the developer to calculate the %DV"
+    name: "The Calcium value is the percentage of daily recommended.\n                \n             \
+      \   It is based on a 2000 calorie diet."
+    required: false
+    type: null
+  - default: null
+    description: "The Iron value is the raw value in milligrams (mg).\n                \n            \
+      \    It is up to the developer to calculate the %DV"
+    name: "The Iron value is the percentage of daily recommended.\n                \n                It\
+      \ is based on a 2000 calorie diet."
+    required: false
+    type: null
+  - default: null
+    description: Vitamin D is the raw value in micrograms (mcg).
+    name: '---'
+    required: false
+    type: null
+  - default: null
+    description: "Added Sugars is the raw value in grams (g).\n                \n                It is\
+      \ new for our food_type = \"Brand\""
+    name: '---'
+    required: false
+    type: null
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v3/food.get
+  exists: true
+  http_verb: GET
+  method: food.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food/v3"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food.get.v3" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v3
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v4/food.get
+  exists: true
+  http_verb: GET
+  method: food.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food/v4"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food.get.v4" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v4
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v5/food.get
+  exists: true
+  http_verb: GET
+  method: food.get
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/food/v5"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"food.get.v5" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v5
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v1/foods.search
+  exists: true
+  http_verb: GET
+  method: foods.search
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/foods/search/v1"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"foods.search" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v1
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v2/foods.search
+  exists: true
+  http_verb: GET
+  method: foods.search
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/foods/search/v2"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"foods.search.v2" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v2
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v3/foods.search
+  exists: true
+  http_verb: GET
+  method: foods.search
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/foods/search/v3"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"foods.search.v3" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v3
+- api_method_param: null
+  deprecated: true
+  doc_url: https://platform.fatsecret.com/docs/v4/foods.search
+  exists: true
+  http_verb: GET
+  method: foods.search
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/foods/search/v4"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"foods.search.v4" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v4
+- api_method_param: null
+  deprecated: false
+  doc_url: https://platform.fatsecret.com/docs/v5/foods.search
+  exists: true
+  http_verb: GET
+  method: foods.search
+  notes: ''
+  oauth:
+  - oauth1
+  - oauth2
+  parameters:
+  - default: null
+    description: '"https://platform.fatsecret.com/rest/foods/search/v5"HTTP "GET"'
+    name: N/A
+    required: true
+    type: null
+  - default: null
+    description: '"foods.search.v5" (included with other parameters)'
+    name: String
+    required: true
+    type: String
+  parse_warnings:
+  - could not detect api method= param or REST URL
+  premier: true
+  response: {}
+  rest_url: null
+  scope: basic
+  version: v5
