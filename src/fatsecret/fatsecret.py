@@ -10,8 +10,11 @@ import datetime
 import time
 from typing import Any, List, Literal, Optional, Tuple, Union
 
+from urllib.parse import parse_qs
+
 import requests
 from bs4 import BeautifulSoup
+from oauthlib.oauth1 import SIGNATURE_TYPE_QUERY
 from requests_oauthlib import OAuth1Session
 
 from .errors import (
@@ -79,12 +82,14 @@ class Fatsecret:
                     client_secret=consumer_secret,
                     resource_owner_key=session_token[0],
                     resource_owner_secret=session_token[1],
+                    signature_type=SIGNATURE_TYPE_QUERY,
                 )
             else:
                 self.session = OAuth1Session(
                     consumer_key,
                     client_secret=consumer_secret,
                     callback_uri="oob",
+                    signature_type=SIGNATURE_TYPE_QUERY,
                 )
         elif auth == "oauth2":
             self.session = requests.Session()
@@ -261,11 +266,23 @@ class Fatsecret:
                 self.consumer_key,
                 client_secret=self.consumer_secret,
                 callback_uri=callback_url,
+                signature_type=SIGNATURE_TYPE_QUERY,
             )
 
-        token = self.session.fetch_request_token(self.REQUEST_TOKEN_URL)
+        # FatSecret's request-token endpoint only accepts GET. requests-oauthlib's
+        # fetch_request_token() forces POST, so issue the signed GET ourselves.
+        resp = self.session.get(self.REQUEST_TOKEN_URL)
+        resp.raise_for_status()
+        token = {k: v[0] for k, v in parse_qs(resp.text).items()}
+        if "oauth_token" not in token:
+            raise RuntimeError(
+                f"Token request failed: {resp.status_code} {resp.text!r}"
+            )
         self.request_token = token["oauth_token"]
         self.request_token_secret = token["oauth_token_secret"]
+        # Promote request token onto the session so authorization_url can find it.
+        self.session._client.client.resource_owner_key = self.request_token
+        self.session._client.client.resource_owner_secret = self.request_token_secret
         return self.session.authorization_url(self.AUTHORIZE_URL)
 
     def authenticate(self, verifier: Union[str, int]) -> Tuple[str, str]:
@@ -276,16 +293,25 @@ class Fatsecret:
         Returns:
             (access_token, access_secret)
         """
-        # Re-instantiate session with request token + verifier so
-        # fetch_access_token can sign the exchange correctly.
+        # Re-instantiate session with request token + verifier so the GET
+        # below is signed correctly. FatSecret's access-token endpoint also
+        # only accepts GET, so we issue it directly rather than going through
+        # fetch_access_token() (which would force POST).
         self.session = OAuth1Session(
             self.consumer_key,
             client_secret=self.consumer_secret,
             resource_owner_key=self.request_token,
             resource_owner_secret=self.request_token_secret,
             verifier=str(verifier),
+            signature_type=SIGNATURE_TYPE_QUERY,
         )
-        token = self.session.fetch_access_token(self.ACCESS_TOKEN_URL)
+        resp = self.session.get(self.ACCESS_TOKEN_URL)
+        resp.raise_for_status()
+        token = {k: v[0] for k, v in parse_qs(resp.text).items()}
+        if "oauth_token" not in token:
+            raise RuntimeError(
+                f"Access-token exchange failed: {resp.status_code} {resp.text!r}"
+            )
         self.access_token = token["oauth_token"]
         self.access_token_secret = token["oauth_token_secret"]
 
@@ -295,6 +321,7 @@ class Fatsecret:
             client_secret=self.consumer_secret,
             resource_owner_key=self.access_token,
             resource_owner_secret=self.access_token_secret,
+            signature_type=SIGNATURE_TYPE_QUERY,
         )
 
         return (self.access_token, self.access_token_secret)

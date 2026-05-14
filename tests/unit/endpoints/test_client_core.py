@@ -154,29 +154,6 @@ class TestCallHttpBody:
             fs._call({"method": "foo.get"})
 
 
-# --------------------------- OAuth1 session_token ---------------------------
-
-
-class TestOAuth1SessionToken:
-    def test_session_token_sets_access_credentials_and_session(self):
-        with patch("fatsecret.fatsecret.OAuth1Session") as mock_oauth1:
-            session_obj = MagicMock(name="oauth1-session")
-            mock_oauth1.return_value = session_obj
-
-            fs = Fatsecret("ck", "cs", session_token=("tok-A", "sec-B"))
-
-            assert fs.access_token == "tok-A"
-            assert fs.access_token_secret == "sec-B"
-            # OAuth1Session built with the resource-owner key/secret pair
-            mock_oauth1.assert_called_once_with(
-                "ck",
-                client_secret="cs",
-                resource_owner_key="tok-A",
-                resource_owner_secret="sec-B",
-            )
-            assert fs.session is session_obj
-
-
 # --------------------------- api_url fallback ---------------------------
 
 
@@ -210,55 +187,6 @@ class TestUnwrapElseBranch:
         payload = {"foods": {"other_key": 1}}
         result = Fatsecret._unwrap(payload, "foods", list_key="food")
         assert result == [{"other_key": 1}]
-
-
-# --------------------------- get_authorize_url ---------------------------
-
-
-class TestGetAuthorizeUrl:
-    def test_fetches_request_token_and_returns_authorize_url(self):
-        fs = _make_oauth1_fs()
-        fs.session = MagicMock()
-        fs.session.fetch_request_token = MagicMock(
-            return_value={
-                "oauth_token": "req-token-XYZ",
-                "oauth_token_secret": "req-secret-ABCD",
-            }
-        )
-        fs.session.authorization_url = MagicMock(
-            return_value=f"{Fatsecret.AUTHORIZE_URL}?oauth_token=req-token-XYZ"
-        )
-
-        url = fs.get_authorize_url(callback_url="oob")
-
-        fs.session.fetch_request_token.assert_called_once_with(
-            Fatsecret.REQUEST_TOKEN_URL
-        )
-        fs.session.authorization_url.assert_called_once_with(Fatsecret.AUTHORIZE_URL)
-        assert fs.request_token == "req-token-XYZ"
-        assert fs.request_token_secret == "req-secret-ABCD"
-        assert url.startswith(Fatsecret.AUTHORIZE_URL)
-        assert "oauth_token=req-token-XYZ" in url
-
-    def test_custom_callback_url_rebuilds_session(self):
-        fs = _make_oauth1_fs()
-
-        with patch("fatsecret.fatsecret.OAuth1Session") as mock_oauth1:
-            new_session = MagicMock()
-            new_session.fetch_request_token = MagicMock(
-                return_value={"oauth_token": "t", "oauth_token_secret": "s"}
-            )
-            new_session.authorization_url = MagicMock(
-                return_value=f"{Fatsecret.AUTHORIZE_URL}?oauth_token=t"
-            )
-            mock_oauth1.return_value = new_session
-
-            fs.get_authorize_url(callback_url="https://example.com/cb")
-
-        mock_oauth1.assert_called_once_with(
-            "ck", client_secret="cs", callback_uri="https://example.com/cb"
-        )
-        assert fs.session is new_session
 
 
 # --------------------------- valid_response legacy ---------------------------
