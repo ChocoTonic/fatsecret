@@ -20,3 +20,6 @@ coverage.xml
 # Environment files
 .env
 scripts/.cache/*.html
+
+# Local planning docs (numbered by phase, never committed)
+plans/
