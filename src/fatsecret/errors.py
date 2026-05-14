@@ -29,3 +29,11 @@ class ParameterError(BaseFatsecretError):
 class ApplicationError(BaseFatsecretError):
     def __init__(self, code, message):
         super().__init__(code, message)
+
+
+class ScopeRequiredError(ApplicationError):
+    """Raised when the upstream rejects a call because the access token lacks a required scope."""
+
+
+class PremierRequiredError(ScopeRequiredError):
+    """Raised when an endpoint requires the `premier` scope and the token doesn't carry it."""
