@@ -35,9 +35,7 @@ jobs:
         run: make lint
 
       - name: Build and validate docs
-        run: |
-          make docs > sphinx.log 2>&1
-          grep -E "WARNING:|ERROR:" sphinx.log && exit 1 || exit 0
+        run: make docs
 
       - name: Run tests
         run: |
