@@ -1,12 +1,13 @@
+import re
 import sys
-from importlib.metadata import version as _pkg_version
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+_root = Path(__file__).parent.parent
+sys.path.insert(0, str(_root / "src"))
 
 project = "fatsecret"
 copyright = "2026"
-release = _pkg_version("fatsecret")
+release = re.search(r'^version = "([^"]+)"', (_root / "pyproject.toml").read_text(), re.M).group(1)
 version = ".".join(release.split(".")[:2])
 
 extensions = [
