@@ -30,6 +30,7 @@ from typing import Any
 from selectolax.parser import HTMLParser, Node
 
 from .models import EndpointSpec, MethodRef, Parameter
+from .xsd import derive_response_for as _xsd_response_for
 
 log = logging.getLogger(__name__)
 
@@ -419,12 +420,19 @@ def parse_page(ref: MethodRef, html: str) -> EndpointSpec:
     )
     spec.parameters = _parse_parameters(_body_html(tree, html), extra_force_opt)
 
+    # Response shape: prefer the XSD (canonical, typed) for endpoints it
+    # covers; fall back to walking the HTML "Example Response" JSON block for
+    # the v2+ additions and post-v1 endpoints the XSD does not model.
+    xsd_shape = _xsd_response_for(ref.method, ref.version)
     example = _extract_example_json(html)
-    spec.response = _collapse_response(example) if example is not None else {}
+    if xsd_shape is not None:
+        spec.response = xsd_shape
+    else:
+        spec.response = _collapse_response(example) if example is not None else {}
 
     if not spec.parameters:
         spec.parse_warnings.append("no parameters table found")
-    if example is None:
+    if example is None and xsd_shape is None:
         spec.parse_warnings.append("no example response section found")
 
     return spec
