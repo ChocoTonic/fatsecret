@@ -4,12 +4,12 @@ does not auto-build (currently anything < v1.4.0).
 
 Output goes to a staging directory (default: ./legacy-staging) laid out as:
 
-    <staging>/legacy/index.html        # top-level listing
-    <staging>/legacy/<tag>/index.html  # one tree per tag
+    <staging>/index.html        # top-level listing of every version
+    <staging>/<tag>/index.html  # one tree per tag, served at gh-pages root
 
-The archive is intended to be published to the `gh-pages` branch under
-`/legacy/...` so historical users hitting old version-specific URLs land on a
-working page rather than a 404.
+The archive is intended to be published to the `gh-pages` branch root so
+URLs like `https://chocotonic.github.io/fatsecret/v1.2.1/` resolve for
+every released tag.
 
 Design goals:
   * Idempotent: re-running produces the same bytes (no timestamps in output).
@@ -387,9 +387,11 @@ def main() -> int:
     repo: Path = args.repo.resolve()
     staging: Path = args.staging.resolve()
     work_root: Path = args.work_root.resolve()
-    staging_legacy = staging / "legacy"
 
-    staging_legacy.mkdir(parents=True, exist_ok=True)
+    # Each tag's docs land at <staging>/<tag>/ directly — no `legacy/`
+    # prefix. The publish step uploads <staging>/ as the gh-pages root, so
+    # the final URL is `https://chocotonic.github.io/fatsecret/vX.Y.Z/`.
+    staging.mkdir(parents=True, exist_ok=True)
     work_root.mkdir(parents=True, exist_ok=True)
 
     venv_dir = work_root / ".venv"
@@ -397,15 +399,15 @@ def main() -> int:
 
     results: list[BuildResult] = []
     for tag in args.tags:
-        results.append(build_tag(tag, repo, work_root, staging_legacy, venv_python))
+        results.append(build_tag(tag, repo, work_root, staging, venv_python))
 
-    write_top_index(staging_legacy, results)
+    write_top_index(staging, results)
 
     print("\n== Summary ==")
     for r in results:
         extra = f"  ({r.notes})" if r.notes else ""
         print(f"  {r.tag:10s}  {r.strategy}{extra}")
-    print(f"\nOutput: {staging_legacy}")
+    print(f"\nOutput: {staging}")
     return 0
 
 
