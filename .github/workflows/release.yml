@@ -45,14 +45,9 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Bump version
+      - name: Compute version
         id: version
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull origin master
-
-          # Derive current version from latest tag, not pyproject.toml
           CURRENT=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | tr -d 'v')
           MAJOR=$(echo $CURRENT | cut -d. -f1)
           MINOR=$(echo $CURRENT | cut -d. -f2)
@@ -61,7 +56,6 @@ jobs:
           COMMIT_MSG=$(git log -1 --pretty=%B)
           IS_DEPENDABOT=${{ github.actor == 'dependabot[bot]' }}
 
-          # Dependabot or CVE → patch bump; all other commits → minor bump
           if [ "$IS_DEPENDABOT" = "true" ]; then
             if echo "$COMMIT_MSG" | grep -qi "CVE\|security\|vulnerability"; then
               NEW="$MAJOR.$MINOR.$((PATCH + 1))"
@@ -74,18 +68,18 @@ jobs:
             NEW="$MAJOR.$((MINOR + 1)).0"
           fi
 
-          sed -i "s/version = \"[^\"]*\"/version = \"$NEW\"/" pyproject.toml
           echo "skip=false" >> $GITHUB_OUTPUT
           echo "version=$NEW" >> $GITHUB_OUTPUT
           echo "tag=v$NEW" >> $GITHUB_OUTPUT
 
-      - name: Commit and tag version bump
+      - name: Tag release
         if: steps.version.outputs.skip == 'false'
         run: |
-          git add pyproject.toml
-          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          sed -i "s/version = \"[^\"]*\"/version = \"${{ steps.version.outputs.version }}\"/" pyproject.toml
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag "${{ steps.version.outputs.tag }}"
-          git push https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }} master --tags
+          git push https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }} "${{ steps.version.outputs.tag }}"
 
       - name: Create GitHub Release
         if: steps.version.outputs.skip == 'false'
