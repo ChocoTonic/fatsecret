@@ -8,6 +8,7 @@ Simple python wrapper of the Fatsecret API
 
 import datetime
 import time
+from importlib.metadata import PackageNotFoundError, version as _pkg_version
 from typing import Any, List, Literal, Optional, Tuple, Union
 
 from urllib.parse import parse_qs
@@ -27,6 +28,14 @@ from .errors import (
     PremierRequiredError,
     ScopeRequiredError,
 )
+
+
+def _user_agent() -> str:
+    try:
+        v = _pkg_version("fatsecret")
+    except PackageNotFoundError:
+        v = "unknown"
+    return f"pyfatsecret-chocotonic/{v} python-requests/{requests.__version__}"
 
 
 class Fatsecret:
@@ -111,6 +120,10 @@ class Fatsecret:
             self.session = requests.Session()
         else:
             raise ValueError(f"auth must be 'oauth1' or 'oauth2', got {auth!r}")
+
+        # Identify ourselves so traces / server logs can distinguish SDK
+        # traffic from other outbound HTTP in the caller's app.
+        self.session.headers["User-Agent"] = _user_agent()
 
         # v2.0 resource-namespaced surface. Each resource exposes the
         # OAS-tag's endpoints via short names (e.g. fs.foods.search_v5).
@@ -302,6 +315,7 @@ class Fatsecret:
                 callback_uri=callback_url,
                 signature_type=SIGNATURE_TYPE_QUERY,
             )
+            self.session.headers["User-Agent"] = _user_agent()
 
         # FatSecret's request-token endpoint only accepts GET. requests-oauthlib's
         # fetch_request_token() forces POST, so issue the signed GET ourselves.
@@ -339,6 +353,7 @@ class Fatsecret:
             verifier=str(verifier),
             signature_type=SIGNATURE_TYPE_QUERY,
         )
+        self.session.headers["User-Agent"] = _user_agent()
         resp = self.session.get(self.ACCESS_TOKEN_URL)
         resp.raise_for_status()
         token = {k: v[0] for k, v in parse_qs(resp.text).items()}
@@ -357,6 +372,7 @@ class Fatsecret:
             resource_owner_secret=self.access_token_secret,
             signature_type=SIGNATURE_TYPE_QUERY,
         )
+        self.session.headers["User-Agent"] = _user_agent()
 
         return (self.access_token, self.access_token_secret)
 
