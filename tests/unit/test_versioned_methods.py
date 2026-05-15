@@ -18,11 +18,40 @@ def fs():
         return Fatsecret("ck", "cs")
 
 
+# ---------------------------------------------------------------------------
+# Phase 2 helpers
+# ---------------------------------------------------------------------------
+
+def _food(**overrides):
+    base = {"food_id": "1", "food_name": "Item", "food_type": "Generic", "food_url": "https://example.com/food"}
+    base.update(overrides)
+    return base
+
+
+def _food_entry(**overrides):
+    base = {
+        "food_entry_id": "1",
+        "food_entry_description": "x",
+        "date_int": "20250101",
+        "meal": "Breakfast",
+        "food_id": "1",
+        "serving_id": "1",
+        "number_of_units": "1",
+        "food_entry_name": "x",
+        "calories": "100",
+        "carbohydrate": "10",
+        "protein": "5",
+        "fat": "1",
+    }
+    base.update(overrides)
+    return base
+
+
 # --------------------------- Foods: search ---------------------------
 
 
 def test_foods_search_v1_call_and_unwrap(fs):
-    payload = {"foods": {"food": [{"food_id": "1"}, {"food_id": "2"}]}}
+    payload = {"foods": {"food": [_food(food_id="1"), _food(food_id="2")]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.foods.search_v1("apple", page_number=0, max_results=10)
 
@@ -32,20 +61,20 @@ def test_foods_search_v1_call_and_unwrap(fs):
     assert params["search_expression"] == "apple"
     assert params["page_number"] == 0
     assert params["max_results"] == 10
-    assert result == [{"food_id": "1"}, {"food_id": "2"}]
+    assert [r.food_id for r in result] == [1, 2]
 
 
 def test_foods_search_v1_unwrap_coerces_single_dict(fs):
-    payload = {"foods": {"food": {"food_id": "1"}}}
+    payload = {"foods": {"food": _food(food_id="1")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.foods.search_v1("apple")
-    assert result == [{"food_id": "1"}]
+    assert [r.food_id for r in result] == [1]
 
 
 def test_foods_search_v5_call_and_unwrap(fs):
     payload = {
         "foods_search": {
-            "results": {"food": [{"food_id": "5"}]},
+            "results": {"food": [_food(food_id="5")]},
             "max_results": "20",
         }
     }
@@ -55,24 +84,24 @@ def test_foods_search_v5_call_and_unwrap(fs):
     params = mock_call.call_args.args[0]
     assert params["method"] == "foods.search.v5"
     assert params["food_type"] == "brand"
-    assert result == [{"food_id": "5"}]
+    assert [r.food_id for r in result] == [5]
 
 
 # --------------------------- Foods: get ---------------------------
 
 
 def test_food_get_v1_call_and_unwrap(fs):
-    payload = {"food": {"food_id": "1", "food_name": "Apple"}}
+    payload = {"food": _food(food_id="1", food_name="Apple")}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.foods.get_v1("1")
     params = mock_call.call_args.args[0]
     assert params["method"] == "food.get"
     assert params["food_id"] == "1"
-    assert result == {"food_id": "1", "food_name": "Apple"}
+    assert result.food_id == 1 and result.food_name == "Apple"
 
 
 def test_food_get_v5_call_and_unwrap(fs):
-    payload = {"food": {"food_id": "5", "food_name": "Brand Apple"}}
+    payload = {"food": _food(food_id="5", food_name="Brand Apple")}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.foods.get_v5("5", region="US")
 
@@ -80,32 +109,32 @@ def test_food_get_v5_call_and_unwrap(fs):
     assert params["method"] == "food.get.v5"
     assert params["food_id"] == "5"
     assert params["region"] == "US"
-    assert result == {"food_id": "5", "food_name": "Brand Apple"}
+    assert result.food_id == 5 and result.food_name == "Brand Apple"
 
 
 # --------------------------- food_entries.get ---------------------------
 
 
 def test_food_entries_get_v2_single_dict_coerced_to_list(fs):
-    payload = {"food_entries": {"food_entry": {"food_entry_id": "10"}}}
+    payload = {"food_entries": {"food_entry": _food_entry(food_entry_id="10")}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.diary.entries_get_v2(food_entry_id="10")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entries.get.v2"
     assert params["food_entry_id"] == "10"
-    assert result == [{"food_entry_id": "10"}]
+    assert [r.food_entry_id for r in result] == [10]
 
 
 def test_food_entries_get_v2_list_passthrough(fs):
     payload = {
         "food_entries": {
-            "food_entry": [{"food_entry_id": "10"}, {"food_entry_id": "11"}]
+            "food_entry": [_food_entry(food_entry_id="10"), _food_entry(food_entry_id="11")]
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.diary.entries_get_v2(food_entry_id="10")
-    assert result == [{"food_entry_id": "10"}, {"food_entry_id": "11"}]
+    assert [r.food_entry_id for r in result] == [10, 11]
 
 
 def test_food_entries_get_v2_no_args_returns_empty(fs):
@@ -120,7 +149,7 @@ def test_food_entries_get_v2_no_args_returns_empty(fs):
 
 
 def test_image_recognition_v2_posts_to_url_with_json_body(fs):
-    payload = {"food_response": [{"food_id": "x"}]}
+    payload = {"food_response": [_food(food_id="x")]}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.native.image_recognition_v2("BASE64IMG", include_food_data=True)
 
@@ -135,7 +164,7 @@ def test_image_recognition_v2_posts_to_url_with_json_body(fs):
     params = kwargs["params"]
     assert "method" not in params
     assert params == {"format": "json"}
-    assert result == [{"food_id": "x"}]
+    assert result == [_food(food_id="x")]
 
 
 # --------------------------- profile.get ---------------------------
@@ -148,7 +177,8 @@ def test_profile_get_v1_unwraps_profile(fs):
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "profile.get"
-    assert result == {"nickname": "alice"}
+    _dump = result.model_dump(exclude_unset=True)
+    assert _dump.get('nickname') == 'alice'
 
 
 # --------------------------- recipes ---------------------------

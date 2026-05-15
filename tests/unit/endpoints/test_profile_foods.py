@@ -38,6 +38,74 @@ def _resolve(obj, dotted_path):
     return obj
 
 
+# ---------------------------------------------------------------------------
+# Phase 2 helpers: pad XSD-required fields so model_validate succeeds
+# ---------------------------------------------------------------------------
+
+def _food(**overrides):
+    base = {
+        "food_id": "1",
+        "food_name": "Item",
+        "food_type": "Generic",
+        "food_url": "https://example.com/food",
+    }
+    base.update(overrides)
+    return base
+
+
+def _food_entry(**overrides):
+    base = {
+        "food_entry_id": "1",
+        "food_entry_description": "x",
+        "date_int": "20250101",
+        "meal": "Breakfast",
+        "food_id": "1",
+        "serving_id": "1",
+        "number_of_units": "1",
+        "food_entry_name": "x",
+        "calories": "100",
+        "carbohydrate": "10",
+        "protein": "5",
+        "fat": "1",
+    }
+    base.update(overrides)
+    return base
+
+
+def _exercise(**overrides):
+    base = {"exercise_id": "1", "exercise_name": "Running"}
+    base.update(overrides)
+    return base
+
+
+def _exercise_entry(**overrides):
+    base = {
+        "is_template_value": "true",
+        "exercise_id": "1",
+        "exercise_name": "Running",
+        "minutes": "30",
+        "calories": "150",
+    }
+    base.update(overrides)
+    return base
+
+
+def _day(**overrides):
+    base = {"date_int": "20250101"}
+    base.update(overrides)
+    return base
+
+
+def _recipe(**overrides):
+    base = {
+        "recipe_id": "1",
+        "recipe_name": "Stew",
+        "recipe_description": "A stew",
+    }
+    base.update(overrides)
+    return base
+
+
 @pytest.fixture
 def fs():
     with patch("fatsecret.fatsecret.OAuth1Session"):
@@ -87,7 +155,7 @@ def test_food_create_happy_path(fs, method_name, api_method):
 
 @pytest.mark.parametrize("method_name,_api", CREATE_VERSIONS)
 def test_food_create_unwraps_food_id_scalar(fs, method_name, _api):
-    payload = {"food_id": "9876"}
+    payload = _food(food_id="9876")
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS)
     assert result == "9876"
@@ -95,7 +163,7 @@ def test_food_create_unwraps_food_id_scalar(fs, method_name, _api):
 
 @pytest.mark.parametrize("method_name,_api", CREATE_VERSIONS)
 def test_food_create_omits_all_optionals_by_default(fs, method_name, _api):
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS)
     params = mock_call.call_args.args[0]
@@ -153,7 +221,7 @@ SHARED_OPTIONALS = [
 def test_food_create_each_shared_optional_present_when_supplied(
     fs, method_name, _api, kwarg, value
 ):
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS, **{kwarg: value})
     params = mock_call.call_args.args[0]
@@ -165,7 +233,7 @@ def test_food_create_each_shared_optional_present_when_supplied(
 def test_food_create_each_shared_optional_absent_when_none(
     fs, method_name, _api, kwarg, _value
 ):
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         _resolve(fs, method_name)(**REQUIRED_CREATE_KWARGS, **{kwarg: None})
     params = mock_call.call_args.args[0]
@@ -176,7 +244,7 @@ def test_food_create_each_shared_optional_absent_when_none(
 
 
 def test_food_create_v1_accepts_other_carbohydrate(fs):
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         fs.profile_foods.create_v1(other_carbohydrate=7.5, **REQUIRED_CREATE_KWARGS)
     params = mock_call.call_args.args[0]
@@ -187,7 +255,7 @@ def test_food_create_v1_accepts_other_carbohydrate(fs):
 
 
 def test_food_create_v1_omits_other_carbohydrate_when_none(fs):
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         fs.profile_foods.create_v1(other_carbohydrate=None, **REQUIRED_CREATE_KWARGS)
     params = mock_call.call_args.args[0]
@@ -196,7 +264,7 @@ def test_food_create_v1_omits_other_carbohydrate_when_none(fs):
 
 def test_food_create_v2_does_not_accept_other_carbohydrate(fs):
     """v2 drops ``other_carbohydrate`` from the signature entirely."""
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload):
         with pytest.raises(TypeError):
             fs.profile_foods.create_v2(other_carbohydrate=7.5, **REQUIRED_CREATE_KWARGS)
@@ -209,7 +277,7 @@ def test_food_create_v2_does_not_accept_other_carbohydrate(fs):
     "kwarg,value", [("added_sugars", 4.0), ("vitamin_d", 2.5)]
 )
 def test_food_create_v2_accepts_v2_only_optionals(fs, kwarg, value):
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         fs.profile_foods.create_v2(**REQUIRED_CREATE_KWARGS, **{kwarg: value})
     params = mock_call.call_args.args[0]
@@ -218,7 +286,7 @@ def test_food_create_v2_accepts_v2_only_optionals(fs, kwarg, value):
 
 @pytest.mark.parametrize("kwarg", ["added_sugars", "vitamin_d"])
 def test_food_create_v2_omits_v2_only_optionals_when_none(fs, kwarg):
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         fs.profile_foods.create_v2(**REQUIRED_CREATE_KWARGS, **{kwarg: None})
     params = mock_call.call_args.args[0]
@@ -228,7 +296,7 @@ def test_food_create_v2_omits_v2_only_optionals_when_none(fs, kwarg):
 @pytest.mark.parametrize("kwarg", ["added_sugars", "vitamin_d"])
 def test_food_create_v1_does_not_accept_v2_only_optionals(fs, kwarg):
     """v1 signature predates ``added_sugars`` and ``vitamin_d``."""
-    payload = {"food_id": "1"}
+    payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload):
         with pytest.raises(TypeError):
             fs.profile_foods.create_v1(**REQUIRED_CREATE_KWARGS, **{kwarg: 1.0})
@@ -398,7 +466,7 @@ FAVORITES_VERSIONS = [
 
 @pytest.mark.parametrize("method_name,api_method", FAVORITES_VERSIONS)
 def test_foods_get_favorites_happy_path(fs, method_name, api_method):
-    payload = {"foods": {"food": [{"food_id": "1"}, {"food_id": "2"}]}}
+    payload = {"foods": {"food": [_food(food_id="1"), _food(food_id="2")]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = _resolve(fs, method_name)()
 
@@ -406,15 +474,15 @@ def test_foods_get_favorites_happy_path(fs, method_name, api_method):
     assert params["method"] == api_method
     # No HTTP verb override → defaults to GET.
     assert mock_call.call_args.kwargs.get("method") is None
-    assert result == [{"food_id": "1"}, {"food_id": "2"}]
+    assert [r.food_id for r in result] == [1, 2]
 
 
 @pytest.mark.parametrize("method_name,_api", FAVORITES_VERSIONS)
 def test_foods_get_favorites_single_dict_coerced_to_list(fs, method_name, _api):
-    payload = {"foods": {"food": {"food_id": "solo"}}}
+    payload = {"foods": {"food": _food(food_id="999")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)()
-    assert result == [{"food_id": "solo"}]
+    assert [r.food_id for r in result] == [999]
 
 
 @pytest.mark.parametrize("method_name,_api", FAVORITES_VERSIONS)
@@ -424,7 +492,7 @@ def test_foods_get_favorites_empty_response_returns_empty_list(
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)()
-    assert result == []
+    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
 
 
 # ---------------------------------------------------------------------------
@@ -439,7 +507,7 @@ MOST_EATEN_VERSIONS = [
 
 @pytest.mark.parametrize("method_name,api_method", MOST_EATEN_VERSIONS)
 def test_foods_get_most_eaten_happy_path(fs, method_name, api_method):
-    payload = {"foods": {"food": [{"food_id": "1"}]}}
+    payload = {"foods": {"food": [_food(food_id="1")]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = _resolve(fs, method_name)()
 
@@ -447,7 +515,7 @@ def test_foods_get_most_eaten_happy_path(fs, method_name, api_method):
     assert params["method"] == api_method
     assert "meal" not in params
     assert mock_call.call_args.kwargs.get("method") is None
-    assert result == [{"food_id": "1"}]
+    assert [r.food_id for r in result] == [1]
 
 
 @pytest.mark.parametrize("method_name,_api", MOST_EATEN_VERSIONS)
@@ -470,10 +538,10 @@ def test_foods_get_most_eaten_meal_absent_when_none(fs, method_name, _api):
 
 @pytest.mark.parametrize("method_name,_api", MOST_EATEN_VERSIONS)
 def test_foods_get_most_eaten_single_dict_coerced_to_list(fs, method_name, _api):
-    payload = {"foods": {"food": {"food_id": "solo"}}}
+    payload = {"foods": {"food": _food(food_id="999")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)()
-    assert result == [{"food_id": "solo"}]
+    assert [r.food_id for r in result] == [999]
 
 
 @pytest.mark.parametrize("method_name,_api", MOST_EATEN_VERSIONS)
@@ -483,7 +551,7 @@ def test_foods_get_most_eaten_empty_response_returns_empty_list(
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)()
-    assert result == []
+    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
 
 
 # ---------------------------------------------------------------------------
@@ -500,7 +568,7 @@ RECENTLY_EATEN_VERSIONS = [
 
 @pytest.mark.parametrize("method_name,api_method", RECENTLY_EATEN_VERSIONS)
 def test_foods_get_recently_eaten_happy_path(fs, method_name, api_method):
-    payload = {"foods": {"food": [{"food_id": "1"}, {"food_id": "2"}]}}
+    payload = {"foods": {"food": [_food(food_id="1"), _food(food_id="2")]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = _resolve(fs, method_name)()
 
@@ -508,7 +576,7 @@ def test_foods_get_recently_eaten_happy_path(fs, method_name, api_method):
     assert params["method"] == api_method
     assert "meal" not in params
     assert mock_call.call_args.kwargs.get("method") is None
-    assert result == [{"food_id": "1"}, {"food_id": "2"}]
+    assert [r.food_id for r in result] == [1, 2]
 
 
 @pytest.mark.parametrize("method_name,_api", RECENTLY_EATEN_VERSIONS)
@@ -533,10 +601,10 @@ def test_foods_get_recently_eaten_meal_absent_when_none(fs, method_name, _api):
 def test_foods_get_recently_eaten_single_dict_coerced_to_list(
     fs, method_name, _api
 ):
-    payload = {"foods": {"food": {"food_id": "solo"}}}
+    payload = {"foods": {"food": _food(food_id="999")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)()
-    assert result == [{"food_id": "solo"}]
+    assert [r.food_id for r in result] == [999]
 
 
 @pytest.mark.parametrize("method_name,_api", RECENTLY_EATEN_VERSIONS)

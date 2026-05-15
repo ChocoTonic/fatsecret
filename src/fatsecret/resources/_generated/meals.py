@@ -28,7 +28,8 @@ class MealsResource(BaseResource):
             ],
         )
         payload = self._client._call(params, method="POST")
-        return self._client._unwrap(payload, "saved_meal_id")
+        raw = self._client._unwrap(payload, "saved_meal_id")
+        return raw
 
     def delete_v1(
         self,
@@ -74,7 +75,8 @@ class MealsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "saved_meals", list_key="saved_meal")
+        raw = self._client._unwrap(payload, "saved_meals", list_key="saved_meal")
+        return raw
 
     def get_v2(
         self,
@@ -89,7 +91,8 @@ class MealsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "saved_meals", list_key="saved_meal")
+        raw = self._client._unwrap(payload, "saved_meals", list_key="saved_meal")
+        return raw
 
     def item_add_v1(
         self,
@@ -107,7 +110,8 @@ class MealsResource(BaseResource):
         params["serving_id"] = serving_id
         params["number_of_units"] = number_of_units
         payload = self._client._call(params, method="POST")
-        return self._client._unwrap(payload, "saved_meal_item_id")
+        raw = self._client._unwrap(payload, "saved_meal_item_id")
+        return raw
 
     def item_delete_v1(
         self,
@@ -146,7 +150,8 @@ class MealsResource(BaseResource):
         params: dict[str, Any] = {"method": "saved_meal_items.get"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "saved_meal_items", list_key="saved_meal_item")
+        raw = self._client._unwrap(payload, "saved_meal_items", list_key="saved_meal_item")
+        return raw
 
     def items_get_v2(
         self,
@@ -156,7 +161,8 @@ class MealsResource(BaseResource):
         params: dict[str, Any] = {"method": "saved_meal_items.get.v2"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "saved_meal_items", list_key="saved_meal_item")
+        raw = self._client._unwrap(payload, "saved_meal_items", list_key="saved_meal_item")
+        return raw
 
 
 __all__ = ["MealsResource"]

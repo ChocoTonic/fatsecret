@@ -7,6 +7,8 @@ from typing import Any, Optional
 
 from .._base import BaseResource
 
+from ...models._generated.foods import Food
+
 
 class FoodsResource(BaseResource):
     """Resource methods for the OAS `Foods` tag (generated)."""
@@ -28,7 +30,8 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "suggestions", list_key="suggestion")
+        raw = self._client._unwrap(payload, "suggestions", list_key="suggestion")
+        return raw
 
     def autocomplete_v2(
         self,
@@ -47,7 +50,8 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "suggestions", list_key="suggestion")
+        raw = self._client._unwrap(payload, "suggestions", list_key="suggestion")
+        return raw
 
     def find_id_for_barcode_v1(
         self,
@@ -66,7 +70,8 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_id")
+        raw = self._client._unwrap(payload, "food_id")
+        return raw
 
     def find_id_for_barcode_v2(
         self,
@@ -77,7 +82,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[Food]:
         """food.find_id_for_barcode (v2). Premier-only."""
         params: dict[str, Any] = {"method": "food.find_id_for_barcode.v2"}
         params["barcode"] = barcode
@@ -93,7 +98,10 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food")
+        raw = self._client._unwrap(payload, "food")
+        if raw is None:
+            return None
+        return Food.model_validate(raw)
 
     def get_v1(
         self,
@@ -102,7 +110,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[Food]:
         """food.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food.get"}
         params["food_id"] = food_id
@@ -116,7 +124,10 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food")
+        raw = self._client._unwrap(payload, "food")
+        if raw is None:
+            return None
+        return Food.model_validate(raw)
 
     def get_v2(
         self,
@@ -125,7 +136,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[Food]:
         """food.get (v2). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food.get.v2"}
         params["food_id"] = food_id
@@ -139,7 +150,10 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food")
+        raw = self._client._unwrap(payload, "food")
+        if raw is None:
+            return None
+        return Food.model_validate(raw)
 
     def get_v3(
         self,
@@ -148,7 +162,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[Food]:
         """food.get (v3). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food.get.v3"}
         params["food_id"] = food_id
@@ -162,7 +176,10 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food")
+        raw = self._client._unwrap(payload, "food")
+        if raw is None:
+            return None
+        return Food.model_validate(raw)
 
     def get_v4(
         self,
@@ -173,7 +190,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[Food]:
         """food.get (v4). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food.get.v4"}
         params["food_id"] = food_id
@@ -189,7 +206,10 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food")
+        raw = self._client._unwrap(payload, "food")
+        if raw is None:
+            return None
+        return Food.model_validate(raw)
 
     def get_v5(
         self,
@@ -200,7 +220,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[Food]:
         """food.get (v5). Premier-only."""
         params: dict[str, Any] = {"method": "food.get.v5"}
         params["food_id"] = food_id
@@ -216,7 +236,10 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food")
+        raw = self._client._unwrap(payload, "food")
+        if raw is None:
+            return None
+        return Food.model_validate(raw)
 
     def search_v1(
         self,
@@ -226,7 +249,7 @@ class FoodsResource(BaseResource):
         generic_description: Optional[str] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.search (v1). Premier-only."""
         params: dict[str, Any] = {"method": "foods.search"}
         self._client._set_optional(
@@ -241,7 +264,8 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods", list_key="food")
+        raw = self._client._unwrap(payload, "foods", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def search_v2(
         self,
@@ -252,7 +276,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.search (v2). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.search.v2"}
         self._client._set_optional(
@@ -268,7 +292,8 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods_search", "results", list_key="food")
+        raw = self._client._unwrap(payload, "foods_search", "results", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def search_v3(
         self,
@@ -281,7 +306,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.search (v3). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.search.v3"}
         self._client._set_optional(
@@ -299,7 +324,8 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods_search", "results", list_key="food")
+        raw = self._client._unwrap(payload, "foods_search", "results", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def search_v4(
         self,
@@ -312,7 +338,7 @@ class FoodsResource(BaseResource):
         flag_default_serving: Optional[bool] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.search (v4). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.search.v4"}
         self._client._set_optional(
@@ -330,7 +356,8 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods_search", "results", list_key="food")
+        raw = self._client._unwrap(payload, "foods_search", "results", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def search_v5(
         self,
@@ -344,7 +371,7 @@ class FoodsResource(BaseResource):
         food_type: Optional[str] = None,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.search (v5). Premier-only."""
         params: dict[str, Any] = {"method": "foods.search.v5"}
         self._client._set_optional(
@@ -363,7 +390,8 @@ class FoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods_search", "results", list_key="food")
+        raw = self._client._unwrap(payload, "foods_search", "results", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
 
 __all__ = ["FoodsResource"]

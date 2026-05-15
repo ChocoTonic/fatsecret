@@ -46,6 +46,82 @@ def fs():
 
 
 # ---------------------------------------------------------------------------
+# Phase 2 helpers: fixture padding for Pydantic-typed responses
+# ---------------------------------------------------------------------------
+
+def _food(**overrides):
+    """Minimal Food stub with all required XSD fields."""
+    base = {
+        "food_id": "1",
+        "food_name": "Item",
+        "food_type": "Generic",
+        "food_url": "https://example.com/food",
+    }
+    base.update(overrides)
+    return base
+
+
+def _food_entry(**overrides):
+    """Minimal FoodEntry stub with all required XSD fields."""
+    base = {
+        "food_entry_id": "1",
+        "food_entry_description": "x",
+        "date_int": "20250101",
+        "meal": "Breakfast",
+        "food_id": "1",
+        "serving_id": "1",
+        "number_of_units": "1",
+        "food_entry_name": "x",
+        "calories": "100",
+        "carbohydrate": "10",
+        "protein": "5",
+        "fat": "1",
+    }
+    base.update(overrides)
+    return base
+
+
+def _exercise(**overrides):
+    base = {"exercise_id": "1", "exercise_name": "Running"}
+    base.update(overrides)
+    return base
+
+
+def _exercise_entry(**overrides):
+    base = {
+        "is_template_value": "true",
+        "exercise_id": "1",
+        "exercise_name": "Running",
+        "minutes": "30",
+        "calories": "150",
+    }
+    base.update(overrides)
+    return base
+
+
+def _day(**overrides):
+    base = {"date_int": "20250101"}
+    base.update(overrides)
+    return base
+
+
+def _recipe(**overrides):
+    base = {
+        "recipe_id": "1",
+        "recipe_name": "Stew",
+        "recipe_description": "A stew",
+    }
+    base.update(overrides)
+    return base
+
+
+def _profile(**overrides):
+    base = {}
+    base.update(overrides)
+    return base
+
+
+# ---------------------------------------------------------------------------
 # foods.search v1 - v5
 # ---------------------------------------------------------------------------
 
@@ -74,7 +150,7 @@ def _call_search(fs, version, **kwargs):
 
 @pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
 def test_foods_search_happy_path(fs, version):
-    items = [{"food_id": "1"}, {"food_id": "2"}]
+    items = [_food(food_id="1"), _food(food_id="2")]
     payload = _search_payload_v1(items) if version == 1 else _search_payload_v2plus(items)
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = _call_search(fs, version)
@@ -87,7 +163,7 @@ def test_foods_search_happy_path(fs, version):
     assert mock_call.call_args.kwargs.get("method", "GET") == "GET"
     assert mock_call.call_args.kwargs.get("url") is None
     assert mock_call.call_args.kwargs.get("json_body") is None
-    assert result == items
+    assert [r.food_id for r in result] == [1, 2]
 
 
 # Optional-parameter forwarding. Each pair = (kwarg_name, sample_value, supported_versions).
@@ -131,10 +207,12 @@ def test_foods_search_optionals_absent_when_none(fs, version):
 
 @pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
 def test_foods_search_single_dict_coerced_to_list(fs, version):
-    single = {"food_id": "42"}
+    single = _food(food_id="42")
     payload = _search_payload_v1(single) if version == 1 else _search_payload_v2plus(single)
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert _call_search(fs, version) == [single]
+        result = _call_search(fs, version)
+    assert len(result) == 1
+    assert result[0].food_id == 42
 
 
 @pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
@@ -206,7 +284,7 @@ def _mock_session_response(json_data):
 
 @pytest.mark.parametrize("version", [1, 3, 4, 5])
 def test_food_get_happy_path(fs, version):
-    food_obj = {"food_id": str(version), "food_name": f"Food v{version}"}
+    food_obj = _food(food_id=str(version), food_name=f"Food v{version}")
     payload = {"food": food_obj}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = getattr(fs.foods, f"get_v{version}")("abc")
@@ -214,11 +292,12 @@ def test_food_get_happy_path(fs, version):
     assert params["method"] == GET_METHOD_NAMES[version]
     assert params["food_id"] == "abc"
     assert mock_call.call_args.kwargs.get("method", "GET") == "GET"
-    assert result == food_obj
+    assert result.food_id == version
+    assert result.food_name == f"Food v{version}"
 
 
 def test_food_get_v2_happy_path(fs):
-    food_obj = {"food_id": "2", "food_name": "Food v2"}
+    food_obj = _food(food_id="2", food_name="Food v2")
     fs.session.get = MagicMock(return_value=_mock_session_response({"food": food_obj}))
     result = fs.foods.get_v2("abc")
 
@@ -229,11 +308,12 @@ def test_food_get_v2_happy_path(fs):
     assert params["format"] == "json"
     assert "region" not in params
     assert "language" not in params
-    assert result == food_obj
+    assert result.food_id == 2
+    assert result.food_name == "Food v2"
 
 
 def test_food_get_v2_optional_forwarding(fs):
-    fs.session.get = MagicMock(return_value=_mock_session_response({"food": {}}))
+    fs.session.get = MagicMock(return_value=_mock_session_response({"food": _food()}))
     fs.foods.get_v2("x", region="US", language="en")
     params = fs.session.get.call_args.kwargs["params"]
     assert params["region"] == "US"
@@ -245,7 +325,7 @@ def test_food_get_v2_optional_forwarding(fs):
 def test_food_get_optional_forwarding(fs, version, kwarg, value, supported):
     if version not in supported:
         pytest.skip(f"{kwarg} not supported on v{version}")
-    with patch.object(Fatsecret, "_call", return_value={"food": {}}) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"food": _food()}) as mock_call:
         getattr(fs.foods, f"get_v{version}")("abc", **{kwarg: value})
     params = mock_call.call_args.args[0]
     assert params[kwarg] == value
@@ -253,7 +333,7 @@ def test_food_get_optional_forwarding(fs, version, kwarg, value, supported):
 
 @pytest.mark.parametrize("version", [1, 3, 4, 5])
 def test_food_get_optionals_absent_when_none(fs, version):
-    with patch.object(Fatsecret, "_call", return_value={"food": {}}) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"food": _food()}) as mock_call:
         getattr(fs.foods, f"get_v{version}")("abc")
     params = mock_call.call_args.args[0]
     for kwarg, _value, supported in _GET_OPTIONALS:
@@ -370,7 +450,7 @@ def test_food_find_id_for_barcode_v1_empty_response(fs):
 
 
 def test_food_find_id_for_barcode_v2_happy_path(fs):
-    food_obj = {"food_id": "12345", "food_name": "Coke 12oz"}
+    food_obj = _food(food_id="12345", food_name="Coke 12oz")
     payload = {"food": food_obj}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.foods.find_id_for_barcode_v2("0049000028911")
@@ -386,7 +466,8 @@ def test_food_find_id_for_barcode_v2_happy_path(fs):
         "language",
     ):
         assert opt not in params
-    assert result == food_obj
+    assert result.food_id == 12345
+    assert result.food_name == "Coke 12oz"
 
 
 @pytest.mark.parametrize(
@@ -401,7 +482,7 @@ def test_food_find_id_for_barcode_v2_happy_path(fs):
     ],
 )
 def test_food_find_id_for_barcode_v2_optional_forwarding(fs, kwarg, value):
-    payload = {"food": {}}
+    payload = {"food": _food()}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         fs.foods.find_id_for_barcode_v2("0049000028911", **{kwarg: value})
     assert mock_call.call_args.args[0][kwarg] == value

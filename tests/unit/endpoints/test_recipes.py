@@ -22,6 +22,74 @@ import pytest
 from fatsecret import Fatsecret
 
 
+# ---------------------------------------------------------------------------
+# Phase 2 helpers: pad XSD-required fields so model_validate succeeds
+# ---------------------------------------------------------------------------
+
+def _food(**overrides):
+    base = {
+        "food_id": "1",
+        "food_name": "Item",
+        "food_type": "Generic",
+        "food_url": "https://example.com/food",
+    }
+    base.update(overrides)
+    return base
+
+
+def _food_entry(**overrides):
+    base = {
+        "food_entry_id": "1",
+        "food_entry_description": "x",
+        "date_int": "20250101",
+        "meal": "Breakfast",
+        "food_id": "1",
+        "serving_id": "1",
+        "number_of_units": "1",
+        "food_entry_name": "x",
+        "calories": "100",
+        "carbohydrate": "10",
+        "protein": "5",
+        "fat": "1",
+    }
+    base.update(overrides)
+    return base
+
+
+def _exercise(**overrides):
+    base = {"exercise_id": "1", "exercise_name": "Running"}
+    base.update(overrides)
+    return base
+
+
+def _exercise_entry(**overrides):
+    base = {
+        "is_template_value": "true",
+        "exercise_id": "1",
+        "exercise_name": "Running",
+        "minutes": "30",
+        "calories": "150",
+    }
+    base.update(overrides)
+    return base
+
+
+def _day(**overrides):
+    base = {"date_int": "20250101"}
+    base.update(overrides)
+    return base
+
+
+def _recipe(**overrides):
+    base = {
+        "recipe_id": "1",
+        "recipe_name": "Stew",
+        "recipe_description": "A stew",
+    }
+    base.update(overrides)
+    return base
+
+
 @pytest.fixture
 def fs():
     with patch("fatsecret.fatsecret.OAuth1Session"):
@@ -34,7 +102,7 @@ def fs():
 
 
 def test_recipe_get_v1_happy_path(fs):
-    payload = {"recipe": {"recipe_id": "42", "recipe_name": "Pancakes"}}
+    payload = {"recipe": _recipe(recipe_id="42", recipe_name="Pancakes")}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.get_v1("42")
     params = mock_call.call_args.args[0]
@@ -42,18 +110,18 @@ def test_recipe_get_v1_happy_path(fs):
     assert params["recipe_id"] == "42"
     # No HTTP verb override (defaults to GET).
     assert mock_call.call_args.kwargs == {}
-    assert result == {"recipe_id": "42", "recipe_name": "Pancakes"}
+    assert result.recipe_id == 42 and result.recipe_name == "Pancakes"
 
 
 def test_recipe_get_v1_optional_region_absent_when_none(fs):
-    with patch.object(Fatsecret, "_call", return_value={"recipe": {}}) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
         fs.recipes.get_v1("42")
     params = mock_call.call_args.args[0]
     assert "region" not in params
 
 
 def test_recipe_get_v1_optional_region_present_when_set(fs):
-    with patch.object(Fatsecret, "_call", return_value={"recipe": {}}) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
         fs.recipes.get_v1("42", region="US")
     params = mock_call.call_args.args[0]
     assert params["region"] == "US"
@@ -61,7 +129,7 @@ def test_recipe_get_v1_optional_region_present_when_set(fs):
 
 def test_recipe_get_v1_does_not_send_grams_per_portion(fs):
     """grams_per_portion is a v2-only response field, never sent on v1 calls."""
-    with patch.object(Fatsecret, "_call", return_value={"recipe": {}}) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
         fs.recipes.get_v1("42", region="US")
     params = mock_call.call_args.args[0]
     assert "grams_per_portion" not in params
@@ -75,29 +143,25 @@ def test_recipe_get_v1_does_not_send_grams_per_portion(fs):
 
 def test_recipe_get_v2_happy_path(fs):
     payload = {
-        "recipe": {
-            "recipe_id": "42",
-            "recipe_name": "Pancakes",
-            "grams_per_portion": "120.0",
-        }
+        "recipe": _recipe(recipe_id="42", recipe_name="Pancakes", grams_per_portion="120.0")
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.get_v2("42")
     params = mock_call.call_args.args[0]
     assert params["method"] == "recipe.get.v2"
     assert params["recipe_id"] == "42"
-    assert result["grams_per_portion"] == "120.0"
+    assert result.grams_per_portion == "120.0"
 
 
 def test_recipe_get_v2_optional_region_absent_when_none(fs):
-    with patch.object(Fatsecret, "_call", return_value={"recipe": {}}) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
         fs.recipes.get_v2("42")
     params = mock_call.call_args.args[0]
     assert "region" not in params
 
 
 def test_recipe_get_v2_optional_region_present_when_set(fs):
-    with patch.object(Fatsecret, "_call", return_value={"recipe": {}}) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
         fs.recipes.get_v2("42", region="FR")
     assert mock_call.call_args.args[0]["region"] == "FR"
 
@@ -115,7 +179,7 @@ def test_recipe_get_v2_empty_payload_returns_none(fs):
 
 def test_recipes_search_v1_happy_path(fs):
     payload = {
-        "recipes": {"recipe": [{"recipe_id": "1"}, {"recipe_id": "2"}]}
+        "recipes": {"recipe": [_recipe(recipe_id="1"), _recipe(recipe_id="2")]}
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.search_v1(
@@ -130,7 +194,7 @@ def test_recipes_search_v1_happy_path(fs):
     assert params["recipe_type"] == "Dessert"
     assert params["page_number"] == 0
     assert params["max_results"] == 10
-    assert result == [{"recipe_id": "1"}, {"recipe_id": "2"}]
+    assert [r.recipe_id for r in result] == [1, 2]
 
 
 def test_recipes_search_v1_no_optionals_only_method(fs):
@@ -143,10 +207,10 @@ def test_recipes_search_v1_no_optionals_only_method(fs):
 
 
 def test_recipes_search_v1_single_dict_normalized_to_list(fs):
-    payload = {"recipes": {"recipe": {"recipe_id": "solo"}}}
+    payload = {"recipes": {"recipe": _recipe(recipe_id="100")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.recipes.search_v1("cake")
-    assert result == [{"recipe_id": "solo"}]
+    assert [r.recipe_id for r in result] == [100]
 
 
 def test_recipes_search_v1_empty_returns_list(fs):
@@ -170,7 +234,7 @@ def test_recipes_search_v1_does_not_send_v3_only_params(fs):
 
 
 def test_recipes_search_v2_happy_path_all_optionals(fs):
-    payload = {"recipes": {"recipe": [{"recipe_id": "9"}]}}
+    payload = {"recipes": {"recipe": [_recipe(recipe_id="9")]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.search_v2(
             search_expression="chicken",
@@ -209,7 +273,7 @@ def test_recipes_search_v2_happy_path_all_optionals(fs):
     assert params["max_results"] == 20
     assert params["sort_by"] == "newest"
     assert params["region"] == "US"
-    assert result == [{"recipe_id": "9"}]
+    assert [r.recipe_id for r in result] == [9]
 
 
 def test_recipes_search_v2_no_optionals_only_method(fs):
@@ -222,10 +286,10 @@ def test_recipes_search_v2_no_optionals_only_method(fs):
 
 
 def test_recipes_search_v2_single_dict_normalized_to_list(fs):
-    payload = {"recipes": {"recipe": {"recipe_id": "x"}}}
+    payload = {"recipes": {"recipe": _recipe(recipe_id="300")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.recipes.search_v2("x")
-    assert result == [{"recipe_id": "x"}]
+    assert [r.recipe_id for r in result] == [300]
 
 
 def test_recipes_search_v2_empty_returns_list(fs):
@@ -262,7 +326,7 @@ def test_recipes_search_v2_does_not_send_v3_only_params(fs):
 
 
 def test_recipes_search_v3_happy_path_all_optionals(fs):
-    payload = {"recipes": {"recipe": [{"recipe_id": "v3"}]}}
+    payload = {"recipes": {"recipe": [_recipe(recipe_id="400")]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.search_v3(
             search_expression="soup",
@@ -293,7 +357,7 @@ def test_recipes_search_v3_happy_path_all_optionals(fs):
     assert params["calories.from"] == 50
     assert params["calories.to"] == 500
     assert params["region"] == "GB"
-    assert result == [{"recipe_id": "v3"}]
+    assert [r.recipe_id for r in result] == [400]
 
 
 def test_recipes_search_v3_no_optionals_only_method(fs):
@@ -326,10 +390,10 @@ def test_recipes_search_v3_recipe_types_matchall_alone(fs):
 
 
 def test_recipes_search_v3_single_dict_normalized_to_list(fs):
-    payload = {"recipes": {"recipe": {"recipe_id": "only"}}}
+    payload = {"recipes": {"recipe": _recipe(recipe_id="500")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.recipes.search_v3()
-    assert result == [{"recipe_id": "only"}]
+    assert [r.recipe_id for r in result] == [500]
 
 
 def test_recipes_search_v3_empty_returns_list(fs):
@@ -482,20 +546,20 @@ def test_recipe_delete_favorite_v1_passthrough_when_no_success_key(fs):
 def test_recipes_get_favorites_v1_happy_path(fs):
     """v1 uses the legacy api method `recipe.get_favorites` (singular root)."""
     payload = {
-        "recipes": {"recipe": [{"recipe_id": "f1"}, {"recipe_id": "f2"}]}
+        "recipes": {"recipe": [_recipe(recipe_id="200"), _recipe(recipe_id="201")]}
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.get_favorites_v1()
     params = mock_call.call_args.args[0]
     assert params == {"method": "recipe.get_favorites"}
     assert mock_call.call_args.kwargs == {}
-    assert result == [{"recipe_id": "f1"}, {"recipe_id": "f2"}]
+    assert [r.recipe_id for r in result] == [200, 201]
 
 
 def test_recipes_get_favorites_v1_single_dict_normalized_to_list(fs):
-    payload = {"recipes": {"recipe": {"recipe_id": "solo"}}}
+    payload = {"recipes": {"recipe": _recipe(recipe_id="100")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.recipes.get_favorites_v1() == [{"recipe_id": "solo"}]
+        assert [r.recipe_id for r in fs.recipes.get_favorites_v1()] == [100]
 
 
 def test_recipes_get_favorites_v1_empty_returns_list(fs):
@@ -509,19 +573,19 @@ def test_recipes_get_favorites_v1_empty_returns_list(fs):
 
 
 def test_recipes_get_favorites_v2_happy_path(fs):
-    payload = {"recipes": {"recipe": [{"recipe_id": "v2a"}]}}
+    payload = {"recipes": {"recipe": [_recipe(recipe_id="29")]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.get_favorites_v2()
     params = mock_call.call_args.args[0]
     assert params == {"method": "recipe.get_favorites.v2"}
     assert mock_call.call_args.kwargs == {}
-    assert result == [{"recipe_id": "v2a"}]
+    assert [r.recipe_id for r in result] == [29]
 
 
 def test_recipes_get_favorites_v2_single_dict_normalized_to_list(fs):
-    payload = {"recipes": {"recipe": {"recipe_id": "only"}}}
+    payload = {"recipes": {"recipe": _recipe(recipe_id="500")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
-        assert fs.recipes.get_favorites_v2() == [{"recipe_id": "only"}]
+        assert [r.recipe_id for r in fs.recipes.get_favorites_v2()] == [500]
 
 
 def test_recipes_get_favorites_v2_empty_returns_list(fs):

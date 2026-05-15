@@ -7,6 +7,8 @@ from typing import Any, Optional
 
 from .._base import BaseResource
 
+from ...models._generated.food_diary import Day, FoodEntry
+
 
 class DiaryResource(BaseResource):
     """Resource methods for the OAS `Food Diary` tag (generated)."""
@@ -52,7 +54,7 @@ class DiaryResource(BaseResource):
     def entries_get_month_v1(
         self,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[Day]:
         """food_entries.get_month (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food_entries.get_month"}
         self._client._set_optional(
@@ -62,12 +64,13 @@ class DiaryResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "month", list_key="day")
+        raw = self._client._unwrap(payload, "month", list_key="day")
+        return [Day.model_validate(r) for r in raw]
 
     def entries_get_month_v2(
         self,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[Day]:
         """food_entries.get_month (v2). Premier-only."""
         params: dict[str, Any] = {"method": "food_entries.get_month.v2"}
         self._client._set_optional(
@@ -77,13 +80,14 @@ class DiaryResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "month", list_key="day")
+        raw = self._client._unwrap(payload, "month", list_key="day")
+        return [Day.model_validate(r) for r in raw]
 
     def entries_get_v1(
         self,
         date: Optional[int] = None,
         food_entry_id: Optional[int] = None,
-    ) -> list:
+    ) -> list[FoodEntry]:
         """food_entries.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food_entries.get"}
         self._client._set_optional(
@@ -94,13 +98,14 @@ class DiaryResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_entries", list_key="food_entry")
+        raw = self._client._unwrap(payload, "food_entries", list_key="food_entry")
+        return [FoodEntry.model_validate(r) for r in raw]
 
     def entries_get_v2(
         self,
         date: Optional[int] = None,
         food_entry_id: Optional[int] = None,
-    ) -> list:
+    ) -> list[FoodEntry]:
         """food_entries.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "food_entries.get.v2"}
         self._client._set_optional(
@@ -111,7 +116,8 @@ class DiaryResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_entries", list_key="food_entry")
+        raw = self._client._unwrap(payload, "food_entries", list_key="food_entry")
+        return [FoodEntry.model_validate(r) for r in raw]
 
     def entry_create_v1(
         self,
@@ -121,7 +127,7 @@ class DiaryResource(BaseResource):
         number_of_units: float,
         meal: str,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[FoodEntry]:
         """food_entry.create (v1). Premier-only."""
         params: dict[str, Any] = {"method": "food_entry.create"}
         params["food_id"] = food_id
@@ -136,7 +142,8 @@ class DiaryResource(BaseResource):
             ],
         )
         payload = self._client._call(params, method="POST")
-        return self._client._unwrap(payload, "food_entries", list_key="food_entry")
+        raw = self._client._unwrap(payload, "food_entries", list_key="food_entry")
+        return [FoodEntry.model_validate(r) for r in raw]
 
     def entry_delete_v1(
         self,

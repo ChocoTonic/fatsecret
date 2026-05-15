@@ -7,6 +7,8 @@ from typing import Any, Optional
 
 from .._base import BaseResource
 
+from ...models._generated.weight_diary import Day
+
 
 class WeightResource(BaseResource):
     """Resource methods for the OAS `Weight Diary` tag (generated)."""
@@ -14,7 +16,7 @@ class WeightResource(BaseResource):
     def get_month_v1(
         self,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[Day]:
         """weights.get_month (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "weights.get_month"}
         self._client._set_optional(
@@ -24,12 +26,13 @@ class WeightResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "month", list_key="day")
+        raw = self._client._unwrap(payload, "month", list_key="day")
+        return [Day.model_validate(r) for r in raw]
 
     def get_month_v2(
         self,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[Day]:
         """weights.get_month (v2). Premier-only."""
         params: dict[str, Any] = {"method": "weights.get_month.v2"}
         self._client._set_optional(
@@ -39,7 +42,8 @@ class WeightResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "month", list_key="day")
+        raw = self._client._unwrap(payload, "month", list_key="day")
+        return [Day.model_validate(r) for r in raw]
 
     def update_v1(
         self,
