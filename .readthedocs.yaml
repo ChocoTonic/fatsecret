@@ -11,7 +11,7 @@ build:
       # instead of uv's separate `.venv`. Without this, sphinx-rtd-theme
       # goes to the wrong env and the build fails with
       # `ThemeError: no theme named 'sphinx_rtd_theme' found`.
-      - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --all-extras --frozen
+      - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --all-extras --all-groups --frozen
 sphinx:
   configuration: docs/conf.py
   fail_on_warning: true
