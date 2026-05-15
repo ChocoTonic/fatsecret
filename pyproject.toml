@@ -31,4 +31,6 @@ dev = [
     "ruff",
     "furo>=2024.8.6",
     "sphinx>=7.4.7",
+    "pyyaml>=6.0",
+    "sphinx-rtd-theme>=3.0.2",
 ]
