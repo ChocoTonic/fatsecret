@@ -21,13 +21,13 @@ jobs:
       SPEC_PATH: "docs/api-spec/openapi.yaml"
     steps:
       - name: Checkout PR head
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: head
           fetch-depth: 1
 
       - name: Checkout master base
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: master
           path: master
