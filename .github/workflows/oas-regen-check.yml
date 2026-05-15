@@ -21,7 +21,7 @@ jobs:
         run: pip install uv
 
       - name: Cache oas-sync scraper HTML
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: scripts/oas-sync/.cache
           key: oas-sync-cache-${{ hashFiles('scripts/oas-sync/uv.lock') }}
