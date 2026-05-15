@@ -212,7 +212,7 @@ class RecipesResource(BaseResource):
     def types_get_v1(
         self,
     ) -> list:
-        """recipe_types.get (v1). DEPRECATED upstream. Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. recipe_types.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "recipe_types.get"}
         payload = self._client._call(params)
         raw = self._client._unwrap(payload, "recipe_types", list_key="recipe_type")
@@ -223,7 +223,7 @@ class RecipesResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """recipe_types.get (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. recipe_types.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "recipe_types.get.v2"}
         self._client._set_optional(
             params,

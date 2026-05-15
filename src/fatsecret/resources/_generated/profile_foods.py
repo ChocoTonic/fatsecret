@@ -62,7 +62,7 @@ class ProfileFoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
-        """food.create (v1). DEPRECATED upstream. Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food.create (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food.create"}
         params["brand_name"] = brand_name
         params["food_name"] = food_name
@@ -131,7 +131,7 @@ class ProfileFoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
-        """food.create (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food.create (v2). Premier-only."""
         params: dict[str, Any] = {"method": "food.create.v2"}
         params["brand_name"] = brand_name
         params["food_name"] = food_name

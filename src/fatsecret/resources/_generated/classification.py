@@ -18,7 +18,7 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """food_brands.get (v1). DEPRECATED upstream. Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_brands.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food_brands.get"}
         params["starts_with"] = starts_with
         self._client._set_optional(
@@ -40,7 +40,7 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """food_brands.get (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_brands.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "food_brands.get.v2"}
         params["starts_with"] = starts_with
         self._client._set_optional(
@@ -60,7 +60,7 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """food_categories.get (v1). DEPRECATED upstream. Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_categories.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food_categories.get"}
         self._client._set_optional(
             params,
@@ -78,7 +78,7 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """food_categories.get (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_categories.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "food_categories.get.v2"}
         self._client._set_optional(
             params,
@@ -97,7 +97,7 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """food_sub_categories.get (v1). DEPRECATED upstream. Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_sub_categories.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "food_sub_categories.get"}
         params["food_category_id"] = food_category_id
         self._client._set_optional(
@@ -117,7 +117,7 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """food_sub_categories.get (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_sub_categories.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "food_sub_categories.get.v2"}
         params["food_category_id"] = food_category_id
         self._client._set_optional(

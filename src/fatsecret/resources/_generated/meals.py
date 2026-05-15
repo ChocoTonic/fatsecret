@@ -17,7 +17,7 @@ class MealsResource(BaseResource):
         saved_meal_description: Optional[str] = None,
         meals: Optional[str] = None,
     ) -> Any:
-        """saved_meal.create (v1). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meal.create (v1). Premier-only."""
         params: dict[str, Any] = {"method": "saved_meal.create"}
         params["saved_meal_name"] = saved_meal_name
         self._client._set_optional(
@@ -66,7 +66,7 @@ class MealsResource(BaseResource):
         self,
         meal: Optional[str] = None,
     ) -> list:
-        """saved_meals.get (v1). DEPRECATED upstream. Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meals.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "saved_meals.get"}
         self._client._set_optional(
             params,
@@ -82,7 +82,7 @@ class MealsResource(BaseResource):
         self,
         meal: Optional[str] = None,
     ) -> list:
-        """saved_meals.get (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meals.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "saved_meals.get.v2"}
         self._client._set_optional(
             params,
@@ -102,7 +102,7 @@ class MealsResource(BaseResource):
         serving_id: int,
         number_of_units: float,
     ) -> Any:
-        """saved_meal_item.add (v1). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meal_item.add (v1). Premier-only."""
         params: dict[str, Any] = {"method": "saved_meal_item.add"}
         params["saved_meal_id"] = saved_meal_id
         params["food_id"] = food_id
@@ -146,7 +146,7 @@ class MealsResource(BaseResource):
         self,
         saved_meal_id: int,
     ) -> list:
-        """saved_meal_items.get (v1). DEPRECATED upstream. Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meal_items.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "saved_meal_items.get"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params)
@@ -157,7 +157,7 @@ class MealsResource(BaseResource):
         self,
         saved_meal_id: int,
     ) -> list:
-        """saved_meal_items.get (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meal_items.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "saved_meal_items.get.v2"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params)

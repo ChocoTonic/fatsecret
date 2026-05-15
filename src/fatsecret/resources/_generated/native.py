@@ -24,7 +24,7 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """image.recognition (v1). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. image.recognition (v1). Premier-only."""
         body: dict[str, Any] = {}
         body["image_b64"] = image_b64
         body["eaten_foods.food_id"] = eaten_foods_food_id
@@ -58,7 +58,7 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """image.recognition (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. image.recognition (v2). Premier-only."""
         body: dict[str, Any] = {}
         body["image_b64"] = image_b64
         body["eaten_foods.food_id"] = eaten_foods_food_id
@@ -92,7 +92,7 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """natural.language.processing (v1). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. natural.language.processing (v1). Premier-only."""
         body: dict[str, Any] = {}
         body["user_input"] = user_input
         body["eaten_foods.food_id"] = eaten_foods_food_id

@@ -19,6 +19,8 @@ from typing import Any
 import yaml
 
 from .config import OUT_RAW_DIR, REPO_ROOT
+from .emit_resource import derive_unwrap
+from .model_coverage import RESPONSE_MODEL_MAP
 
 log = logging.getLogger(__name__)
 
@@ -463,7 +465,8 @@ def _build_operation(
 
     # Response schema: register one schema per operation, flat.
     schema_name = _schema_name(method, version)
-    schemas[schema_name] = _response_schema_from_block(endpoint.get("response"))
+    response_schema = _response_schema_from_block(endpoint.get("response"))
+    schemas[schema_name] = response_schema
 
     responses: dict[str, Any] = {
         "200": {
@@ -475,12 +478,21 @@ def _build_operation(
         "default": {"$ref": "#/components/responses/Error"},
     }
 
+    tag = _tag_for_endpoint(category, method)
+    unwrap_path, list_key, _is_mutator = derive_unwrap(response_schema)
+    has_typed_model = (tag, tuple(unwrap_path), list_key) in RESPONSE_MODEL_MAP
+
     operation: dict[str, Any] = {
         "operationId": op_id,
         "responses": responses,
         "security": _security_for(endpoint),
         "summary": summary,
-        "tags": [_tag_for_endpoint(category, method)],
+        "tags": [tag],
+        # Machine-readable companion to the typed/dict split documented for
+        # humans in docs/migration-v3.rst.  Always emitted (boolean) so
+        # programmatic consumers can discover coverage without inferring
+        # from a missing key. Source of truth: model_coverage.py.
+        "x-fatsecret-typed-response": has_typed_model,
     }
     if parameters:
         operation["parameters"] = parameters

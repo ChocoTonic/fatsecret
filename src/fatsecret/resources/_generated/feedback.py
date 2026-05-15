@@ -24,7 +24,7 @@ class FeedbackResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
-        """feedback (v1). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. feedback (v1). Premier-only."""
         body: dict[str, Any] = {}
         body["barcode"] = barcode
         body["issue_type_id"] = issue_type_id
