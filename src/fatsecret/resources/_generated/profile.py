@@ -17,7 +17,14 @@ class ProfileResource(BaseResource):
         self,
         user_id: str,
     ) -> Optional[Profile]:
-        """profile.create (v1). Premier-only."""
+        """Creates a new profile and returns the oauth_token and oauth_secret for the new profile. The token and secret returned by this method are persisted indefinitely and may be used in order to provide profile-specific information storage for users including food and exercise diaries and weight tracking. The response is a newly allocated oauth_token and associated oauth_secret which should be stored and re-used to provide ongoing API services on behalf of a user. The results from this call should be saved and subsequently used to provide ongoing storage to users of your site or service. You are obliged to ensure that the values are held securely and to not disclose any oauth_secret values. You should maintain the relationship between your users and the token and secret values you allocate for them. In addition to creating profiles for your own users, you can also use the full 3-legged OAuth provided by fatsecret.com to attain an access token for a profile that is linked to a user account on fatsecret.com. For more information click here.
+
+        :param user_id: You can set your own ID for the newly created profile if you do not wish to store the auth_token and auth_secret
+        :return: :class:`Profile` instance, or ``None`` when the response is empty.
+
+        Notes:
+            profile.create (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "profile.create"}
         params["user_id"] = user_id
         payload = self._client._call(params, method="POST")
@@ -30,7 +37,14 @@ class ProfileResource(BaseResource):
         self,
         user_id: Optional[str] = None,
     ) -> Optional[Profile]:
-        """profile.get_auth (v1). Premier-only."""
+        """Returns the authentication information for a nominated user. You can also use the full 3-legged OAuth provided by fatsecret.com to attain an access token for a profile that is linked to a user account on fatsecret.com. For more information click here.
+
+        :param user_id: You can set your own ID for the newly created profile if you do not wish to store the auth_token and auth_secret
+        :return: :class:`Profile` instance, or ``None`` when the response is empty.
+
+        Notes:
+            profile.get_auth (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "profile.get_auth"}
         self._client._set_optional(
             params,
@@ -47,7 +61,13 @@ class ProfileResource(BaseResource):
     def get_v1(
         self,
     ) -> Optional[Profile]:
-        """profile.get (v1). Premier-only."""
+        """Returns general status information for a nominated user.
+
+        :return: :class:`Profile` instance, or ``None`` when the response is empty.
+
+        Notes:
+            profile.get (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "profile.get"}
         payload = self._client._call(params)
         raw = self._client._unwrap(payload, "profile")

@@ -971,6 +971,14 @@ openapi: 3.1.0
 paths:
   /rest/server.api#exercise_entries.commit_day:
     post:
+      description: Saves the default exercise entries for the user on a nominated date. The API will always
+        return 24 hours worth of exercise entries for a given user on a given date. Users can set up and
+        save standard routines for the activities they do on any given day of the week, known as "template"
+        exercise entries. When the exercise entries are retrieved for a day that has not previously been
+        committed or adjusted by the user a set of 24 hours worth of "template" or default entries will
+        be returned. The exercise_entries.commit_day method takes the current "template" exercise entries
+        and saves them to the exercise diary. Calling this method is in effect an acknowledgement on behalf
+        of a user that they undertook the activities presented in the template.
       operationId: exercise_entries_commit_day_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1008,6 +1016,13 @@ paths:
   /rest/server.api#exercise_entries.get:
     get:
       deprecated: true
+      description: Returns the daily exercise entries for the user on a nominated date. The API will always
+        return 24 hours worth of exercise entries for a given user on a given date. These entries will
+        either be "template" entries (which a user may override for any given day of the week) or saved
+        exercise entry values. Once a user saves or updates the entries on any given day, all entries
+        for that day are saved. All adjustments to the day involve reducing the time for an existing activity
+        in order to either add or increase the time taken for another activity. The default entries presented
+        for a user for a given day of the week can be overridden using exercise_entries.save_template.
       operationId: exercise_entries_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1044,6 +1059,13 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#exercise_entries.get.v2:
     get:
+      description: Returns the daily exercise entries for the user on a nominated date. The API will always
+        return 24 hours worth of exercise entries for a given user on a given date. These entries will
+        either be "template" entries (which a user may override for any given day of the week) or saved
+        exercise entry values. Once a user saves or updates the entries on any given day, all entries
+        for that day are saved. All adjustments to the day involve reducing the time for an existing activity
+        in order to either add or increase the time taken for another activity. The default entries presented
+        for a user for a given day of the week can be overridden using exercise_entries.save_template.
       operationId: exercise_entries_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -1081,6 +1103,10 @@ paths:
   /rest/server.api#exercise_entries.get_month:
     get:
       deprecated: true
+      description: Returns the summary estimated daily calories expended for a user's exercise diary entries
+        for the month specified. Use this call to display total energy expenditure information to users
+        about their exercise and activities for a nominated month. Days with no saved exercise diary entries
+        are not included.
       operationId: exercise_entries_get_month_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1117,6 +1143,10 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#exercise_entries.get_month.v2:
     get:
+      description: Returns the summary estimated daily calories expended for a user's exercise diary entries
+        for the month specified. Use this call to display total energy expenditure information to users
+        about their exercise and activities for a nominated month. Days with no saved exercise diary entries
+        are not included.
       operationId: exercise_entries_get_month_v2
       parameters:
       - description: FatSecret API method selector.
@@ -1153,6 +1183,14 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#exercise_entries.save_template:
     post:
+      description: 'Takes the set of exercise entries on a nominated date and saves these entries as "template"
+        entries for nominated days of the week. By default, the template daily exercise entries for all
+        users for all days of the week are: his method is used to take the saved entries on for a nominated
+        date and to copy them for one or more days of the week as the template daily exercise entries.
+        So, for instance, if a user records 1 hour of walking, 8 hours of sleeping and 15 hours of resting
+        for a particular day in their exercise diary, and then saves that date as a template for Saturday
+        and Sunday, these three activities will be presented as the default exercise entries for all future
+        Saturdays and Sundays.'
       operationId: exercise_entries_save_template_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1198,6 +1236,14 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#exercise_entry.edit:
     put:
+      description: Records a change to a user's exercise diary entry for a nominated date. All changes
+        to an exercise diary involve either increasing the duration of an existing activity or introducing
+        a new activity for a nominated duration. Because there are always 24 hours worth of exercise entries
+        on any given date, the user must nominate the exercise or activity from which the time was taken
+        to balance out the total duration of activities and exercises for the 24 hour period. As such,
+        each change to the exercise entries on a given day is a "shifting" operation where time is moved
+        from one activity to another. An exercise is removed from the day when all of the time allocated
+        to it is shifted to other exercises.
       operationId: exercise_entry_edit_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1274,6 +1320,8 @@ paths:
   /rest/server.api#exercises.get:
     get:
       deprecated: true
+      description: This is a utility method, returning the full list of all supported exercise type names
+        and their associated unique identifiers.
       operationId: exercises_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1318,6 +1366,8 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#exercises.get.v2:
     get:
+      description: This is a utility method, returning the full list of all supported exercise type names
+        and their associated unique identifiers.
       operationId: exercises_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -1362,6 +1412,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#food.add_favorite:
     post:
+      description: Add a food to a user's favorite according to the parameters specified.
       operationId: food_add_favorite_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1414,6 +1465,8 @@ paths:
   /rest/server.api#food.create:
     post:
       deprecated: true
+      description: Creates a food for the user according to the parameters specified. The result of the
+        call is the new unique identifier of the newly created food.
       operationId: food_create_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1611,6 +1664,8 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food.create.v2:
     post:
+      description: Creates a food for the user according to the parameters specified. The result of the
+        call is the new unique identifier of the newly created food.
       operationId: food_create_v2
       parameters:
       - description: FatSecret API method selector.
@@ -1814,6 +1869,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food.delete_favorite:
     delete:
+      description: Deletes the specified food from the user's favorite.
       operationId: food_delete_favorite_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1865,6 +1921,11 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food.find_id_for_barcode:
     get:
+      description: Returns the food_id matching the barcode specified. Barcodes must be specified as GTIN-13
+        numbers - a 13-digit number filled in with zeros for the spaces to the left. UPC-A, EAN-13 and
+        EAN-8 barcodes may be specified. UPC-E barcodes should be converted to their UPC-A equivalent
+        (and then specified as GTIN-13 numbers). An interactive demonstration of our Barcode API can be
+        accessed here
       operationId: food_find_id_for_barcode_v1
       parameters:
       - description: FatSecret API method selector.
@@ -1916,6 +1977,11 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food.find_id_for_barcode.v2:
     get:
+      description: Returns detailed nutritional information for the specified food matching the barcode
+        specified. Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with zeros
+        for the spaces to the left. UPC-A, EAN-13 and EAN-8 barcodes may be specified. UPC-E barcodes
+        should be converted to their UPC-A equivalent (and then specified as GTIN-13 numbers). An interactive
+        demonstration of our Barcode API can be accessed here
       operationId: food_find_id_for_barcode_v2
       parameters:
       - description: FatSecret API method selector.
@@ -1996,6 +2062,8 @@ paths:
   /rest/server.api#food.get:
     get:
       deprecated: true
+      description: Returns detailed nutritional information for the specified food for each available
+        standard serving size. Use this call to display nutrition values for a food to users.
       operationId: food_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2060,6 +2128,8 @@ paths:
   /rest/server.api#food.get.v2:
     get:
       deprecated: true
+      description: Returns detailed nutritional information for the specified food for each available
+        standard serving size. Use this call to display nutrition values for a food to users.
       operationId: food_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -2124,6 +2194,8 @@ paths:
   /rest/server.api#food.get.v3:
     get:
       deprecated: true
+      description: Returns detailed nutritional information for the specified food for each available
+        standard serving size. Use this call to display nutrition values for a food to users.
       operationId: food_get_v3
       parameters:
       - description: FatSecret API method selector.
@@ -2188,6 +2260,8 @@ paths:
   /rest/server.api#food.get.v4:
     get:
       deprecated: true
+      description: Returns detailed nutritional information for the specified food for each available
+        standard serving size. Use this call to display nutrition values for a food to users.
       operationId: food_get_v4
       parameters:
       - description: FatSecret API method selector.
@@ -2266,6 +2340,8 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#food.get.v5:
     get:
+      description: Returns detailed nutritional information for the specified food for each available
+        standard serving size. Use this call to display nutrition values for a food to users.
       operationId: food_get_v5
       parameters:
       - description: FatSecret API method selector.
@@ -2345,6 +2421,7 @@ paths:
   /rest/server.api#food_brands.get:
     get:
       deprecated: true
+      description: This is a utility method, returning the list of food brands.
       operationId: food_brands_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2403,6 +2480,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food_brands.get.v2:
     get:
+      description: This is a utility method, returning the list of food brands.
       operationId: food_brands_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -2462,6 +2540,8 @@ paths:
   /rest/server.api#food_categories.get:
     get:
       deprecated: true
+      description: This is a utility method, returning the full list of all food categories and their
+        associated unique identifiers.
       operationId: food_categories_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2506,6 +2586,8 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food_categories.get.v2:
     get:
+      description: This is a utility method, returning the full list of all food categories and their
+        associated unique identifiers.
       operationId: food_categories_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -2550,6 +2632,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food_entries.copy:
     post:
+      description: Copies the food entries for a specified meal from a nominated date to a nominated date.
       operationId: food_entries_copy_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2599,6 +2682,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food_entries.copy_saved_meal:
     post:
+      description: Copies the food entries for a specified saved meal to a specified meal.
       operationId: food_entries_copy_saved_meal_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2648,6 +2732,9 @@ paths:
   /rest/server.api#food_entries.get:
     get:
       deprecated: true
+      description: Returns saved food diary entries for the user according to the filter specified. This
+        method can be used to return all food diary entries recorded on a nominated date or a single food
+        diary entry with a nominated food_entry_id.
       operationId: food_entries_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2690,6 +2777,9 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#food_entries.get.v2:
     get:
+      description: Returns saved food diary entries for the user according to the filter specified. This
+        method can be used to return all food diary entries recorded on a nominated date or a single food
+        diary entry with a nominated food_entry_id.
       operationId: food_entries_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -2733,6 +2823,9 @@ paths:
   /rest/server.api#food_entries.get_month:
     get:
       deprecated: true
+      description: Returns summary daily nutritional information for a user's food diary entries for the
+        month specified. Use this call to display nutritional information to users about their food intake
+        for a nominated month. Days with no food diary entries are not included.
       operationId: food_entries_get_month_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2769,6 +2862,9 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#food_entries.get_month.v2:
     get:
+      description: Returns summary daily nutritional information for a user's food diary entries for the
+        month specified. Use this call to display nutritional information to users about their food intake
+        for a nominated month. Days with no food diary entries are not included.
       operationId: food_entries_get_month_v2
       parameters:
       - description: FatSecret API method selector.
@@ -2805,6 +2901,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#food_entry.create:
     post:
+      description: Records a food diary entry for the user according to the parameters specified.
       operationId: food_entry_create_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2875,6 +2972,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#food_entry.delete:
     delete:
+      description: Deletes the specified food entry for the user.
       operationId: food_entry_delete_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2911,6 +3009,10 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food_entry.edit:
     put:
+      description: Adjusts the recorded values for a food diary entry. Note that the date of the entry
+        may not be adjusted, however one or more of the other remaining properties – food_entry_name,
+        serving_id, number_of_units, or meal may be altered. In order to shift the date for which a food
+        diary entry was recorded the original entry must be deleted and a new entry recorded.
       operationId: food_entry_edit_v1
       parameters:
       - description: FatSecret API method selector.
@@ -2976,6 +3078,8 @@ paths:
   /rest/server.api#food_sub_categories.get:
     get:
       deprecated: true
+      description: This is a utility method, returning the full list of all food sub categories for a
+        food category.
       operationId: food_sub_categories_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3026,6 +3130,8 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#food_sub_categories.get.v2:
     get:
+      description: This is a utility method, returning the full list of all food sub categories for a
+        food category.
       operationId: food_sub_categories_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -3077,6 +3183,9 @@ paths:
   /rest/server.api#foods.autocomplete:
     get:
       deprecated: true
+      description: 'Returns food elements best matching the search expression specified, ordered by their
+        relevancy to the search expression. An interactive demonstration of our Autocomplete API can be
+        accessed here Note: foods.autocomplete only works for the default region / language combination.'
       operationId: foods_autocomplete_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3128,6 +3237,9 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#foods.autocomplete.v2:
     get:
+      description: Returns food elements best matching the search expression specified, ordered by their
+        relevancy to the search expression. An interactive demonstration of our Autocomplete API can be
+        accessed here
       operationId: foods_autocomplete_v2
       parameters:
       - description: FatSecret API method selector.
@@ -3180,6 +3292,7 @@ paths:
   /rest/server.api#foods.get_favorites:
     get:
       deprecated: true
+      description: Returns the favorite foods for the specified user.
       operationId: foods_get_favorites_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3210,6 +3323,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#foods.get_favorites.v2:
     get:
+      description: Returns the favorite foods for the specified user.
       operationId: foods_get_favorites_v2
       parameters:
       - description: FatSecret API method selector.
@@ -3241,6 +3355,7 @@ paths:
   /rest/server.api#foods.get_most_eaten:
     get:
       deprecated: true
+      description: Returns the favorite foods for the specified user.
       operationId: foods_get_most_eaten_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3277,6 +3392,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#foods.get_most_eaten.v2:
     get:
+      description: Returns the favorite foods for the specified user.
       operationId: foods_get_most_eaten_v2
       parameters:
       - description: FatSecret API method selector.
@@ -3314,6 +3430,7 @@ paths:
   /rest/server.api#foods.get_recently_eaten:
     get:
       deprecated: true
+      description: Returns the favorite foods for the specified user.
       operationId: foods_get_recently_eaten_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3350,6 +3467,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#foods.get_recently_eaten.v2:
     get:
+      description: Returns the favorite foods for the specified user.
       operationId: foods_get_recently_eaten_v2
       parameters:
       - description: FatSecret API method selector.
@@ -3386,6 +3504,12 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#foods.search:
     get:
+      description: Conducts a search of the food database using the search expression specified. The results
+        are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved
+        by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+        of 4 will return results numbered 41-50. Search results will be refined according to the user's
+        prior saved food entries. An interactive demonstration of our Food Search API can be accessed
+        here
       operationId: foods_search_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3460,6 +3584,12 @@ paths:
   /rest/server.api#foods.search.v2:
     get:
       deprecated: true
+      description: Conducts a search of the food database using the search expression specified. The results
+        are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved
+        by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+        of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified
+        food. Use this call to display nutrition values for a food to users. An interactive demonstration
+        of our Food Search API can be accessed here
       operationId: foods_search_v2
       parameters:
       - description: FatSecret API method selector.
@@ -3537,6 +3667,12 @@ paths:
   /rest/server.api#foods.search.v3:
     get:
       deprecated: true
+      description: Conducts a search of the food database using the search expression specified. The results
+        are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved
+        by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+        of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified
+        food. Use this call to display nutrition values for a food to users. An interactive demonstration
+        of our Food Search API can be accessed here
       operationId: foods_search_v3
       parameters:
       - description: FatSecret API method selector.
@@ -3629,6 +3765,12 @@ paths:
   /rest/server.api#foods.search.v4:
     get:
       deprecated: true
+      description: Conducts a search of the food database using the search expression specified. The results
+        are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved
+        by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+        of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified
+        food. Use this call to display nutrition values for a food to users. An interactive demonstration
+        of our Food Search API can be accessed here
       operationId: foods_search_v4
       parameters:
       - description: FatSecret API method selector.
@@ -3720,6 +3862,12 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#foods.search.v5:
     get:
+      description: Conducts a search of the food database using the search expression specified. The results
+        are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved
+        by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+        of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified
+        food. Use this call to display nutrition values for a food to users. An interactive demonstration
+        of our Food Search API can be accessed here
       operationId: foods_search_v5
       parameters:
       - description: FatSecret API method selector.
@@ -3818,6 +3966,17 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#profile.create:
     post:
+      description: Creates a new profile and returns the oauth_token and oauth_secret for the new profile.
+        The token and secret returned by this method are persisted indefinitely and may be used in order
+        to provide profile-specific information storage for users including food and exercise diaries
+        and weight tracking. The response is a newly allocated oauth_token and associated oauth_secret
+        which should be stored and re-used to provide ongoing API services on behalf of a user. The results
+        from this call should be saved and subsequently used to provide ongoing storage to users of your
+        site or service. You are obliged to ensure that the values are held securely and to not disclose
+        any oauth_secret values. You should maintain the relationship between your users and the token
+        and secret values you allocate for them. In addition to creating profiles for your own users,
+        you can also use the full 3-legged OAuth provided by fatsecret.com to attain an access token for
+        a profile that is linked to a user account on fatsecret.com. For more information click here.
       operationId: profile_create_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3855,6 +4014,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#profile.get:
     get:
+      description: Returns general status information for a nominated user.
       operationId: profile_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3885,6 +4045,9 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#profile.get_auth:
     get:
+      description: Returns the authentication information for a nominated user. You can also use the full
+        3-legged OAuth provided by fatsecret.com to attain an access token for a profile that is linked
+        to a user account on fatsecret.com. For more information click here.
       operationId: profile_get_auth_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3922,6 +4085,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#recipe.add_favorite:
     post:
+      description: Add a recipe to a user's favorite.
       operationId: recipe_add_favorite_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3958,6 +4122,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#recipe.delete_favorite:
     delete:
+      description: Deletes the specified recipe from the user's favorite.
       operationId: recipe_delete_favorite_v1
       parameters:
       - description: FatSecret API method selector.
@@ -3995,6 +4160,7 @@ paths:
   /rest/server.api#recipe.get:
     get:
       deprecated: true
+      description: Returns detailed information for the specified recipe for the standard serving.
       operationId: recipe_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4038,6 +4204,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#recipe.get.v2:
     get:
+      description: Returns detailed information for the specified recipe for the standard serving.
       operationId: recipe_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -4082,6 +4249,7 @@ paths:
   /rest/server.api#recipe_types.get:
     get:
       deprecated: true
+      description: This is a utility method, returning the full list of all supported recipe type names.
       operationId: recipe_types_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4112,6 +4280,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#recipe_types.get.v2:
     get:
+      description: This is a utility method, returning the full list of all supported recipe type names.
       operationId: recipe_types_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -4157,6 +4326,7 @@ paths:
   /rest/server.api#recipes.get_favorites:
     get:
       deprecated: true
+      description: Returns the favorite recipes for the specified user.
       operationId: recipes_get_favorites_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4187,6 +4357,7 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#recipes.get_favorites.v2:
     get:
+      description: Returns the favorite recipes for the specified user.
       operationId: recipes_get_favorites_v2
       parameters:
       - description: FatSecret API method selector.
@@ -4218,6 +4389,11 @@ paths:
   /rest/server.api#recipes.search:
     get:
       deprecated: true
+      description: Conducts a search of the recipe database using the search expression specified. The
+        results are paginated according to a zero-based "page" offset. Successive pages of results may
+        be retrieved by specifying a starting page offset value. For instance, specifying a max_results
+        of 10 and page_number of 4 will return results numbered 41-50. An interactive demonstration of
+        our Recipe Search API can be accessed here
       operationId: recipes_search_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4274,6 +4450,11 @@ paths:
   /rest/server.api#recipes.search.v2:
     get:
       deprecated: true
+      description: Conducts a search of the recipe database using the search expression specified. The
+        results are paginated according to a zero-based "page" offset. Successive pages of results may
+        be retrieved by specifying a starting page offset value. For instance, specifying a max_results
+        of 10 and page_number of 4 will return results numbered 41-50. An interactive demonstration of
+        our Recipe Search API can be accessed here
       operationId: recipes_search_v2
       parameters:
       - description: FatSecret API method selector.
@@ -4403,6 +4584,11 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#recipes.search.v3:
     get:
+      description: Conducts a search of the recipe database using the search expression specified. The
+        results are paginated according to a zero-based "page" offset. Successive pages of results may
+        be retrieved by specifying a starting page offset value. For instance, specifying a max_results
+        of 10 and page_number of 4 will return results numbered 41-50. An interactive demonstration of
+        our Recipe Search API can be accessed here
       operationId: recipes_search_v3
       parameters:
       - description: FatSecret API method selector.
@@ -4548,6 +4734,8 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#saved_meal.create:
     post:
+      description: Records a saved meal for the user according to the parameters specified. The result
+        of the call is the new unique identifier of the newly created saved meal.
       operationId: saved_meal_create_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4596,6 +4784,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal.delete:
     delete:
+      description: Deletes the specified saved meal for the user.
       operationId: saved_meal_delete_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4632,6 +4821,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal.edit:
     put:
+      description: Records a change to a user's saved meal.
       operationId: saved_meal_edit_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4686,6 +4876,8 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_item.add:
     post:
+      description: Adds a food to a user's saved meal according to the parameters specified. The result
+        of the call is the new unique identifier of the newly created saved meal item.
       operationId: saved_meal_item_add_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4749,6 +4941,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_item.delete:
     delete:
+      description: Deletes the specified saved meal item for the user.
       operationId: saved_meal_item_delete_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4785,6 +4978,10 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_item.edit:
     put:
+      description: Records a change to a user's saved meal item. Note that the serving_id of the saved
+        meal item may not be adjusted, however one or more of the other remaining properties – saved_meal_item_name
+        or number_of_units may be altered. In order to adjust a serving_id for which a saved_meal_item
+        was recorded the original item must be deleted and a new item recorded.
       operationId: saved_meal_item_edit_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4837,6 +5034,7 @@ paths:
   /rest/server.api#saved_meal_items.get:
     get:
       deprecated: true
+      description: Returns saved meal items for a specified saved meal.
       operationId: saved_meal_items_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4873,6 +5071,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_items.get.v2:
     get:
+      description: Returns saved meal items for a specified saved meal.
       operationId: saved_meal_items_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -4910,6 +5109,7 @@ paths:
   /rest/server.api#saved_meals.get:
     get:
       deprecated: true
+      description: Returns saved meals for the specified user.
       operationId: saved_meals_get_v1
       parameters:
       - description: FatSecret API method selector.
@@ -4946,6 +5146,7 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meals.get.v2:
     get:
+      description: Returns saved meals for the specified user.
       operationId: saved_meals_get_v2
       parameters:
       - description: FatSecret API method selector.
@@ -4982,6 +5183,10 @@ paths:
       x-fatsecret-typed-response: false
   /rest/server.api#weight.update:
     post:
+      description: Records a user's weight for a nominated date. First time weigh-ins require the goal_weight_kg
+        and current_height_cm parameters. Please note as per the API Terms of Use that it is your responsibility
+        to ensure that the information generated by using the API is not be interpreted as a substitute
+        for medical physician consultation, evaluation, or treatment.
       operationId: weight_update_v1
       parameters:
       - description: FatSecret API method selector.
@@ -5058,6 +5263,10 @@ paths:
   /rest/server.api#weights.get_month:
     get:
       deprecated: true
+      description: Returns the recorded weights for a user for the month specified. Use this call to display
+        a user's weight chart or log of weight changes for a nominated month. The day elements returned
+        are those where the user entered or updated their weight for the specified month. Days with no
+        recorded weight are not included.
       operationId: weights_get_month_v1
       parameters:
       - description: FatSecret API method selector.
@@ -5094,6 +5303,10 @@ paths:
       x-fatsecret-typed-response: true
   /rest/server.api#weights.get_month.v2:
     get:
+      description: Returns the recorded weights for a user for the month specified. Use this call to display
+        a user's weight chart or log of weight changes for a nominated month. The day elements returned
+        are those where the user entered or updated their weight for the specified month. Days with no
+        recorded weight are not included.
       operationId: weights_get_month_v2
       parameters:
       - description: FatSecret API method selector.
@@ -5130,6 +5343,14 @@ paths:
       x-fatsecret-typed-response: true
   https://platform.fatsecret.com/rest/feedback/v1:
     post:
+      description: This API method enables developers to submit user feedback regarding potentially incorrect
+        or missing food and/or barcode data. It supports a variety of issue types, including potential
+        food or brand naming errors, incorrect nutrition facts, missing serving sizes, and unrecognized
+        barcodes. To facilitate rapid verification, the API returns signed upload URLs, allowing developers
+        to optionally (but ideally) upload up to three user submitted supporting images of the Barcode,
+        Packaging, and Nutrition Facts via subsequent PUT requests. The subsequent PUT requests will be
+        required to use both the provided URL and the "contentTypeHeader" field in the response as a 'Content-Type'
+        header to successfully validate with the signed upload URL(s)
       operationId: feedback_v1
       parameters:
       - description: A barcode where a food is associated incorrectly. Required when issue_type_id is
@@ -5226,6 +5447,17 @@ paths:
       x-fatsecret-typed-response: false
   https://platform.fatsecret.com/rest/image-recognition/v1:
     post:
+      description: 'This API detects foods within an image and returns a list of foods from the fatsecret
+        database By passing a list of eaten foods, we will also attempt to determine if any of the inputs
+        match in order to improve the accuracy of the response. NOTE: If an appropriate serving is not
+        found, nutritional information may not be present. This typically occurs when a non-standard serving
+        description is provided for a restaurant-based food. In such scenarios, we recommend using the
+        default serving size returned via the API, indicated by the serving object with "is_default":
+        true. Additionally, for mobile app interfaces, we recommend not automatically logging all foods
+        and associated serving amounts directly into the user''s food diary. Instead, we recommend displaying
+        an intermittent screen that allows the user to: This approach improves user experience and ensures
+        more accurate food diary entries. NOTE: The entire request body is limited to 1MB characters (1.048M)
+        and as such we recommend to check the request size before hitting the API.'
       operationId: image_recognition_v1
       parameters:
       - description: A Base64 image of one or more foods. This field is limited to 999,982 characters
@@ -5318,6 +5550,19 @@ paths:
       x-fatsecret-typed-response: false
   https://platform.fatsecret.com/rest/image-recognition/v2:
     post:
+      description: 'This API identifies food items and their corresponding portion sizes or weights within
+        an image. It returns a list of matched foods from the local, verified fatsecret country database,
+        along with detailed nutritional information for each detected portion. By passing a list of eaten
+        foods, we will also attempt to determine if any of the inputs match in order to improve the accuracy
+        of the response. NOTE: If an appropriate serving is not found, nutritional information may not
+        be present. This typically occurs when a non-standard serving description is provided for a restaurant-based
+        food. In such scenarios, we recommend using the default serving size returned via the API, indicated
+        by the serving object with "is_default": true. Additionally, for mobile app interfaces, we recommend
+        not automatically logging all foods and associated serving amounts directly into the user''s food
+        diary. Instead, we recommend displaying an intermittent screen that allows the user to: This approach
+        improves user experience and ensures more accurate food diary entries. We support jpg, png and
+        webp formats, with a size of up to 1.09MB. We recommend resizing images to a resolution of either
+        256x256 or 512x512 pixels.'
       operationId: image_recognition_v2
       parameters:
       - description: A Base64 image of one or more foods. This field is limited to 999,982 characters
@@ -5410,6 +5655,12 @@ paths:
       x-fatsecret-typed-response: false
   https://platform.fatsecret.com/rest/natural-language-processing/v1:
     post:
+      description: 'This API breaks down natural language and returns a list of foods from the fatsecret
+        database By passing a list of eaten foods, we will also attempt to determine if any of the inputs
+        match in order to improve the accuracy of the response. Example: For breakfast I ate a slice of
+        toast with butter NOTE: If an appropriate serving is not found, nutritional information may not
+        be present. This will typically occur for a non-standard serving description provided for a restaurant
+        based food. NOTE: The request body may not exceed 1MB in size. This is inclusive of all body parameters.'
       operationId: natural_language_processing_v1
       parameters:
       - description: A description of what a user has eaten. May contain multiple items. e.g. "A toast

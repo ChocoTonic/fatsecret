@@ -26,6 +26,19 @@ templates_path = ["_templates"]
 
 html_theme = "sphinx_rtd_theme"
 
+# Wrap signatures longer than 80 chars onto multiple lines (Sphinx 7.1+).
+# Generated mutator/create methods can take 20+ optional args; rendering them
+# on a single line forces a horizontal scrollbar in the RTD theme.
+maximum_signature_line_length = 80
+python_maximum_signature_line_length = 80
+
+# Move type hints out of the signature into the description as a Parameters
+# field list.  Combined with the ``:param NAME: ...`` lines emitted by the
+# codegen pipeline, this renders the per-arg descriptions alongside their
+# types as a proper field table instead of a wall of inline annotations.
+autodoc_typehints = "description"
+autodoc_typehints_format = "short"
+
 # Show an in-development banner only on Read the Docs branch builds
 # (e.g., master/dev). Tagged version builds set VERSION_TYPE=tag and stay clean.
 _is_dev_build = os.environ.get("READTHEDOCS_VERSION_TYPE") == "branch"

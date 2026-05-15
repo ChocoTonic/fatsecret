@@ -24,7 +24,23 @@ class FeedbackResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. feedback (v1). Premier-only."""
+        """This API method enables developers to submit user feedback regarding potentially incorrect or missing food and/or barcode data. It supports a variety of issue types, including potential food or brand naming errors, incorrect nutrition facts, missing serving sizes, and unrecognized barcodes. To facilitate rapid verification, the API returns signed upload URLs, allowing developers to optionally (but ideally) upload up to three user submitted supporting images of the Barcode, Packaging, and Nutrition Facts via subsequent PUT requests. The subsequent PUT requests will be required to use both the provided URL and the "contentTypeHeader" field in the response as a 'Content-Type' header to successfully validate with the signed upload URL(s)
+
+        :param barcode: A barcode where a food is associated incorrectly. Required when issue_type_id is 1
+        :param issue_type_id: The type ID for the request. Valid options are 1 (Wrong Name/Brand), 2 (Wrong Nutrition Info), 3 (Missing Serving Size), 4 (Barcode not found), 99 (Other)
+        :param external_id: Custom identifier for external use. E.g an external unique user identifier
+        :param issue_type: Issue description. This is to be provided when the issue_type_id is 99 (Other)
+        :param notes: Custom notes regarding the issue
+        :param returned_food_food_id: A food ID that is related to the issue (i.e. barcode incorrect food attached). Required when issue_type_id is 1, 2 or 3
+        :param returned_food_serving_id: A foods serving ID that is related to the issue (i.e. incorrect nutrient information). Required when issue_type_id is 2 or 3
+        :param image_file_extension: The image file extension in which the signed uploads will be generated using. Accepts jpg, jpeg, png and tiff. Defaulted to jpg if not provided
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            feedback (v1). Premier-only.
+        """
         body: dict[str, Any] = {}
         body["barcode"] = barcode
         body["issue_type_id"] = issue_type_id

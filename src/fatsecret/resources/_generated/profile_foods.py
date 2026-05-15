@@ -19,7 +19,15 @@ class ProfileFoodsResource(BaseResource):
         serving_id: Optional[int] = None,
         number_of_units: Optional[float] = None,
     ) -> bool:
-        """food.add_favorite (v1). Premier-only."""
+        """Add a food to a user's favorite according to the parameters specified.
+
+        :param food_id: Unique food identifier
+        :param serving_id: Unique serving identifier
+        :param number_of_units: Number of units in this standard serving size. For instance, if the serving description is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for "Brand" the number of units will always be "1"
+
+        Notes:
+            food.add_favorite (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.add_favorite"}
         params["food_id"] = food_id
         self._client._set_optional(
@@ -62,7 +70,40 @@ class ProfileFoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food.create (v1). DEPRECATED upstream. Premier-only."""
+        """Creates a food for the user according to the parameters specified. The result of the call is the new unique identifier of the newly created food.
+
+        :param brand_name: Brand name, only when food_type is "Brand". E.G.: "Quaker"
+        :param food_name: Name of the food, not including the brand name. E.G.: "Instant Oatmeal"
+        :param serving_size: Full description of the serving size. E.G.: "1 serving"
+        :param calories: Energy content in kcal
+        :param fat: Total fat content in grams
+        :param carbohydrate: Total carbohydrate content in grams
+        :param protein: Protein content in grams
+        :param brand_type: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+        :param serving_amount: The quantity combined with serving_amount_unit to derive the total standardized quantity of the serving
+        :param serving_amount_unit: The metric unit of measure for the serving size – either "g" or "ml" or "oz" – combined with metric_serving_amount to derive the total standardized quantity of the serving (default value is "g")
+        :param calories_from_fat: The energy content in kcal from fat
+        :param saturated_fat: Saturated fat content in grams (where available)
+        :param polyunsaturated_fat: Polyunsaturated fat content in grams (where available)
+        :param monounsaturated_fat: Monounsaturated fat content in grams (where available)
+        :param trans_fat: Trans fat content in grams (where available)
+        :param cholesterol: Cholesterol content in milligrams (where available)
+        :param sodium: Sodium content in milligrams (where available)
+        :param potassium: Potassium content in milligrams (where available)
+        :param fiber: Fiber content in grams (where available)
+        :param sugar: Sugar content in grams (where available)
+        :param other_carbohydrate: The other carbohydrate content in grams
+        :param vitamin_a: Percentage of daily recommended Vitamin A, based on a 2000 calorie diet (where available)
+        :param vitamin_c: Percentage of daily recommended Vitamin C, based on a 2000 calorie diet (where available)
+        :param calcium: Percentage of daily recommended Calcium, based on a 2000 calorie diet (where available)
+        :param iron: Percentage of daily recommended Iron, based on a 2000 calorie diet (where available)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food.create (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.create"}
         params["brand_name"] = brand_name
         params["food_name"] = food_name
@@ -131,7 +172,41 @@ class ProfileFoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food.create (v2). Premier-only."""
+        """Creates a food for the user according to the parameters specified. The result of the call is the new unique identifier of the newly created food.
+
+        :param brand_name: Brand name, only when food_type is "Brand". E.G.: "Quaker"
+        :param food_name: Name of the food, not including the brand name. E.G.: "Instant Oatmeal"
+        :param serving_size: Full description of the serving size. E.G.: "1 serving"
+        :param calories: Energy content in kcal
+        :param fat: Total fat content in grams
+        :param carbohydrate: Total carbohydrate content in grams
+        :param protein: Protein content in grams
+        :param brand_type: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+        :param serving_amount: The quantity combined with serving_amount_unit to derive the total standardized quantity of the serving
+        :param serving_amount_unit: The metric unit of measure for the serving size – either "g" or "ml" or "oz" – combined with metric_serving_amount to derive the total standardized quantity of the serving (default value is "g")
+        :param calories_from_fat: The energy content in kcal from fat
+        :param saturated_fat: Saturated fat content in grams (where available)
+        :param polyunsaturated_fat: Polyunsaturated fat content in grams (where available)
+        :param monounsaturated_fat: Monounsaturated fat content in grams (where available)
+        :param trans_fat: Trans fat content in grams (where available)
+        :param cholesterol: Cholesterol content in milligrams (where available)
+        :param sodium: Sodium content in milligrams (where available)
+        :param potassium: Potassium content in milligrams (where available)
+        :param fiber: Fiber content in grams (where available)
+        :param sugar: Sugar content in grams (where available)
+        :param added_sugars: Added Sugars content in grams (where available)
+        :param vitamin_d: Vitamin D content in micrograms (where available)
+        :param vitamin_a: Vitamin A content in micrograms (where available)
+        :param vitamin_c: Vitamin C content in milligrams (where available)
+        :param calcium: Calcium content in milligrams (where available)
+        :param iron: Iron content in milligrams (where available)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food.create (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.create.v2"}
         params["brand_name"] = brand_name
         params["food_name"] = food_name
@@ -176,7 +251,15 @@ class ProfileFoodsResource(BaseResource):
         serving_id: Optional[int] = None,
         number_of_units: Optional[float] = None,
     ) -> bool:
-        """food.delete_favorite (v1). Premier-only."""
+        """Deletes the specified food from the user's favorite.
+
+        :param food_id: Unique food identifier
+        :param serving_id: Unique serving identifier
+        :param number_of_units: Number of units in this standard serving size. For instance, if the serving description is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for "Brand" the number of units will always be "1"
+
+        Notes:
+            food.delete_favorite (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.delete_favorite"}
         params["food_id"] = food_id
         self._client._set_optional(
@@ -192,7 +275,13 @@ class ProfileFoodsResource(BaseResource):
     def get_favorites_v1(
         self,
     ) -> list[Food]:
-        """foods.get_favorites (v1). DEPRECATED upstream. Premier-only."""
+        """Returns the favorite foods for the specified user.
+
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.get_favorites (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.get_favorites"}
         payload = self._client._call(params)
         raw = self._client._unwrap(payload, "foods", list_key="food")
@@ -201,7 +290,13 @@ class ProfileFoodsResource(BaseResource):
     def get_favorites_v2(
         self,
     ) -> list[Food]:
-        """foods.get_favorites (v2). Premier-only."""
+        """Returns the favorite foods for the specified user.
+
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.get_favorites (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.get_favorites.v2"}
         payload = self._client._call(params)
         raw = self._client._unwrap(payload, "foods", list_key="food")
@@ -211,7 +306,14 @@ class ProfileFoodsResource(BaseResource):
         self,
         meal: Optional[str] = None,
     ) -> list[Food]:
-        """foods.get_most_eaten (v1). DEPRECATED upstream. Premier-only."""
+        """Returns the favorite foods for the specified user.
+
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.get_most_eaten (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.get_most_eaten"}
         self._client._set_optional(
             params,
@@ -227,7 +329,14 @@ class ProfileFoodsResource(BaseResource):
         self,
         meal: Optional[str] = None,
     ) -> list[Food]:
-        """foods.get_most_eaten (v2). Premier-only."""
+        """Returns the favorite foods for the specified user.
+
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.get_most_eaten (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.get_most_eaten.v2"}
         self._client._set_optional(
             params,
@@ -243,7 +352,14 @@ class ProfileFoodsResource(BaseResource):
         self,
         meal: Optional[str] = None,
     ) -> list[Food]:
-        """foods.get_recently_eaten (v1). DEPRECATED upstream. Premier-only."""
+        """Returns the favorite foods for the specified user.
+
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.get_recently_eaten (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.get_recently_eaten"}
         self._client._set_optional(
             params,
@@ -259,7 +375,14 @@ class ProfileFoodsResource(BaseResource):
         self,
         meal: Optional[str] = None,
     ) -> list[Food]:
-        """foods.get_recently_eaten (v2). Premier-only."""
+        """Returns the favorite foods for the specified user.
+
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.get_recently_eaten (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.get_recently_eaten.v2"}
         self._client._set_optional(
             params,

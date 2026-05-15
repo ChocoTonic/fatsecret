@@ -19,7 +19,15 @@ class DiaryResource(BaseResource):
         meal: str,
         date: Optional[int] = None,
     ) -> bool:
-        """food_entries.copy_saved_meal (v1). Premier-only."""
+        """Copies the food entries for a specified saved meal to a specified meal.
+
+        :param saved_meal_id: Unique saved meal identifier
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        :param date: Number of days since January 1, 1970 (default value is the current day)
+
+        Notes:
+            food_entries.copy_saved_meal (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entries.copy_saved_meal"}
         params["saved_meal_id"] = saved_meal_id
         params["meal"] = meal
@@ -38,7 +46,15 @@ class DiaryResource(BaseResource):
         to_date: int,
         meal: Optional[str] = None,
     ) -> bool:
-        """food_entries.copy (v1). Premier-only."""
+        """Copies the food entries for a specified meal from a nominated date to a nominated date.
+
+        :param from_date: Date to copy food entries from expressed in the number of days since January 1, 1970
+        :param to_date: Date to copy food entries to expressed in the number of days since January 1, 1970 (default value is the current day)
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+
+        Notes:
+            food_entries.copy (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entries.copy"}
         params["from_date"] = self._client.unix_time_v2(from_date)
         params["to_date"] = self._client.unix_time_v2(to_date)
@@ -55,7 +71,14 @@ class DiaryResource(BaseResource):
         self,
         date: Optional[int] = None,
     ) -> list[Day]:
-        """food_entries.get_month (v1). DEPRECATED upstream. Premier-only."""
+        """Returns summary daily nutritional information for a user's food diary entries for the month specified. Use this call to display nutritional information to users about their food intake for a nominated month. Days with no food diary entries are not included.
+
+        :param date: Number of days since January 1, 1970 (default value is the current day)
+        :return: List of :class:`Day` instances.
+
+        Notes:
+            food_entries.get_month (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entries.get_month"}
         self._client._set_optional(
             params,
@@ -71,7 +94,14 @@ class DiaryResource(BaseResource):
         self,
         date: Optional[int] = None,
     ) -> list[Day]:
-        """food_entries.get_month (v2). Premier-only."""
+        """Returns summary daily nutritional information for a user's food diary entries for the month specified. Use this call to display nutritional information to users about their food intake for a nominated month. Days with no food diary entries are not included.
+
+        :param date: Number of days since January 1, 1970 (default value is the current day)
+        :return: List of :class:`Day` instances.
+
+        Notes:
+            food_entries.get_month (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entries.get_month.v2"}
         self._client._set_optional(
             params,
@@ -88,7 +118,15 @@ class DiaryResource(BaseResource):
         date: Optional[int] = None,
         food_entry_id: Optional[int] = None,
     ) -> list[FoodEntry]:
-        """food_entries.get (v1). DEPRECATED upstream. Premier-only."""
+        """Returns saved food diary entries for the user according to the filter specified. This method can be used to return all food diary entries recorded on a nominated date or a single food diary entry with a nominated food_entry_id.
+
+        :param date: Number of days since January 1, 1970 (default value is the current day)
+        :param food_entry_id: Unique identifier of the food diary entry
+        :return: List of :class:`FoodEntry` instances.
+
+        Notes:
+            food_entries.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entries.get"}
         self._client._set_optional(
             params,
@@ -106,7 +144,15 @@ class DiaryResource(BaseResource):
         date: Optional[int] = None,
         food_entry_id: Optional[int] = None,
     ) -> list[FoodEntry]:
-        """food_entries.get (v2). Premier-only."""
+        """Returns saved food diary entries for the user according to the filter specified. This method can be used to return all food diary entries recorded on a nominated date or a single food diary entry with a nominated food_entry_id.
+
+        :param date: Number of days since January 1, 1970 (default value is the current day)
+        :param food_entry_id: Unique identifier of the food diary entry
+        :return: List of :class:`FoodEntry` instances.
+
+        Notes:
+            food_entries.get (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entries.get.v2"}
         self._client._set_optional(
             params,
@@ -128,7 +174,19 @@ class DiaryResource(BaseResource):
         meal: str,
         date: Optional[int] = None,
     ) -> list[FoodEntry]:
-        """food_entry.create (v1). Premier-only."""
+        """Records a food diary entry for the user according to the parameters specified.
+
+        :param food_id: Unique food identifier
+        :param food_entry_name: A description of the food item as entered by the user; typically the name of the food. E.G.: "Instant Oatmeal"
+        :param serving_id: Unique serving identifier
+        :param number_of_units: Number of units in this standard serving size. For instance, if the serving description is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for "Brand" the number of units will always be "1"
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        :param date: Number of days since January 1, 1970 (default value is the current day)
+        :return: List of :class:`FoodEntry` instances.
+
+        Notes:
+            food_entry.create (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entry.create"}
         params["food_id"] = food_id
         params["food_entry_name"] = food_entry_name
@@ -149,7 +207,13 @@ class DiaryResource(BaseResource):
         self,
         food_entry_id: int,
     ) -> bool:
-        """food_entry.delete (v1). Premier-only."""
+        """Deletes the specified food entry for the user.
+
+        :param food_entry_id: Unique identifier of the food diary entry
+
+        Notes:
+            food_entry.delete (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entry.delete"}
         params["food_entry_id"] = food_entry_id
         payload = self._client._call(params, method="DELETE")
@@ -163,7 +227,17 @@ class DiaryResource(BaseResource):
         number_of_units: Optional[float] = None,
         meal: Optional[str] = None,
     ) -> bool:
-        """food_entry.edit (v1). Premier-only."""
+        """Adjusts the recorded values for a food diary entry. Note that the date of the entry may not be adjusted, however one or more of the other remaining properties – food_entry_name, serving_id, number_of_units, or meal may be altered. In order to shift the date for which a food diary entry was recorded the original entry must be deleted and a new entry recorded.
+
+        :param food_entry_id: Unique identifier of the food diary entry
+        :param food_entry_name: A description of the food item as entered by the user; typically the name of the food. E.G.: "Instant Oatmeal"
+        :param serving_id: Unique serving identifier
+        :param number_of_units: Number of units in this standard serving size. For instance, if the serving description is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for "Brand" the number of units will always be "1"
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+
+        Notes:
+            food_entry.edit (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_entry.edit"}
         params["food_entry_id"] = food_entry_id
         self._client._set_optional(

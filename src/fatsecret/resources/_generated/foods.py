@@ -19,7 +19,16 @@ class FoodsResource(BaseResource):
         max_results: Optional[int] = None,
         region: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. foods.autocomplete (v1). DEPRECATED upstream. Premier-only."""
+        """Returns food elements best matching the search expression specified, ordered by their relevancy to the search expression. An interactive demonstration of our Autocomplete API can be accessed here Note: foods.autocomplete only works for the default region / language combination.
+
+        :param expression: Suggestions for the given expression is returned. E.G.: "chic" will return up to four of the best suggestions that contains "chic"
+        :param max_results: Maximum number of results to return (default value is 4). This number cannot be greater than 10
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            foods.autocomplete (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.autocomplete"}
         params["expression"] = expression
         self._client._set_optional(
@@ -39,7 +48,16 @@ class FoodsResource(BaseResource):
         max_results: Optional[int] = None,
         region: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. foods.autocomplete (v2). Premier-only."""
+        """Returns food elements best matching the search expression specified, ordered by their relevancy to the search expression. An interactive demonstration of our Autocomplete API can be accessed here
+
+        :param expression: Suggestions for the given expression is returned. E.G.: "chic" will return up to four of the best suggestions that contains "chic"
+        :param max_results: Maximum number of results to return (default value is 4). This number cannot be greater than 10
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            foods.autocomplete (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.autocomplete.v2"}
         params["expression"] = expression
         self._client._set_optional(
@@ -59,7 +77,16 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food.find_id_for_barcode (v1). Premier-only."""
+        """Returns the food_id matching the barcode specified. Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with zeros for the spaces to the left. UPC-A, EAN-13 and EAN-8 barcodes may be specified. UPC-E barcodes should be converted to their UPC-A equivalent (and then specified as GTIN-13 numbers). An interactive demonstration of our Barcode API can be accessed here
+
+        :param barcode: 13-digit GTIN-13 formatted sequence of digits representing the barcode to search against
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food.find_id_for_barcode (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.find_id_for_barcode"}
         params["barcode"] = barcode
         self._client._set_optional(
@@ -83,7 +110,20 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Optional[Food]:
-        """food.find_id_for_barcode (v2). Premier-only."""
+        """Returns detailed nutritional information for the specified food matching the barcode specified. Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with zeros for the spaces to the left. UPC-A, EAN-13 and EAN-8 barcodes may be specified. UPC-E barcodes should be converted to their UPC-A equivalent (and then specified as GTIN-13 numbers). An interactive demonstration of our Barcode API can be accessed here
+
+        :param barcode: 13-digit GTIN-13 formatted sequence of digits representing the barcode to search against
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param include_food_images: Response will include food image in the response. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param include_food_attributes: Response will include food dietary preferences and allergens if available. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: :class:`Food` instance, or ``None`` when the response is empty.
+
+        Notes:
+            food.find_id_for_barcode (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.find_id_for_barcode.v2"}
         params["barcode"] = barcode
         self._client._set_optional(
@@ -111,7 +151,18 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Optional[Food]:
-        """food.get (v1). DEPRECATED upstream. Premier-only."""
+        """Returns detailed nutritional information for the specified food for each available standard serving size. Use this call to display nutrition values for a food to users.
+
+        :param food_id: Unique food identifier
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: :class:`Food` instance, or ``None`` when the response is empty.
+
+        Notes:
+            food.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.get"}
         params["food_id"] = food_id
         self._client._set_optional(
@@ -137,7 +188,18 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Optional[Food]:
-        """food.get (v2). DEPRECATED upstream. Premier-only."""
+        """Returns detailed nutritional information for the specified food for each available standard serving size. Use this call to display nutrition values for a food to users.
+
+        :param food_id: Unique food identifier
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: :class:`Food` instance, or ``None`` when the response is empty.
+
+        Notes:
+            food.get (v2). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.get.v2"}
         params["food_id"] = food_id
         self._client._set_optional(
@@ -163,7 +225,18 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Optional[Food]:
-        """food.get (v3). DEPRECATED upstream. Premier-only."""
+        """Returns detailed nutritional information for the specified food for each available standard serving size. Use this call to display nutrition values for a food to users.
+
+        :param food_id: Unique food identifier
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: :class:`Food` instance, or ``None`` when the response is empty.
+
+        Notes:
+            food.get (v3). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.get.v3"}
         params["food_id"] = food_id
         self._client._set_optional(
@@ -191,7 +264,20 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Optional[Food]:
-        """food.get (v4). DEPRECATED upstream. Premier-only."""
+        """Returns detailed nutritional information for the specified food for each available standard serving size. Use this call to display nutrition values for a food to users.
+
+        :param food_id: Unique food identifier
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param include_food_images: Response will include food image in the response. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param include_food_attributes: Response will include food dietary preferences and allergens if available. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: :class:`Food` instance, or ``None`` when the response is empty.
+
+        Notes:
+            food.get (v4). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.get.v4"}
         params["food_id"] = food_id
         self._client._set_optional(
@@ -221,7 +307,20 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Optional[Food]:
-        """food.get (v5). Premier-only."""
+        """Returns detailed nutritional information for the specified food for each available standard serving size. Use this call to display nutrition values for a food to users.
+
+        :param food_id: Unique food identifier
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param include_food_images: Response will include food image in the response. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param include_food_attributes: Response will include food dietary preferences and allergens if available. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: :class:`Food` instance, or ``None`` when the response is empty.
+
+        Notes:
+            food.get (v5). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food.get.v5"}
         params["food_id"] = food_id
         self._client._set_optional(
@@ -250,7 +349,19 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list[Food]:
-        """foods.search (v1). Premier-only."""
+        """Conducts a search of the food database using the search expression specified. The results are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number of 4 will return results numbered 41-50. Search results will be refined according to the user's prior saved food entries. An interactive demonstration of our Food Search API can be accessed here
+
+        :param search_expression: Search expression to match on food names
+        :param page_number: Zero-based offset into the results for the query
+        :param max_results: Maximum number of results to return (default value is 20). This number cannot be greater than 50
+        :param generic_description: Either "weight" or "portion": Weight (default) - the summary description for key nutritional values is displayed by weight (typically 100g); E.G.: "Per 100g". Portion - the summary description for key nutritional values is displayed using the default portion size; E.G.: "Per 1 Cup" Note that the summary nutrition description for "Brand" food items is always shown using a "portion" based description
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.search (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.search"}
         self._client._set_optional(
             params,
@@ -277,7 +388,20 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list[Food]:
-        """foods.search (v2). DEPRECATED upstream. Premier-only."""
+        """Conducts a search of the food database using the search expression specified. The results are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified food. Use this call to display nutrition values for a food to users. An interactive demonstration of our Food Search API can be accessed here
+
+        :param search_expression: Search expression to match on food names
+        :param page_number: Zero-based offset into the results for the query
+        :param max_results: Maximum number of results to return (default value is 20). This number cannot be greater than 50
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.search (v2). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.search.v2"}
         self._client._set_optional(
             params,
@@ -307,7 +431,22 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list[Food]:
-        """foods.search (v3). DEPRECATED upstream. Premier-only."""
+        """Conducts a search of the food database using the search expression specified. The results are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified food. Use this call to display nutrition values for a food to users. An interactive demonstration of our Food Search API can be accessed here
+
+        :param search_expression: Search expression to match on food names
+        :param page_number: Zero-based offset into the results for the query
+        :param max_results: Maximum number of results to return (default value is 20). This number cannot be greater than 50
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param include_food_images: Response will include food image in the response. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param include_food_attributes: Response will include food dietary preferences and allergens if available. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.search (v3). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.search.v3"}
         self._client._set_optional(
             params,
@@ -339,7 +478,22 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list[Food]:
-        """foods.search (v4). DEPRECATED upstream. Premier-only."""
+        """Conducts a search of the food database using the search expression specified. The results are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified food. Use this call to display nutrition values for a food to users. An interactive demonstration of our Food Search API can be accessed here
+
+        :param search_expression: Search expression to match on food names
+        :param page_number: Zero-based offset into the results for the query
+        :param max_results: Maximum number of results to return (default value is 20). This number cannot be greater than 50
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param include_food_images: Response will include food image in the response. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param include_food_attributes: Response will include food dietary preferences and allergens if available. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.search (v4). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.search.v4"}
         self._client._set_optional(
             params,
@@ -372,7 +526,23 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list[Food]:
-        """foods.search (v5). Premier-only."""
+        """Conducts a search of the food database using the search expression specified. The results are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified food. Use this call to display nutrition values for a food to users. An interactive demonstration of our Food Search API can be accessed here
+
+        :param search_expression: Search expression to match on food names
+        :param page_number: Zero-based offset into the results for the query
+        :param max_results: Maximum number of results to return (default value is 20). This number cannot be greater than 50
+        :param include_sub_categories: Response will include the names of all sub categories associated with the food
+        :param include_food_images: Response will include food image in the response. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param include_food_attributes: Response will include food dietary preferences and allergens if available. (Requires separate premier offering, please contact us in order for this feature to be enabled for your account)
+        :param flag_default_serving: Either "true" or "false" - the response will flag one of the servings as the default serving (the suggested or most commonly chosen option)
+        :param food_type: Restricts search results to a specific type. Valid values are "none", "generic" or "brand". Defaults to "none" i.e no filter
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: List of :class:`Food` instances.
+
+        Notes:
+            foods.search (v5). Premier-only.
+        """
         params: dict[str, Any] = {"method": "foods.search.v5"}
         self._client._set_optional(
             params,

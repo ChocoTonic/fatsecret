@@ -5,7 +5,7 @@ endpoints:
   exists: true
   http_verb: POST
   method: food.add_favorite
-  notes: ''
+  notes: Add a food to a user's favorite according to the parameters specified.
   oauth:
   - oauth1
   - oauth2
@@ -41,7 +41,8 @@ endpoints:
   exists: true
   http_verb: POST
   method: food.create
-  notes: ''
+  notes: Creates a food for the user according to the parameters specified. The result of the call is
+    the new unique identifier of the newly created food.
   oauth:
   - oauth1
   - oauth2
@@ -200,7 +201,8 @@ endpoints:
   exists: true
   http_verb: POST
   method: food.create
-  notes: ''
+  notes: Creates a food for the user according to the parameters specified. The result of the call is
+    the new unique identifier of the newly created food.
   oauth:
   - oauth1
   - oauth2
@@ -364,7 +366,7 @@ endpoints:
   exists: true
   http_verb: DELETE
   method: food.delete_favorite
-  notes: ''
+  notes: Deletes the specified food from the user's favorite.
   oauth:
   - oauth1
   - oauth2
@@ -400,7 +402,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.get_favorites
-  notes: ''
+  notes: Returns the favorite foods for the specified user.
   oauth:
   - oauth1
   - oauth2
@@ -421,7 +423,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.get_favorites
-  notes: ''
+  notes: Returns the favorite foods for the specified user.
   oauth:
   - oauth1
   - oauth2
@@ -442,7 +444,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.get_most_eaten
-  notes: ''
+  notes: Returns the favorite foods for the specified user.
   oauth:
   - oauth1
   - oauth2
@@ -467,7 +469,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.get_most_eaten
-  notes: ''
+  notes: Returns the favorite foods for the specified user.
   oauth:
   - oauth1
   - oauth2
@@ -492,7 +494,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.get_recently_eaten
-  notes: ''
+  notes: Returns the favorite foods for the specified user.
   oauth:
   - oauth1
   - oauth2
@@ -517,7 +519,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.get_recently_eaten
-  notes: ''
+  notes: Returns the favorite foods for the specified user.
   oauth:
   - oauth1
   - oauth2
