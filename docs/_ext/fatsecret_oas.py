@@ -2,9 +2,11 @@
 
 Reads ``docs/api-spec/openapi.generated.yaml`` at build time, maps each OAS
 operationId to its concrete Python method (resource sub-objects on a
-``Fatsecret`` instance, e.g. ``Fatsecret.foods.search_v5``), and emits one
-section per tag. Falls back to a flat ``autoclass`` block if the spec or
-pyyaml is missing so older tags / minimal checkouts still build.
+``Fatsecret`` instance, e.g. ``Fatsecret.foods.search_v5``), and emits a
+two-level structure: top-level guide categories (mirroring the layout of
+platform.fatsecret.com/docs/guides/) each containing one subsection per
+OAS tag. Falls back to a flat ``autoclass`` block if the spec or pyyaml
+is missing so older tags / minimal checkouts still build.
 """
 
 from __future__ import annotations
@@ -45,6 +47,22 @@ _TAG_TO_RESOURCES: dict[str, list[str]] = {
     "profile": ["profile", "profile_foods"],
     "feedback": ["feedback"],
 }
+
+# Two-level grouping: top-level guide category -> ordered list of OAS tags.
+# Mirrors the structure of platform.fatsecret.com/docs/guides/. Any OAS tag
+# not listed here falls through to a synthetic "Other" group (logged).
+_TAG_GROUPS: list[tuple[str, list[str]]] = [
+    ("Foods", ["food", "food_brands", "food_categories", "food_sub_categories", "foods"]),
+    ("Diary", ["food_entries", "food_entry", "exercise_entries", "exercise_entry"]),
+    ("Exercises", ["exercises"]),
+    ("Recipes", ["recipe", "recipe_types", "recipes"]),
+    ("Profile", ["profile"]),
+    ("Saved Meals (Premier)", ["saved_meal", "saved_meal_item", "saved_meal_items", "saved_meals"]),
+    ("Weight (Premier)", ["weight", "weights"]),
+    ("AI (Premier)", ["image", "natural"]),
+    ("Feedback", ["feedback"]),
+]
+
 
 _TAG_HEADING: dict[str, str] = {
     "food": "Food",
@@ -213,38 +231,61 @@ class FatsecretApiGroupsDirective(Directive):
         methods, classes = _resource_inventory(Fatsecret)
         groups = _collect_ops(spec)
 
-        tag_order = sorted(groups.keys())
-        if "Authentication" in tag_order:
-            tag_order.remove("Authentication")
-            tag_order.insert(0, "Authentication")
+        # Build ordered (group_name, [tag, ...]) list from the static mapping,
+        # then sweep up any OAS tags that weren't pre-assigned into "Other".
+        assigned: set[str] = {t for _g, tags in _TAG_GROUPS for t in tags}
+        present_tags = set(groups.keys())
+        leftovers = sorted(present_tags - assigned)
+        if leftovers:
+            _log.warning(
+                "fatsecret_oas: %d tag(s) not in _TAG_GROUPS, placing under 'Other': %s",
+                len(leftovers), ", ".join(leftovers),
+            )
+        # Authentication, if it ever appears, stays at the top of "Other".
+        if "Authentication" in leftovers:
+            leftovers.remove("Authentication")
+            leftovers.insert(0, "Authentication")
+
+        ordered_groups: list[tuple[str, list[str]]] = [
+            (gname, [t for t in tags if t in present_tags])
+            for gname, tags in _TAG_GROUPS
+        ]
+        if leftovers:
+            ordered_groups.append(("Other", leftovers))
 
         lines: list[str] = []
         unresolved: list[str] = []
         seen: set[str] = set()
 
-        for tag in tag_order:
-            heading = _TAG_HEADING.get(tag, tag)
-            lines.append(heading)
-            lines.append("-" * len(heading))
+        for group_name, tags in ordered_groups:
+            if not tags:
+                continue
+            lines.append(group_name)
+            lines.append("-" * len(group_name))
             lines.append("")
-            for op_id in sorted(set(groups[tag])):
-                resolved = _resolve(op_id, tag, methods, classes)
-                if resolved is None:
-                    unresolved.append(f"{tag}:{op_id}")
-                    lines.append(f"* ``{op_id}`` (no matching Python method)")
-                    lines.append("")
-                    continue
-                attr, mname, target = resolved
-                accessor = f"Fatsecret.{attr}.{mname}()"
-                if target in seen:
-                    lines.append(f"* ``{accessor}`` -- also tagged ``{tag}``.")
-                    lines.append("")
-                    continue
-                seen.add(target)
-                lines.append(f"**{accessor}**")
+            for tag in tags:
+                heading = _TAG_HEADING.get(tag, tag)
+                lines.append(heading)
+                lines.append("~" * len(heading))
                 lines.append("")
-                lines.append(f".. automethod:: {target}")
-                lines.append("")
+                for op_id in sorted(set(groups[tag])):
+                    resolved = _resolve(op_id, tag, methods, classes)
+                    if resolved is None:
+                        unresolved.append(f"{tag}:{op_id}")
+                        lines.append(f"* ``{op_id}`` (no matching Python method)")
+                        lines.append("")
+                        continue
+                    attr, mname, target = resolved
+                    accessor = f"Fatsecret.{attr}.{mname}()"
+                    if target in seen:
+                        lines.append(f"* ``{accessor}`` -- also tagged ``{tag}``.")
+                        lines.append("")
+                        continue
+                    seen.add(target)
+                    lines.append(f"**{accessor}**")
+                    lines.append("")
+                    lines.append(f".. automethod:: {target}")
+                    lines.append("")
 
         try:
             util = sorted(
