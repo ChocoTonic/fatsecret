@@ -8,7 +8,7 @@ dependencies = [
     "bs4",
     "lxml",
     "python-dotenv",
-    "requests==2.32.5",
+    "requests==2.34.2",
     "requests-oauthlib>=2.0.0",
     "tenacity>=9.0",
 ]
