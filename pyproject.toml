@@ -10,6 +10,7 @@ dependencies = [
     "python-dotenv",
     "requests==2.32.5",
     "requests-oauthlib>=2.0.0",
+    "tenacity>=9.0",
 ]
 
 [project.urls]
