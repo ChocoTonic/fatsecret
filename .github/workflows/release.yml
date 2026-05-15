@@ -294,3 +294,35 @@ jobs:
           fi
           echo "::error::PyPI publish failed for a reason other than duplicate-file."
           exit 1
+
+      - name: Trigger Read the Docs build for the new tag
+        if: steps.version.outputs.skip == 'false'
+        env:
+          READTHEDOCS_TOKEN: ${{ secrets.READTHEDOCS_TOKEN }}
+          RTD_VERSION: ${{ steps.version.outputs.tag }}
+        run: |
+          # Activate the version (idempotent — RTD returns 204 whether it
+          # was already active or not) and trigger a build. RTD's GitHub
+          # webhook only builds versions that are already active, so new
+          # tags require this nudge to be visible in the version flyout.
+          set -euo pipefail
+          # First, sync versions so the freshly-pushed tag is known to RTD.
+          curl -sS -X POST \
+            -H "Authorization: Token ${READTHEDOCS_TOKEN}" \
+            "https://app.readthedocs.org/api/v3/projects/fatsecret/sync-versions/" \
+            -o /dev/null -w "sync-versions: HTTP %{http_code}\n"
+          # Give RTD a moment to ingest the tag.
+          sleep 20
+          # Activate.
+          curl -sS -X PATCH \
+            -H "Authorization: Token ${READTHEDOCS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{"active":true,"hidden":false}' \
+            "https://app.readthedocs.org/api/v3/projects/fatsecret/versions/${RTD_VERSION}/" \
+            -o /dev/null -w "activate ${RTD_VERSION}: HTTP %{http_code}\n"
+          # Trigger build.
+          curl -sS -X POST \
+            -H "Authorization: Token ${READTHEDOCS_TOKEN}" \
+            "https://app.readthedocs.org/api/v3/projects/fatsecret/versions/${RTD_VERSION}/builds/" \
+            -o /tmp/rtd-build.json -w "trigger build: HTTP %{http_code}\n"
+          python3 -c "import json; b=json.load(open('/tmp/rtd-build.json')).get('build',{}); print(f\"  build id={b.get('id')} state={b.get('state',{}).get('code')}\")"
