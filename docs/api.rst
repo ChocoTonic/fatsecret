@@ -10,7 +10,11 @@ warnings during development, run Python with::
 
     python -W default::DeprecationWarning:fatsecret
 
-.. autoclass:: fatsecret.Fatsecret
-    :members:
-    :noindex:
-    :exclude-members: __init__
+The endpoint methods below are exposed via resource sub-objects on a
+:class:`fatsecret.Fatsecret` instance -- e.g. ``fs.foods.search_v5(...)`` --
+and are grouped by their OpenAPI tag (sourced from
+``docs/api-spec/openapi.generated.yaml``). Client-only helpers (auth
+handshake, session lifecycle, time conversion) are listed at the bottom
+under **Client utilities**.
+
+.. fatsecret-api-groups::
