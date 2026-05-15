@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 from pathlib import Path
@@ -18,5 +19,11 @@ extensions = [
 
 exclude_patterns = ["_build"]
 add_module_names = False
+templates_path = ["_templates"]
 
 html_theme = "sphinx_rtd_theme"
+
+# Show an in-development banner only on Read the Docs branch builds
+# (e.g., master/dev). Tagged version builds set VERSION_TYPE=tag and stay clean.
+_is_dev_build = os.environ.get("READTHEDOCS_VERSION_TYPE") == "branch"
+html_context = {"is_dev_build": _is_dev_build}

@@ -1,0 +1,11 @@
+{% extends "!layout.html" %}
+{% block document %}
+{% if is_dev_build %}
+<div class="admonition warning" style="margin-bottom: 1em;">
+  <p class="admonition-title">v3 in development</p>
+  <p>You're viewing in-development documentation. For the released stable docs, see
+  <a href="https://fatsecret.readthedocs.io/en/stable/">fatsecret.readthedocs.io/en/stable/</a>.</p>
+</div>
+{% endif %}
+{{ super() }}
+{% endblock %}
