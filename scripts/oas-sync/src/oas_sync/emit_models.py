@@ -249,7 +249,14 @@ def _resolve_field_type(
 
     # 1) Inline anonymous complexType.
     if inline_complex is not None:
-        synth_name = _snake_to_pascal(parent_name) + _snake_to_pascal(field_name)
+        # ``parent_name`` may be a snake_case XSD type name (``food``) or a
+        # PascalCase synthesised class name (``RecipesRecipe``); only convert
+        # when it looks snake_case.
+        if any(c.isupper() for c in parent_name) and "_" not in parent_name:
+            parent_pascal = parent_name
+        else:
+            parent_pascal = _snake_to_pascal(parent_name)
+        synth_name = parent_pascal + _snake_to_pascal(field_name)
         pending_inline.append((synth_name, inline_complex))
         deps.add(synth_name)
         return synth_name, imports, aliases, deps
@@ -343,7 +350,7 @@ def _build_class_from_complex(
         optional = min_occ == "0"
 
         annotation, imports, aliases, deps = _resolve_field_type(
-            type_name, inline, simple_types, complex_types, pending_inline, source_xsd, name
+            type_name, inline, simple_types, complex_types, pending_inline, class_name, name
         )
         spec.fields.append(
             _FieldSpec(
@@ -364,8 +371,17 @@ def _build_class_from_complex(
 # ---------------------------------------------------------------------------
 
 
-def _gather_foods_classes() -> list[_ClassSpec]:
-    """Return the ordered list of class specs for the foods resource."""
+def _gather_classes(
+    seed_types: tuple[str, ...],
+    seed_elements: tuple[str, ...],
+) -> list[_ClassSpec]:
+    """Generic seed-driven class gathering.
+
+    ``seed_types`` are XSD ``complexType`` names; ``seed_elements`` are
+    top-level ``element`` names whose body is an anonymous complexType.
+    Reachable inline complexTypes get walked into synthesised classes
+    (e.g. ``food.servings`` -> ``FoodServings``).
+    """
     root = _load_root()
     simple_types = _index_simple_types(root)
     complex_types = _index_complex_types(root)
@@ -374,14 +390,12 @@ def _gather_foods_classes() -> list[_ClassSpec]:
     classes: dict[str, _ClassSpec] = {}
     pending_inline: list[tuple[str, ET.Element]] = []
 
-    # 1) Named complexTypes from the seed list. Skip the degenerate
-    # restriction-only ``food_sub_category`` — it's resolved inline as ``str``.
-    for type_name in _FOODS_SEED_TYPES:
+    for type_name in seed_types:
         ctype = complex_types.get(type_name)
         if ctype is None:
             continue
         if ctype.find(XSD_NS + "sequence") is None:
-            continue  # degenerate
+            continue
         class_name = _snake_to_pascal(type_name)
         if class_name in classes:
             continue
@@ -389,9 +403,7 @@ def _gather_foods_classes() -> list[_ClassSpec]:
             class_name, type_name, ctype, simple_types, complex_types, pending_inline
         )
 
-    # 2) Top-level elements that wrap an anonymous complexType (foods,
-    # foods_search, food_results, food_entries).
-    for elem_name in _FOODS_SEED_ELEMENTS:
+    for elem_name in seed_elements:
         elem = elements.get(elem_name)
         if elem is None:
             continue
@@ -405,21 +417,94 @@ def _gather_foods_classes() -> list[_ClassSpec]:
             class_name, elem_name, inline, simple_types, complex_types, pending_inline
         )
 
-    # 3) Drain inline anonymous complexTypes (and any they themselves spawn).
     while pending_inline:
         synth_name, inline_ct = pending_inline.pop(0)
         if synth_name in classes:
             continue
-        # source_xsd label uses the synthesised name (no real XSD name exists).
         classes[synth_name] = _build_class_from_complex(
             synth_name, f"<inline {synth_name}>", inline_ct, simple_types, complex_types, pending_inline
         )
 
-    # 4) Topological sort with alphabetical tiebreak. A class may reference
-    # only classes already defined; otherwise we fall back to an
-    # alphabetical order (Pydantic v2 supports forward refs but we prefer
-    # a stable, real-order layout).
     return _topo_sort(classes)
+
+
+def _gather_foods_classes() -> list[_ClassSpec]:
+    """Return the ordered list of class specs for the foods resource."""
+    return _gather_classes(_FOODS_SEED_TYPES, _FOODS_SEED_ELEMENTS)
+
+
+# ---------------------------------------------------------------------------
+# Seed tables for the remaining Phase 2 resources
+# ---------------------------------------------------------------------------
+
+
+# Recipes: the ``recipes`` element wraps an anonymous complexType that
+# itself contains an anonymous ``recipe`` complexType. Both surface as
+# generated classes (``Recipes`` and ``RecipesRecipe``); we re-export the
+# latter under the friendlier ``Recipe`` name in models/__init__.py.
+_RECIPES_SEED_TYPES: tuple[str, ...] = ()
+_RECIPES_SEED_ELEMENTS: tuple[str, ...] = ("recipes",)
+
+
+# Profile (auth + plain): the ``profile`` element holds an anonymous
+# complexType whose fields are simpleType-restricted scalars. Same shape
+# is returned by ``profile.create``, ``profile.get``, ``profile.get_auth``.
+_PROFILE_SEED_TYPES: tuple[str, ...] = ()
+_PROFILE_SEED_ELEMENTS: tuple[str, ...] = ("profile",)
+
+
+# Exercise Diary: ``exercise_entries``, ``exercise_types``, ``month``.
+# ``exercise``, ``exercise_entry``, and ``day`` are named complexTypes
+# referenced from those elements.
+_EXERCISES_SEED_TYPES: tuple[str, ...] = (
+    "exercise",
+    "exercise_entry",
+    "day",
+)
+_EXERCISES_SEED_ELEMENTS: tuple[str, ...] = (
+    "exercise_entries",
+    "exercise_types",
+    "month",
+)
+
+
+# Food Diary: reuses ``food_entry``/``food_entries`` plus the ``month``
+# / ``day`` shape shared with the other diaries.
+_FOOD_DIARY_SEED_TYPES: tuple[str, ...] = (
+    "food_entry",
+    "day",
+)
+_FOOD_DIARY_SEED_ELEMENTS: tuple[str, ...] = (
+    "food_entries",
+    "month",
+)
+
+
+# Weight Diary: only ``weights.get_month`` is XSD-covered (via the shared
+# ``month``/``day`` shape). The other weight endpoints fall back to
+# returning raw ``dict`` because the XSD doesn't model them.
+_WEIGHT_DIARY_SEED_TYPES: tuple[str, ...] = ("day",)
+_WEIGHT_DIARY_SEED_ELEMENTS: tuple[str, ...] = ("month",)
+
+
+def _gather_recipes_classes() -> list[_ClassSpec]:
+    return _gather_classes(_RECIPES_SEED_TYPES, _RECIPES_SEED_ELEMENTS)
+
+
+def _gather_profile_classes() -> list[_ClassSpec]:
+    return _gather_classes(_PROFILE_SEED_TYPES, _PROFILE_SEED_ELEMENTS)
+
+
+def _gather_exercise_diary_classes() -> list[_ClassSpec]:
+    return _gather_classes(_EXERCISES_SEED_TYPES, _EXERCISES_SEED_ELEMENTS)
+
+
+def _gather_food_diary_classes() -> list[_ClassSpec]:
+    return _gather_classes(_FOOD_DIARY_SEED_TYPES, _FOOD_DIARY_SEED_ELEMENTS)
+
+
+def _gather_weight_diary_classes() -> list[_ClassSpec]:
+    return _gather_classes(_WEIGHT_DIARY_SEED_TYPES, _WEIGHT_DIARY_SEED_ELEMENTS)
 
 
 def _topo_sort(classes: dict[str, _ClassSpec]) -> list[_ClassSpec]:
@@ -548,6 +633,11 @@ def _render_class(out: StringIO, cls: _ClassSpec) -> None:
 
 _RESOURCE_BUILDERS = {
     "foods": _gather_foods_classes,
+    "recipes": _gather_recipes_classes,
+    "profile_auth": _gather_profile_classes,
+    "exercise_diary": _gather_exercise_diary_classes,
+    "food_diary": _gather_food_diary_classes,
+    "weight_diary": _gather_weight_diary_classes,
 }
 
 

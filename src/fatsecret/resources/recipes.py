@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Optional
 
+from ..models._generated.recipes import RecipesRecipe
 from ._generated.recipes import RecipesResource as _GeneratedRecipesResource
 
 
@@ -36,13 +37,15 @@ class RecipesResource(_GeneratedRecipesResource):
         )
         return self._client._mutator_success(payload)
 
-    def get_favorites_v1(self) -> list:
+    def get_favorites_v1(self) -> list[RecipesRecipe]:
         payload = self._client._call({"method": "recipe.get_favorites"})
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
-    def get_favorites_v2(self) -> list:
+    def get_favorites_v2(self) -> list[RecipesRecipe]:
         payload = self._client._call({"method": "recipe.get_favorites.v2"})
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
     def search_v2(
         self,
@@ -62,7 +65,7 @@ class RecipesResource(_GeneratedRecipesResource):
         max_results: Optional[int] = None,
         sort_by: Optional[str] = None,
         region: Optional[str] = None,
-    ) -> list:
+    ) -> list[RecipesRecipe]:
         params: dict = {"method": "recipes.search.v2"}
         self._client._set_optional(
             params,
@@ -86,7 +89,8 @@ class RecipesResource(_GeneratedRecipesResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
     def search_v3(
         self,
@@ -108,7 +112,7 @@ class RecipesResource(_GeneratedRecipesResource):
         max_results: Optional[int] = None,
         sort_by: Optional[str] = None,
         region: Optional[str] = None,
-    ) -> list:
+    ) -> list[RecipesRecipe]:
         params: dict = {"method": "recipes.search.v3"}
         self._client._set_optional(
             params,
@@ -134,7 +138,8 @@ class RecipesResource(_GeneratedRecipesResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
 
 __all__ = ["RecipesResource"]

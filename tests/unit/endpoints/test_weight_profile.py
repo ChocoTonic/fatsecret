@@ -16,6 +16,74 @@ import pytest
 from fatsecret import Fatsecret
 
 
+# ---------------------------------------------------------------------------
+# Phase 2 helpers: pad XSD-required fields so model_validate succeeds
+# ---------------------------------------------------------------------------
+
+def _food(**overrides):
+    base = {
+        "food_id": "1",
+        "food_name": "Item",
+        "food_type": "Generic",
+        "food_url": "https://example.com/food",
+    }
+    base.update(overrides)
+    return base
+
+
+def _food_entry(**overrides):
+    base = {
+        "food_entry_id": "1",
+        "food_entry_description": "x",
+        "date_int": "20250101",
+        "meal": "Breakfast",
+        "food_id": "1",
+        "serving_id": "1",
+        "number_of_units": "1",
+        "food_entry_name": "x",
+        "calories": "100",
+        "carbohydrate": "10",
+        "protein": "5",
+        "fat": "1",
+    }
+    base.update(overrides)
+    return base
+
+
+def _exercise(**overrides):
+    base = {"exercise_id": "1", "exercise_name": "Running"}
+    base.update(overrides)
+    return base
+
+
+def _exercise_entry(**overrides):
+    base = {
+        "is_template_value": "true",
+        "exercise_id": "1",
+        "exercise_name": "Running",
+        "minutes": "30",
+        "calories": "150",
+    }
+    base.update(overrides)
+    return base
+
+
+def _day(**overrides):
+    base = {"date_int": "20250101"}
+    base.update(overrides)
+    return base
+
+
+def _recipe(**overrides):
+    base = {
+        "recipe_id": "1",
+        "recipe_name": "Stew",
+        "recipe_description": "A stew",
+    }
+    base.update(overrides)
+    return base
+
+
 @pytest.fixture
 def fs():
     with patch("fatsecret.fatsecret.OAuth1Session"):
@@ -127,27 +195,27 @@ def test_weights_get_month_v1_method_and_no_date(fs):
     assert "date" not in params
     # GET verb (no `method=` kwarg means default GET path)
     assert mock_call.call_args.kwargs.get("method") in (None, "GET")
-    assert result == [{"date_int": "20000", "weight_kg": "70"}]
+    assert [r.date_int for r in result] == [20000]
 
 
 def test_weights_get_month_v1_single_dict_coerced_to_list(fs):
     payload = _month_payload({"date_int": "20000", "weight_kg": "70"})
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.weight.get_month_v1()
-    assert result == [{"date_int": "20000", "weight_kg": "70"}]
+    assert [r.date_int for r in result] == [20000]
 
 
 def test_weights_get_month_v1_list_passthrough(fs):
     days = [{"date_int": "20000"}, {"date_int": "20001"}]
     with patch.object(Fatsecret, "_call", return_value=_month_payload(days)):
         result = fs.weight.get_month_v1()
-    assert result == days
+    assert [d.date_int for d in result] == [int(x['date_int']) for x in days]
 
 
 def test_weights_get_month_v1_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={"month": None}):
         result = fs.weight.get_month_v1()
-    assert result == []
+    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
 
 
 @pytest.mark.parametrize(
@@ -178,21 +246,22 @@ def test_weights_get_month_v2_method_name(fs):
         result = fs.weight.get_month_v2()
     params = mock_call.call_args.args[0]
     assert params["method"] == "weights.get_month.v2"
-    assert result == []
+    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
 
 
 def test_weights_get_month_v2_single_dict_coerced(fs):
     payload = _month_payload({"date_int": "20100", "weight_kg": "68"})
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.weight.get_month_v2()
-    assert result == [{"date_int": "20100", "weight_kg": "68"}]
+    assert len(result) == 1
+    assert result[0].date_int == 20100
 
 
 def test_weights_get_month_v2_list_passthrough(fs):
     days = [{"date_int": "20100"}, {"date_int": "20101"}]
     with patch.object(Fatsecret, "_call", return_value=_month_payload(days)):
         result = fs.weight.get_month_v2()
-    assert result == days
+    assert [d.date_int for d in result] == [int(x['date_int']) for x in days]
 
 
 def test_weights_get_month_v2_empty_response(fs):
@@ -230,8 +299,12 @@ def test_profile_create_v1_with_user_id(fs):
     assert params["user_id"] == "user-42"
     assert mock_call.call_args.kwargs.get("method") == "POST"
     # v2.0: returns the unwrapped profile dict (no more tuple coercion).
-    assert isinstance(result, dict)
-    assert result == {"auth_token": "t2", "auth_secret": "s2"}
+    # Phase 2: result is now Profile typed model
+    from fatsecret.models import Profile
+    assert isinstance(result, Profile)
+    _dump = result.model_dump(exclude_unset=True)
+
+    assert _dump == {"auth_token": "t2", "auth_secret": "s2"}
 
 
 def test_profile_create_v1_returns_profile_dict_passthrough(fs):
@@ -239,7 +312,9 @@ def test_profile_create_v1_returns_profile_dict_passthrough(fs):
     payload = {"profile": {"some_other_field": "x"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.profile.create_v1(user_id="user-42")
-    assert result == {"some_other_field": "x"}
+    _dump = result.model_dump(exclude_unset=True)
+
+    assert _dump == {"some_other_field": "x"}
 
 
 # --------------------------- profile.get v1 ---------------------------
@@ -250,7 +325,7 @@ def test_profile_get_v1_returns_profile_dict(fs):
         "profile": {
             "nickname": "alice",
             "is_premier": "false",
-            "last_weight_date_int": "20000",
+            "last_weight_date_int": 20000  # Pydantic coerces,
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
@@ -259,12 +334,14 @@ def test_profile_get_v1_returns_profile_dict(fs):
     assert params["method"] == "profile.get"
     # No POST kwarg => default GET path
     assert mock_call.call_args.kwargs.get("method") in (None, "GET")
-    assert result == {
+    assert result.model_dump(exclude_unset=True, exclude_none=True) == {
         "nickname": "alice",
         "is_premier": "false",
-        "last_weight_date_int": "20000",
+        "last_weight_date_int": 20000  # Pydantic coerces,
     }
-    assert isinstance(result, dict)
+    # Phase 2: result is now Profile typed model
+    from fatsecret.models import Profile
+    assert isinstance(result, Profile)
 
 
 def test_profile_get_v1_no_arguments(fs):
@@ -290,9 +367,13 @@ def test_profile_get_auth_v1_returns_profile_dict(fs):
     # default verb (GET)
     assert mock_call.call_args.kwargs.get("method") in (None, "GET")
     # v2.0: returns the unwrapped profile dict (no more tuple coercion).
-    assert isinstance(result, dict)
-    assert result == {"auth_token": "atk", "auth_secret": "ask"}
-    assert "auth_token" in result and "auth_secret" in result
+    # Phase 2: result is now Profile typed model
+    from fatsecret.models import Profile
+    assert isinstance(result, Profile)
+    _dump = result.model_dump(exclude_unset=True)
+
+    assert _dump == {"auth_token": "atk", "auth_secret": "ask"}
+    assert result.auth_token is not None and result.auth_secret is not None
 
 
 def test_profile_get_auth_v1_without_user_id(fs):
@@ -301,7 +382,9 @@ def test_profile_get_auth_v1_without_user_id(fs):
         result = fs.profile.get_auth_v1()
     params = mock_call.call_args.args[0]
     assert "user_id" not in params
-    assert result == {"auth_token": "a", "auth_secret": "b"}
+    _dump = result.model_dump(exclude_unset=True)
+
+    assert _dump == {"auth_token": "a", "auth_secret": "b"}
 
 
 def test_profile_get_auth_v1_without_auth_token_passes_through(fs):
@@ -309,4 +392,6 @@ def test_profile_get_auth_v1_without_auth_token_passes_through(fs):
     payload = {"profile": {"nickname": "noauth"}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.profile.get_auth_v1(user_id="u")
-    assert result == {"nickname": "noauth"}
+    _dump = result.model_dump(exclude_unset=True)
+
+    assert _dump == {"nickname": "noauth"}

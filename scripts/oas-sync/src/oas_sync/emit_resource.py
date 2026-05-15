@@ -84,6 +84,55 @@ _TAG_SLUG_MAP = {
 
 
 # ---------------------------------------------------------------------------
+# Phase 2: response-model wrapping registry
+# ---------------------------------------------------------------------------
+#
+# Maps (tag, unwrap_path_tuple, list_key) -> (model_module, model_class).
+# When an entry exists, the generated method wraps the unwrapped raw
+# payload in ``Model.model_validate(raw)`` (singular) or
+# ``[Model.model_validate(r) for r in raw]`` (list), and the return type
+# annotation becomes the model class instead of ``Any``/``list``.
+#
+# Resources without XSD coverage (food_classification, saved_meals,
+# weight_diary's non-month endpoints, native_apis, feedback) have no
+# entries here and continue to return raw ``dict``/``list[dict]``.
+#
+# ``model_module`` is the name of the file under
+# ``fatsecret.models._generated`` (also re-exported via
+# ``fatsecret.models``).
+_RESPONSE_MODEL_MAP: dict[
+    tuple[str, tuple[str, ...], str | None],
+    tuple[str, str],
+] = {
+    # Foods (singular)
+    ("Foods", ("food",), None): ("foods", "Food"),
+    # Foods (list / search variants)
+    ("Foods", ("foods",), "food"): ("foods", "Food"),
+    ("Foods", ("foods_search", "results"), "food"): ("foods", "Food"),
+    # Profile Foods (same Food model)
+    ("Profile Foods", ("foods",), "food"): ("foods", "Food"),
+    # Recipes
+    ("Recipes", ("recipe",), None): ("recipes", "RecipesRecipe"),
+    ("Recipes", ("recipes",), "recipe"): ("recipes", "RecipesRecipe"),
+    # Profile Auth
+    ("Profile Auth", ("profile",), None): ("profile_auth", "Profile"),
+    # Food Diary
+    ("Food Diary", ("food_entries",), "food_entry"): ("food_diary", "FoodEntry"),
+    ("Food Diary", ("month",), "day"): ("food_diary", "Day"),
+    # Exercise Diary
+    ("Exercise Diary", ("exercise_entries",), "exercise_entry"): (
+        "exercise_diary", "ExerciseEntry",
+    ),
+    ("Exercise Diary", ("exercise_types",), "exercise"): (
+        "exercise_diary", "Exercise",
+    ),
+    ("Exercise Diary", ("month",), "day"): ("exercise_diary", "Day"),
+    # Weight Diary (only get_month is XSD-covered)
+    ("Weight Diary", ("month",), "day"): ("weight_diary", "Day"),
+}
+
+
+# ---------------------------------------------------------------------------
 # OAS loading
 # ---------------------------------------------------------------------------
 
@@ -264,6 +313,7 @@ def _extract_method(
     schema = _resolve_schema(oas, content.get("schema") or {})
     unwrap_path, list_key, is_mutator = derive_unwrap(schema)
 
+    model = _RESPONSE_MODEL_MAP.get((tag, tuple(unwrap_path), list_key))
     return {
         "method_name": _method_name_for(tag, op_id),
         "operation_id": op_id,
@@ -277,6 +327,9 @@ def _extract_method(
         "list_key": list_key,
         "is_mutator": is_mutator,
         "docstring": _docstring_for(operation),
+        # (model_module, model_class) when this method's response is
+        # XSD-modelled; ``None`` when it falls back to a raw dict.
+        "model": model,
     }
 
 
@@ -290,8 +343,13 @@ def _render_method(m: dict[str, Any]) -> str:
     name = m["method_name"]
 
     # Return type hint.
+    model = m.get("model")
     if m["is_mutator"]:
         ret = "bool"
+    elif model is not None and m["list_key"]:
+        ret = f"list[{model[1]}]"
+    elif model is not None:
+        ret = f"Optional[{model[1]}]"
     elif m["list_key"]:
         ret = "list"
     else:
@@ -372,13 +430,32 @@ def _render_method(m: dict[str, Any]) -> str:
         buf.write("        return self._client._mutator_success(payload)\n")
     elif m["list_key"]:
         buf.write(
-            f"        return self._client._unwrap(payload{path_args}, "
+            f"        raw = self._client._unwrap(payload{path_args}, "
             f'list_key="{m["list_key"]}")\n'
         )
+        if model is not None:
+            buf.write(
+                f"        return [{model[1]}.model_validate(r) for r in raw]\n"
+            )
+        else:
+            buf.write("        return raw\n")
     elif m["unwrap_path"]:
-        buf.write(f"        return self._client._unwrap(payload{path_args})\n")
+        buf.write(f"        raw = self._client._unwrap(payload{path_args})\n")
+        if model is not None:
+            buf.write("        if raw is None:\n")
+            buf.write("            return None\n")
+            buf.write(
+                f"        return {model[1]}.model_validate(raw)\n"
+            )
+        else:
+            buf.write("        return raw\n")
     else:
-        buf.write("        return payload\n")
+        if model is not None:
+            buf.write(
+                f"        return {model[1]}.model_validate(payload)\n"
+            )
+        else:
+            buf.write("        return payload\n")
 
     return buf.getvalue()
 
@@ -393,7 +470,21 @@ def _render_module(tag: str, methods: list[dict[str, Any]]) -> str:
     buf.write(f'"""Resource wrapper for the OAS ``{tag}`` tag (generated)."""\n\n')
     buf.write("from __future__ import annotations\n\n")
     buf.write("from typing import Any, Optional\n\n")
-    buf.write("from .._base import BaseResource\n\n\n")
+    buf.write("from .._base import BaseResource\n")
+    # Emit model imports grouped by module, sorted for determinism.
+    model_imports: dict[str, set[str]] = {}
+    for m in methods:
+        model = m.get("model")
+        if model is not None:
+            model_imports.setdefault(model[0], set()).add(model[1])
+    if model_imports:
+        buf.write("\n")
+        for module in sorted(model_imports):
+            classes = ", ".join(sorted(model_imports[module]))
+            buf.write(
+                f"from ...models._generated.{module} import {classes}\n"
+            )
+    buf.write("\n\n")
     buf.write(f"class {class_name}(BaseResource):\n")
     buf.write(f'    """Resource methods for the OAS `{tag}` tag (generated)."""\n')
     for m in methods:

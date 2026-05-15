@@ -7,6 +7,8 @@ from typing import Any, Optional
 
 from .._base import BaseResource
 
+from ...models._generated.foods import Food
+
 
 class ProfileFoodsResource(BaseResource):
     """Resource methods for the OAS `Profile Foods` tag (generated)."""
@@ -95,7 +97,8 @@ class ProfileFoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params, method="POST")
-        return self._client._unwrap(payload, "food_id")
+        raw = self._client._unwrap(payload, "food_id")
+        return raw
 
     def create_v2(
         self,
@@ -164,7 +167,8 @@ class ProfileFoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params, method="POST")
-        return self._client._unwrap(payload, "food_id")
+        raw = self._client._unwrap(payload, "food_id")
+        return raw
 
     def delete_favorite_v1(
         self,
@@ -187,24 +191,26 @@ class ProfileFoodsResource(BaseResource):
 
     def get_favorites_v1(
         self,
-    ) -> list:
+    ) -> list[Food]:
         """foods.get_favorites (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.get_favorites"}
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods", list_key="food")
+        raw = self._client._unwrap(payload, "foods", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def get_favorites_v2(
         self,
-    ) -> list:
+    ) -> list[Food]:
         """foods.get_favorites (v2). Premier-only."""
         params: dict[str, Any] = {"method": "foods.get_favorites.v2"}
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods", list_key="food")
+        raw = self._client._unwrap(payload, "foods", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def get_most_eaten_v1(
         self,
         meal: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.get_most_eaten (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.get_most_eaten"}
         self._client._set_optional(
@@ -214,12 +220,13 @@ class ProfileFoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods", list_key="food")
+        raw = self._client._unwrap(payload, "foods", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def get_most_eaten_v2(
         self,
         meal: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.get_most_eaten (v2). Premier-only."""
         params: dict[str, Any] = {"method": "foods.get_most_eaten.v2"}
         self._client._set_optional(
@@ -229,12 +236,13 @@ class ProfileFoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods", list_key="food")
+        raw = self._client._unwrap(payload, "foods", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def get_recently_eaten_v1(
         self,
         meal: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.get_recently_eaten (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.get_recently_eaten"}
         self._client._set_optional(
@@ -244,12 +252,13 @@ class ProfileFoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods", list_key="food")
+        raw = self._client._unwrap(payload, "foods", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
     def get_recently_eaten_v2(
         self,
         meal: Optional[str] = None,
-    ) -> list:
+    ) -> list[Food]:
         """foods.get_recently_eaten (v2). Premier-only."""
         params: dict[str, Any] = {"method": "foods.get_recently_eaten.v2"}
         self._client._set_optional(
@@ -259,7 +268,8 @@ class ProfileFoodsResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "foods", list_key="food")
+        raw = self._client._unwrap(payload, "foods", list_key="food")
+        return [Food.model_validate(r) for r in raw]
 
 
 __all__ = ["ProfileFoodsResource"]
