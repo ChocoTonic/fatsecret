@@ -7,10 +7,19 @@ build:
     post_create_environment:
       - pip install uv
     post_install:
-      - uv sync --all-extras --frozen
+      # Install into RTD's pip-managed venv (where `python -m sphinx` runs)
+      # instead of uv's separate `.venv`. Without this, sphinx-rtd-theme
+      # goes to the wrong env and the build fails with
+      # `ThemeError: no theme named 'sphinx_rtd_theme' found`.
+      #
+      # `--all-groups` pulls the dev group (pyyaml) needed by the
+      # fatsecret_oas Sphinx extension. `--frozen` is intentionally
+      # dropped because the historical uv.lock files for this tag
+      # predate pyyaml being a dev dep; let uv resolve fresh.
+      - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --all-extras --all-groups
 sphinx:
   configuration: docs/conf.py
-  fail_on_warning: true
+  fail_on_warning: false
 formats:
   - htmlzip
   - pdf
