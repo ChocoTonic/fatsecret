@@ -7,6 +7,8 @@ from typing import Any, Optional
 
 from .._base import BaseResource
 
+from ...models._generated.exercise_diary import Day, Exercise, ExerciseEntry
+
 
 class ExercisesResource(BaseResource):
     """Resource methods for the OAS `Exercise Diary` tag (generated)."""
@@ -29,7 +31,7 @@ class ExercisesResource(BaseResource):
     def entries_get_month_v1(
         self,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[Day]:
         """exercise_entries.get_month (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "exercise_entries.get_month"}
         self._client._set_optional(
@@ -39,12 +41,13 @@ class ExercisesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "month", list_key="day")
+        raw = self._client._unwrap(payload, "month", list_key="day")
+        return [Day.model_validate(r) for r in raw]
 
     def entries_get_month_v2(
         self,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[Day]:
         """exercise_entries.get_month (v2). Premier-only."""
         params: dict[str, Any] = {"method": "exercise_entries.get_month.v2"}
         self._client._set_optional(
@@ -54,12 +57,13 @@ class ExercisesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "month", list_key="day")
+        raw = self._client._unwrap(payload, "month", list_key="day")
+        return [Day.model_validate(r) for r in raw]
 
     def entries_get_v1(
         self,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[ExerciseEntry]:
         """exercise_entries.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "exercise_entries.get"}
         self._client._set_optional(
@@ -69,12 +73,13 @@ class ExercisesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "exercise_entries", list_key="exercise_entry")
+        raw = self._client._unwrap(payload, "exercise_entries", list_key="exercise_entry")
+        return [ExerciseEntry.model_validate(r) for r in raw]
 
     def entries_get_v2(
         self,
         date: Optional[int] = None,
-    ) -> list:
+    ) -> list[ExerciseEntry]:
         """exercise_entries.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "exercise_entries.get.v2"}
         self._client._set_optional(
@@ -84,7 +89,8 @@ class ExercisesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "exercise_entries", list_key="exercise_entry")
+        raw = self._client._unwrap(payload, "exercise_entries", list_key="exercise_entry")
+        return [ExerciseEntry.model_validate(r) for r in raw]
 
     def entries_save_template_v1(
         self,
@@ -134,7 +140,7 @@ class ExercisesResource(BaseResource):
         self,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> list:
+    ) -> list[Exercise]:
         """exercises.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "exercises.get"}
         self._client._set_optional(
@@ -145,13 +151,14 @@ class ExercisesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "exercise_types", list_key="exercise")
+        raw = self._client._unwrap(payload, "exercise_types", list_key="exercise")
+        return [Exercise.model_validate(r) for r in raw]
 
     def list_v2(
         self,
         region: Optional[str] = None,
         language: Optional[str] = None,
-    ) -> list:
+    ) -> list[Exercise]:
         """exercises.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "exercises.get.v2"}
         self._client._set_optional(
@@ -162,7 +169,8 @@ class ExercisesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "exercise_types", list_key="exercise")
+        raw = self._client._unwrap(payload, "exercise_types", list_key="exercise")
+        return [Exercise.model_validate(r) for r in raw]
 
 
 __all__ = ["ExercisesResource"]

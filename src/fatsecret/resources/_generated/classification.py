@@ -30,7 +30,8 @@ class ClassificationResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_brands", list_key="food_brand")
+        raw = self._client._unwrap(payload, "food_brands", list_key="food_brand")
+        return raw
 
     def brands_get_v2(
         self,
@@ -51,7 +52,8 @@ class ClassificationResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_brands", list_key="food_brand")
+        raw = self._client._unwrap(payload, "food_brands", list_key="food_brand")
+        return raw
 
     def categories_get_v1(
         self,
@@ -68,7 +70,8 @@ class ClassificationResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_categories", list_key="food_category")
+        raw = self._client._unwrap(payload, "food_categories", list_key="food_category")
+        return raw
 
     def categories_get_v2(
         self,
@@ -85,7 +88,8 @@ class ClassificationResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_categories", list_key="food_category")
+        raw = self._client._unwrap(payload, "food_categories", list_key="food_category")
+        return raw
 
     def sub_categories_get_v1(
         self,
@@ -104,7 +108,8 @@ class ClassificationResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_sub_categories", list_key="food_sub_category")
+        raw = self._client._unwrap(payload, "food_sub_categories", list_key="food_sub_category")
+        return raw
 
     def sub_categories_get_v2(
         self,
@@ -123,7 +128,8 @@ class ClassificationResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "food_sub_categories", list_key="food_sub_category")
+        raw = self._client._unwrap(payload, "food_sub_categories", list_key="food_sub_category")
+        return raw
 
 
 __all__ = ["ClassificationResource"]

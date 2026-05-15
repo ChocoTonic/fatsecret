@@ -7,6 +7,8 @@ from typing import Any, Optional
 
 from .._base import BaseResource
 
+from ...models._generated.recipes import RecipesRecipe
+
 
 class RecipesResource(BaseResource):
     """Resource methods for the OAS `Recipes` tag (generated)."""
@@ -33,25 +35,27 @@ class RecipesResource(BaseResource):
 
     def get_favorites_v1(
         self,
-    ) -> list:
+    ) -> list[RecipesRecipe]:
         """recipes.get_favorites (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "recipes.get_favorites"}
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
     def get_favorites_v2(
         self,
-    ) -> list:
+    ) -> list[RecipesRecipe]:
         """recipes.get_favorites (v2). Premier-only."""
         params: dict[str, Any] = {"method": "recipes.get_favorites.v2"}
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
     def get_v1(
         self,
         recipe_id: int,
         region: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[RecipesRecipe]:
         """recipe.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "recipe.get"}
         params["recipe_id"] = recipe_id
@@ -62,13 +66,16 @@ class RecipesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipe")
+        raw = self._client._unwrap(payload, "recipe")
+        if raw is None:
+            return None
+        return RecipesRecipe.model_validate(raw)
 
     def get_v2(
         self,
         recipe_id: int,
         region: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[RecipesRecipe]:
         """recipe.get (v2). Premier-only."""
         params: dict[str, Any] = {"method": "recipe.get.v2"}
         params["recipe_id"] = recipe_id
@@ -79,7 +86,10 @@ class RecipesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipe")
+        raw = self._client._unwrap(payload, "recipe")
+        if raw is None:
+            return None
+        return RecipesRecipe.model_validate(raw)
 
     def search_v1(
         self,
@@ -87,7 +97,7 @@ class RecipesResource(BaseResource):
         recipe_type: Optional[str] = None,
         page_number: Optional[int] = None,
         max_results: Optional[int] = None,
-    ) -> list:
+    ) -> list[RecipesRecipe]:
         """recipes.search (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "recipes.search"}
         self._client._set_optional(
@@ -100,7 +110,8 @@ class RecipesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
     def search_v2(
         self,
@@ -120,7 +131,7 @@ class RecipesResource(BaseResource):
         max_results: Optional[int] = None,
         sort_by: Optional[str] = None,
         region: Optional[str] = None,
-    ) -> list:
+    ) -> list[RecipesRecipe]:
         """recipes.search (v2). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "recipes.search.v2"}
         self._client._set_optional(
@@ -145,7 +156,8 @@ class RecipesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
     def search_v3(
         self,
@@ -167,7 +179,7 @@ class RecipesResource(BaseResource):
         max_results: Optional[int] = None,
         sort_by: Optional[str] = None,
         region: Optional[str] = None,
-    ) -> list:
+    ) -> list[RecipesRecipe]:
         """recipes.search (v3). Premier-only."""
         params: dict[str, Any] = {"method": "recipes.search.v3"}
         self._client._set_optional(
@@ -194,7 +206,8 @@ class RecipesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipes", list_key="recipe")
+        raw = self._client._unwrap(payload, "recipes", list_key="recipe")
+        return [RecipesRecipe.model_validate(r) for r in raw]
 
     def types_get_v1(
         self,
@@ -202,7 +215,8 @@ class RecipesResource(BaseResource):
         """recipe_types.get (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "recipe_types.get"}
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipe_types", list_key="recipe_type")
+        raw = self._client._unwrap(payload, "recipe_types", list_key="recipe_type")
+        return raw
 
     def types_get_v2(
         self,
@@ -219,7 +233,8 @@ class RecipesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "recipe_types", list_key="recipe_type")
+        raw = self._client._unwrap(payload, "recipe_types", list_key="recipe_type")
+        return raw
 
 
 __all__ = ["RecipesResource"]

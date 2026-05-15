@@ -7,6 +7,8 @@ from typing import Any, Optional
 
 from .._base import BaseResource
 
+from ...models._generated.profile_auth import Profile
+
 
 class ProfileResource(BaseResource):
     """Resource methods for the OAS `Profile Auth` tag (generated)."""
@@ -14,17 +16,20 @@ class ProfileResource(BaseResource):
     def create_v1(
         self,
         user_id: str,
-    ) -> Any:
+    ) -> Optional[Profile]:
         """profile.create (v1). Premier-only."""
         params: dict[str, Any] = {"method": "profile.create"}
         params["user_id"] = user_id
         payload = self._client._call(params, method="POST")
-        return self._client._unwrap(payload, "profile")
+        raw = self._client._unwrap(payload, "profile")
+        if raw is None:
+            return None
+        return Profile.model_validate(raw)
 
     def get_auth_v1(
         self,
         user_id: Optional[str] = None,
-    ) -> Any:
+    ) -> Optional[Profile]:
         """profile.get_auth (v1). Premier-only."""
         params: dict[str, Any] = {"method": "profile.get_auth"}
         self._client._set_optional(
@@ -34,15 +39,21 @@ class ProfileResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "profile")
+        raw = self._client._unwrap(payload, "profile")
+        if raw is None:
+            return None
+        return Profile.model_validate(raw)
 
     def get_v1(
         self,
-    ) -> Any:
+    ) -> Optional[Profile]:
         """profile.get (v1). Premier-only."""
         params: dict[str, Any] = {"method": "profile.get"}
         payload = self._client._call(params)
-        return self._client._unwrap(payload, "profile")
+        raw = self._client._unwrap(payload, "profile")
+        if raw is None:
+            return None
+        return Profile.model_validate(raw)
 
 
 __all__ = ["ProfileResource"]
