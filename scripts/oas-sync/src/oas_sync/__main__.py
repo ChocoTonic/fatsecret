@@ -9,6 +9,7 @@ import typer
 from .assemble import assemble as assemble_openapi
 from .discover import discover, group_by_category
 from .emit import emit_inventory, emit_raw_yaml
+from .emit_models import emit_models
 from .emit_resource import emit_resource
 from .http import fetch
 from .models import MethodRef
@@ -103,6 +104,17 @@ def emit_resource_cmd(
     """Generate the Python resource module for one OAS tag."""
     _configure_logging(verbose)
     out = emit_resource(tag)
+    typer.echo(f"wrote {out}")
+
+
+@app.command(name="emit-models")
+def emit_models_cmd(
+    resource: str = typer.Argument(..., help="Resource name (e.g., 'foods')."),
+    verbose: bool = typer.Option(False, "--verbose", "-v"),
+) -> None:
+    """Generate Pydantic response models for one resource from the XSD."""
+    _configure_logging(verbose)
+    out = emit_models(resource)
     typer.echo(f"wrote {out}")
 
 
