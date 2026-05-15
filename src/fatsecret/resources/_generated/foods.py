@@ -19,7 +19,7 @@ class FoodsResource(BaseResource):
         max_results: Optional[int] = None,
         region: Optional[str] = None,
     ) -> list:
-        """foods.autocomplete (v1). DEPRECATED upstream. Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. foods.autocomplete (v1). DEPRECATED upstream. Premier-only."""
         params: dict[str, Any] = {"method": "foods.autocomplete"}
         params["expression"] = expression
         self._client._set_optional(
@@ -39,7 +39,7 @@ class FoodsResource(BaseResource):
         max_results: Optional[int] = None,
         region: Optional[str] = None,
     ) -> list:
-        """foods.autocomplete (v2). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. foods.autocomplete (v2). Premier-only."""
         params: dict[str, Any] = {"method": "foods.autocomplete.v2"}
         params["expression"] = expression
         self._client._set_optional(
@@ -59,7 +59,7 @@ class FoodsResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> Any:
-        """food.find_id_for_barcode (v1). Premier-only."""
+        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food.find_id_for_barcode (v1). Premier-only."""
         params: dict[str, Any] = {"method": "food.find_id_for_barcode"}
         params["barcode"] = barcode
         self._client._set_optional(

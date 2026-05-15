@@ -25,6 +25,7 @@ from typing import Any
 import yaml
 
 from .config import REPO_ROOT
+from .model_coverage import RESPONSE_MODEL_MAP as _RESPONSE_MODEL_MAP
 
 log = logging.getLogger(__name__)
 
@@ -87,49 +88,11 @@ _TAG_SLUG_MAP = {
 # Phase 2: response-model wrapping registry
 # ---------------------------------------------------------------------------
 #
-# Maps (tag, unwrap_path_tuple, list_key) -> (model_module, model_class).
-# When an entry exists, the generated method wraps the unwrapped raw
-# payload in ``Model.model_validate(raw)`` (singular) or
-# ``[Model.model_validate(r) for r in raw]`` (list), and the return type
-# annotation becomes the model class instead of ``Any``/``list``.
-#
-# Resources without XSD coverage (food_classification, saved_meals,
-# weight_diary's non-month endpoints, native_apis, feedback) have no
-# entries here and continue to return raw ``dict``/``list[dict]``.
-#
-# ``model_module`` is the name of the file under
-# ``fatsecret.models._generated`` (also re-exported via
-# ``fatsecret.models``).
-_RESPONSE_MODEL_MAP: dict[
-    tuple[str, tuple[str, ...], str | None],
-    tuple[str, str],
-] = {
-    # Foods (singular)
-    ("Foods", ("food",), None): ("foods", "Food"),
-    # Foods (list / search variants)
-    ("Foods", ("foods",), "food"): ("foods", "Food"),
-    ("Foods", ("foods_search", "results"), "food"): ("foods", "Food"),
-    # Profile Foods (same Food model)
-    ("Profile Foods", ("foods",), "food"): ("foods", "Food"),
-    # Recipes
-    ("Recipes", ("recipe",), None): ("recipes", "RecipesRecipe"),
-    ("Recipes", ("recipes",), "recipe"): ("recipes", "RecipesRecipe"),
-    # Profile Auth
-    ("Profile Auth", ("profile",), None): ("profile_auth", "Profile"),
-    # Food Diary
-    ("Food Diary", ("food_entries",), "food_entry"): ("food_diary", "FoodEntry"),
-    ("Food Diary", ("month",), "day"): ("food_diary", "Day"),
-    # Exercise Diary
-    ("Exercise Diary", ("exercise_entries",), "exercise_entry"): (
-        "exercise_diary", "ExerciseEntry",
-    ),
-    ("Exercise Diary", ("exercise_types",), "exercise"): (
-        "exercise_diary", "Exercise",
-    ),
-    ("Exercise Diary", ("month",), "day"): ("exercise_diary", "Day"),
-    # Weight Diary (only get_month is XSD-covered)
-    ("Weight Diary", ("month",), "day"): ("weight_diary", "Day"),
-}
+# The (tag, unwrap_path_tuple, list_key) -> (model_module, model_class)
+# coverage map lives in ``model_coverage.RESPONSE_MODEL_MAP`` so that
+# ``assemble.py`` can stamp the same coverage signal onto the OAS as an
+# ``x-fatsecret-typed-response`` vendor extension. Imported above as
+# ``_RESPONSE_MODEL_MAP`` to keep the existing call sites unchanged.
 
 
 # ---------------------------------------------------------------------------
@@ -314,6 +277,18 @@ def _extract_method(
     unwrap_path, list_key, is_mutator = derive_unwrap(schema)
 
     model = _RESPONSE_MODEL_MAP.get((tag, tuple(unwrap_path), list_key))
+    docstring = _docstring_for(operation)
+    # Surface the typed/dict split in IDE tooltips.  Methods that lack a
+    # Pydantic model return the raw FatSecret response shape; flag them so
+    # users don't have to cross-reference the migration guide.  Mutators
+    # already advertise their ``bool`` return via the type annotation, so
+    # they don't need the note.
+    if model is None and not is_mutator:
+        note = (
+            "No typed model — returns the raw FatSecret response shape. "
+            "See ``docs/migration-v3.rst`` for details."
+        )
+        docstring = f"{note} {docstring}".strip()
     return {
         "method_name": _method_name_for(tag, op_id),
         "operation_id": op_id,
@@ -326,7 +301,7 @@ def _extract_method(
         "unwrap_path": list(unwrap_path),
         "list_key": list_key,
         "is_mutator": is_mutator,
-        "docstring": _docstring_for(operation),
+        "docstring": docstring,
         # (model_module, model_class) when this method's response is
         # XSD-modelled; ``None`` when it falls back to a raw dict.
         "model": model,

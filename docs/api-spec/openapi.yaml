@@ -1004,6 +1004,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#exercise_entries.get:
     get:
       deprecated: true
@@ -1040,6 +1041,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#exercise_entries.get.v2:
     get:
       operationId: exercise_entries_get_v2
@@ -1075,6 +1077,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#exercise_entries.get_month:
     get:
       deprecated: true
@@ -1111,6 +1114,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#exercise_entries.get_month.v2:
     get:
       operationId: exercise_entries_get_month_v2
@@ -1146,6 +1150,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#exercise_entries.save_template:
     post:
       operationId: exercise_entries_save_template_v1
@@ -1190,6 +1195,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#exercise_entry.edit:
     put:
       operationId: exercise_entry_edit_v1
@@ -1264,6 +1270,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#exercises.get:
     get:
       deprecated: true
@@ -1308,6 +1315,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#exercises.get.v2:
     get:
       operationId: exercises_get_v2
@@ -1351,6 +1359,7 @@ paths:
       tags:
       - Exercise Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food.add_favorite:
     post:
       operationId: food_add_favorite_v1
@@ -1401,6 +1410,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food.create:
     post:
       deprecated: true
@@ -1598,6 +1608,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food.create.v2:
     post:
       operationId: food_create_v2
@@ -1800,6 +1811,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food.delete_favorite:
     delete:
       operationId: food_delete_favorite_v1
@@ -1850,6 +1862,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food.find_id_for_barcode:
     get:
       operationId: food_find_id_for_barcode_v1
@@ -1900,6 +1913,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food.find_id_for_barcode.v2:
     get:
       operationId: food_find_id_for_barcode_v2
@@ -1978,6 +1992,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food.get:
     get:
       deprecated: true
@@ -2041,6 +2056,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food.get.v2:
     get:
       deprecated: true
@@ -2104,6 +2120,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food.get.v3:
     get:
       deprecated: true
@@ -2167,6 +2184,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food.get.v4:
     get:
       deprecated: true
@@ -2245,6 +2263,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food.get.v5:
     get:
       operationId: food_get_v5
@@ -2322,6 +2341,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food_brands.get:
     get:
       deprecated: true
@@ -2380,6 +2400,7 @@ paths:
       tags:
       - Food Classification
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_brands.get.v2:
     get:
       operationId: food_brands_get_v2
@@ -2437,6 +2458,7 @@ paths:
       tags:
       - Food Classification
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_categories.get:
     get:
       deprecated: true
@@ -2481,6 +2503,7 @@ paths:
       tags:
       - Food Classification
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_categories.get.v2:
     get:
       operationId: food_categories_get_v2
@@ -2524,6 +2547,7 @@ paths:
       tags:
       - Food Classification
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_entries.copy:
     post:
       operationId: food_entries_copy_v1
@@ -2572,6 +2596,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_entries.copy_saved_meal:
     post:
       operationId: food_entries_copy_saved_meal_v1
@@ -2619,6 +2644,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_entries.get:
     get:
       deprecated: true
@@ -2661,6 +2687,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food_entries.get.v2:
     get:
       operationId: food_entries_get_v2
@@ -2702,6 +2729,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food_entries.get_month:
     get:
       deprecated: true
@@ -2738,6 +2766,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food_entries.get_month.v2:
     get:
       operationId: food_entries_get_month_v2
@@ -2773,6 +2802,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food_entry.create:
     post:
       operationId: food_entry_create_v1
@@ -2842,6 +2872,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#food_entry.delete:
     delete:
       operationId: food_entry_delete_v1
@@ -2877,6 +2908,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_entry.edit:
     put:
       operationId: food_entry_edit_v1
@@ -2940,6 +2972,7 @@ paths:
       tags:
       - Food Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_sub_categories.get:
     get:
       deprecated: true
@@ -2990,6 +3023,7 @@ paths:
       tags:
       - Food Classification
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#food_sub_categories.get.v2:
     get:
       operationId: food_sub_categories_get_v2
@@ -3039,6 +3073,7 @@ paths:
       tags:
       - Food Classification
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#foods.autocomplete:
     get:
       deprecated: true
@@ -3090,6 +3125,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#foods.autocomplete.v2:
     get:
       operationId: foods_autocomplete_v2
@@ -3140,6 +3176,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#foods.get_favorites:
     get:
       deprecated: true
@@ -3170,6 +3207,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.get_favorites.v2:
     get:
       operationId: foods_get_favorites_v2
@@ -3199,6 +3237,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.get_most_eaten:
     get:
       deprecated: true
@@ -3235,6 +3274,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.get_most_eaten.v2:
     get:
       operationId: foods_get_most_eaten_v2
@@ -3270,6 +3310,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.get_recently_eaten:
     get:
       deprecated: true
@@ -3306,6 +3347,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.get_recently_eaten.v2:
     get:
       operationId: foods_get_recently_eaten_v2
@@ -3341,6 +3383,7 @@ paths:
       tags:
       - Profile Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.search:
     get:
       operationId: foods_search_v1
@@ -3413,6 +3456,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.search.v2:
     get:
       deprecated: true
@@ -3489,6 +3533,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.search.v3:
     get:
       deprecated: true
@@ -3580,6 +3625,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.search.v4:
     get:
       deprecated: true
@@ -3671,6 +3717,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#foods.search.v5:
     get:
       operationId: foods_search_v5
@@ -3768,6 +3815,7 @@ paths:
       tags:
       - Foods
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#profile.create:
     post:
       operationId: profile_create_v1
@@ -3804,6 +3852,7 @@ paths:
       tags:
       - Profile Auth
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#profile.get:
     get:
       operationId: profile_get_v1
@@ -3833,6 +3882,7 @@ paths:
       tags:
       - Profile Auth
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#profile.get_auth:
     get:
       operationId: profile_get_auth_v1
@@ -3869,6 +3919,7 @@ paths:
       tags:
       - Profile Auth
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#recipe.add_favorite:
     post:
       operationId: recipe_add_favorite_v1
@@ -3904,6 +3955,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#recipe.delete_favorite:
     delete:
       operationId: recipe_delete_favorite_v1
@@ -3939,6 +3991,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#recipe.get:
     get:
       deprecated: true
@@ -3982,6 +4035,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#recipe.get.v2:
     get:
       operationId: recipe_get_v2
@@ -4024,6 +4078,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#recipe_types.get:
     get:
       deprecated: true
@@ -4054,6 +4109,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#recipe_types.get.v2:
     get:
       operationId: recipe_types_get_v2
@@ -4097,6 +4153,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#recipes.get_favorites:
     get:
       deprecated: true
@@ -4127,6 +4184,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#recipes.get_favorites.v2:
     get:
       operationId: recipes_get_favorites_v2
@@ -4156,6 +4214,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#recipes.search:
     get:
       deprecated: true
@@ -4211,6 +4270,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#recipes.search.v2:
     get:
       deprecated: true
@@ -4340,6 +4400,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#recipes.search.v3:
     get:
       operationId: recipes_search_v3
@@ -4484,6 +4545,7 @@ paths:
       tags:
       - Recipes
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#saved_meal.create:
     post:
       operationId: saved_meal_create_v1
@@ -4531,6 +4593,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meal.delete:
     delete:
       operationId: saved_meal_delete_v1
@@ -4566,6 +4629,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meal.edit:
     put:
       operationId: saved_meal_edit_v1
@@ -4619,6 +4683,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_item.add:
     post:
       operationId: saved_meal_item_add_v1
@@ -4681,6 +4746,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_item.delete:
     delete:
       operationId: saved_meal_item_delete_v1
@@ -4716,6 +4782,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_item.edit:
     put:
       operationId: saved_meal_item_edit_v1
@@ -4766,6 +4833,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_items.get:
     get:
       deprecated: true
@@ -4802,6 +4870,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_items.get.v2:
     get:
       operationId: saved_meal_items_get_v2
@@ -4837,6 +4906,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meals.get:
     get:
       deprecated: true
@@ -4873,6 +4943,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#saved_meals.get.v2:
     get:
       operationId: saved_meals_get_v2
@@ -4908,6 +4979,7 @@ paths:
       tags:
       - Saved Meals
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#weight.update:
     post:
       operationId: weight_update_v1
@@ -4982,6 +5054,7 @@ paths:
       tags:
       - Weight Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   /rest/server.api#weights.get_month:
     get:
       deprecated: true
@@ -5018,6 +5091,7 @@ paths:
       tags:
       - Weight Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   /rest/server.api#weights.get_month.v2:
     get:
       operationId: weights_get_month_v2
@@ -5053,6 +5127,7 @@ paths:
       tags:
       - Weight Diary
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: true
   https://platform.fatsecret.com/rest/feedback/v1:
     post:
       operationId: feedback_v1
@@ -5148,6 +5223,7 @@ paths:
       tags:
       - Feedback
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   https://platform.fatsecret.com/rest/image-recognition/v1:
     post:
       operationId: image_recognition_v1
@@ -5239,6 +5315,7 @@ paths:
       tags:
       - Native APIs
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   https://platform.fatsecret.com/rest/image-recognition/v2:
     post:
       operationId: image_recognition_v2
@@ -5330,6 +5407,7 @@ paths:
       tags:
       - Native APIs
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
   https://platform.fatsecret.com/rest/natural-language-processing/v1:
     post:
       operationId: natural_language_processing_v1
@@ -5422,6 +5500,7 @@ paths:
       tags:
       - Native APIs
       x-fatsecret-premier: true
+      x-fatsecret-typed-response: false
 security:
 - oauth2:
   - basic
