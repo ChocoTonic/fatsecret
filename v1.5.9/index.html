@@ -1,233 +1,100 @@
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FatSecret &mdash; fatsecret 1.5.9 (archived)</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=674ce552"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Migrating from 0.x" href="usage.html" /> 
+<meta charset="utf-8">
+<title>fatsecret v1.5.9 (archived docs)</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         max-width: 760px; margin: 3em auto; padding: 0 1em; line-height: 1.5; color: #222; }
+  header { border-bottom: 1px solid #ddd; padding-bottom: 1em; margin-bottom: 1.5em; }
+  h1 { margin: 0; }
+  .subtitle { color: #666; margin-top: 0.3em; }
+  pre, code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; }
+  pre { padding: 0.7em; overflow-x: auto; }
+  .note { background: #fff8d6; border-left: 3px solid #d4a017; padding: 0.8em 1em; margin: 1.5em 0; }
+  a { color: #0366d6; }
+</style>
 </head>
-
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="#" class="icon icon-home">
-            fatsecret
-          </a>
-              <div class="version">
-                1.5
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+<body>
+<header>
+  <h1>fatsecret v1.5.9</h1>
+  <p class="subtitle">Archived documentation snapshot</p>
+</header>
+<div class="note">
+This is a static archive page for an older release of <code>fatsecret</code>.
+For current documentation see <a href="https://chocotonic.github.io/fatsecret/">chocotonic.github.io/fatsecret</a>.
+This page is a frozen snapshot for a release whose docs could not be
+rebuilt from source, so it links to the most useful authoritative
+references for this specific version.
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Migrating from 0.x</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth2-client-credentials">OAuth2 (client-credentials)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth1-3-legged-examples">OAuth1 (3-legged) examples</a></li>
-</ul>
+
+<h2>Resources for v1.5.9</h2>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+  <li><a href="https://github.com/ChocoTonic/fatsecret/tree/v1.5.9">Source tree on GitHub at v1.5.9</a></li>
+  <li><a href="https://pypi.org/project/fatsecret/1.5.9/">PyPI release page for 1.5.9</a></li>
+  <li><a href="../">Back to legacy docs index</a></li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
+<h2>README at v1.5.9</h2>
+<pre># fatsecret
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">fatsecret</a>
-      </nav>
+![status](https://badge.fury.io/py/fatsecret.svg)
+[![Docs](https://img.shields.io/badge/docs-gh--pages-blue)](https://chocotonic.github.io/fatsecret/)
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">FatSecret</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="fatsecret">
-<h1>FatSecret<a class="headerlink" href="#fatsecret" title="Link to this heading"></a></h1>
-<p>This library provides a lightweight python wrapper for the Fatsecret API with the goal of making it easier to visualize
-the data retrieved from the API. To that end, this library will usually return lists of identical elements for ease of
-plotting, discarding extra header fields that the Fatsecret API otherwise includes. All API calls return either a
-single or list of JSON dictionaries.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><strong>v1.0 is a breaking release.</strong> Every method now has an explicit version
-suffix (e.g. <code class="docutils literal notranslate"><span class="pre">foods_search_v5</span></code>). The unsuffixed names from 0.x remain
-as deprecation aliases until v2.0. Run with
-<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-W</span> <span class="pre">default::DeprecationWarning:fatsecret</span></code> to surface them.</p>
-</div>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
-<p>Install the module via pip:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install fatsecret
-</pre></div>
-</div>
-<p>or easy_install:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ easy_install fatsecret
-</pre></div>
-</div>
-</section>
-<section id="config">
-<h2>Config<a class="headerlink" href="#config" title="Link to this heading"></a></h2>
-<p>Register for a developer account at <a class="reference external" href="http://platform.fatsecret.com/api/">Fatsecret</a>. You will need your Consumer Key and Consumer Secret key for
-your application.</p>
-</section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<p>Fatsecret supports both delegated and public calls. Only through delegated calls can you access Fatsecret user
-profile data.</p>
-<p>If you’re only interested in the public data you only require a session to make HTTP requests:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fatsecret</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fatsecret</span>
+This library provides a lightweight python wrapper for the Fatsecret API with the goal of making it easier to visualize the data retrieved from the API. To that end, this library will usually return lists of identical elements for ease of plotting, discarding extra header fields that the Fatsecret API otherwise includes. All API calls return either a single or list of JSON dictionaries.
 
-<span class="n">fs</span> <span class="o">=</span> <span class="n">Fatsecret</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Once you have created a session then you can start reading from Fatsecret’s public food and recipe database</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">foods</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">foods_search_v5</span><span class="p">(</span><span class="s2">&quot;Tacos&quot;</span><span class="p">)</span>        <span class="c1"># latest upstream version</span>
-</pre></div>
-</div>
-</section>
-<section id="oauth-examples">
-<h2>OAuth Examples<a class="headerlink" href="#oauth-examples" title="Link to this heading"></a></h2>
-<p>You will need to authenticate to a Fatsecret user profile via OAuth 1.0 in order to access profile specific
-data such as the meal diary, favorite meals, etc.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Migrating from 0.x</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth2-client-credentials">OAuth2 (client-credentials)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#oauth1-3-legged-examples">OAuth1 (3-legged) examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#web-application">Web Application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#cli-application">CLI Application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#use-new-profiles-for-your-app">Use New Profiles for Your App</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="api-reference">
-<h2>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
-</ul>
-</div>
-</section>
-</section>
+## Installation
 
+```sh
+pip install fatsecret
+```
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="usage.html" class="btn btn-neutral float-right" title="Migrating from 0.x" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+Requires Python 3.11+.
 
-  <hr/>
+## Config
 
-  <div role="contentinfo">
-    <p>&#169; Copyright 2026.</p>
-  </div>
+Register for a developer account at [Fatsecret](https://platform.fatsecret.com/api/). You will need your Consumer Key and Consumer Secret key for your application.
 
-   
+## Usage
 
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+Fatsecret supports both delegated and public calls. Only through delegated calls can you access Fatsecret user profile data.
 
-<!-- fatsecret-version-selector -->
-<script>
-(function() {
-  var versions = ["latest", "stable", "v1.5.11", "v1.5.10", "v1.5.9", "v1.5.8", "v1.5.7", "v1.5.6", "v1.5.5", "v1.5.4", "v1.5.3", "v1.5.2", "v1.5.1", "v1.5.0", "v1.4.1", "v1.4.0", "v1.3.0", "v1.2.2", "v1.2.1", "v1.2.0", "v1.1.0", "v1.0.2", "v1.0.1", "v1.0.0", "v0.15.0", "v0.14.0", "v0.13.0", "v0.12.0", "v0.11.0", "v0.10.0", "v0.9.0", "v0.8.0", "v0.7.0", "v0.6.0", "v0.5.1", "v0.5.0", "v0.4.0", "v0.3.0", "v0.2.3"];
-  var m = window.location.pathname.match(/\/(latest|stable|v\d+\.\d+\.\d+)(\/|$)/);
-  if (!m) return;
-  var current = m[1];
-  var base = window.location.pathname.substring(0, m.index + 1);
+If you only need public data:
 
-  function buildSelect() {
-    var sel = document.createElement('select');
-    versions.forEach(function(v) {
-      var o = document.createElement('option');
-      o.value = v; o.text = v;
-      if (v === current) o.selected = true;
-      sel.appendChild(o);
-    });
-    sel.onchange = function() { window.location.href = base + sel.value + '/'; };
-    return sel;
-  }
+```py
+from fatsecret import Fatsecret
 
-  // Preferred placement: a separate element appended to the RTD theme's
-  // sidebar header (`.wy-side-nav-search`), below the project name and
-  // version label. Doesn't modify the static version text in place.
-  var rtdSidebar = document.querySelector('.wy-side-nav-search');
-  if (rtdSidebar) {
-    var wrap = document.createElement('div');
-    wrap.style.cssText = 'padding:8px 12px;margin-top:4px;text-align:left;background:rgba(0,0,0,0.12);font:12px -apple-system,BlinkMacSystemFont,sans-serif';
-    var label = document.createElement('span');
-    label.textContent = 'Version: ';
-    label.style.cssText = 'color:#fff;margin-right:6px';
-    var sel = buildSelect();
-    sel.style.cssText = 'background:#fff;color:#222;border:none;border-radius:3px;padding:2px 6px;font:inherit;cursor:pointer';
-    wrap.appendChild(label);
-    wrap.appendChild(sel);
-    rtdSidebar.appendChild(wrap);
-    return;
-  }
+fs = Fatsecret(consumer_key, consumer_secret)
+foods = fs.foods_search_v5(&quot;Tacos&quot;)          # current upstream version
+# or, to pin to a specific historical shape:
+foods = fs.foods_search_v1(&quot;Tacos&quot;)
+```
 
-  // Fallback: fixed-position dropdown top-right. Covers stub pages and
-  // any future theme without a sidebar we recognise.
-  var wrap = document.createElement('div');
-  wrap.style.cssText = 'position:fixed;top:0.75rem;right:0.75rem;z-index:9999;background:#fff;color:#222;border:1px solid #ccc;border-radius:6px;padding:6px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.12);font:13px -apple-system,BlinkMacSystemFont,sans-serif';
-  var label = document.createElement('span');
-  label.textContent = 'Version: ';
-  label.style.cssText = 'color:#666;margin-right:4px';
-  var sel = buildSelect();
-  sel.style.cssText = 'font:inherit;background:#fff;color:#222;border:1px solid #ccc;border-radius:3px;padding:2px 4px';
-  wrap.appendChild(label);
-  wrap.appendChild(sel);
-  document.body.appendChild(wrap);
-})();
-</script>
+Every method carries an explicit `_vN` version suffix matching FatSecret&#x27;s
+multi-version API. Unsuffixed names (`foods_search`, `food_get`, …) still
+exist as `DeprecationWarning`-emitting aliases and will be removed in
+v2.0. Surface the warnings during development:
+
+```sh
+python -W default::DeprecationWarning:fatsecret your_script.py
+```
+
+For OAuth2 client-credentials (required for Premier / Native endpoints):
+
+```py
+fs = Fatsecret(client_id, client_secret, auth=&quot;oauth2&quot;, scopes=[&quot;basic&quot;, &quot;premier&quot;])
+```
+
+Refer to the [documentation](https://chocotonic.github.io/fatsecret/) for further examples and detail.
+
+## Documentation
+
+Docs are published to GitHub Pages at [chocotonic.github.io/fatsecret](https://chocotonic.github.io/fatsecret/). Every released tag gets its own permanent URL at `https://chocotonic.github.io/fatsecret/vX.Y.Z/` (e.g. [`v1.5.6`](https://chocotonic.github.io/fatsecret/v1.5.6/), [`v1.4.1`](https://chocotonic.github.io/fatsecret/v1.4.1/), [`v0.5.0`](https://chocotonic.github.io/fatsecret/v0.5.0/)), so version-pinned URLs never 404. See [the all-versions index](https://chocotonic.github.io/fatsecret/) for the full list.
+
+## Contributing
+
+All contributions are welcome! I&#x27;m not actively maintaining this library, so there&#x27;s a good chance that any API changes have not been implemented in this wrapper.
+</pre>
+
 </body>
 </html>
