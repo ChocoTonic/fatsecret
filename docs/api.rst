@@ -12,12 +12,89 @@ warnings during development, run Python with::
 
 The endpoint methods below are exposed via resource sub-objects on a
 :class:`fatsecret.Fatsecret` instance -- e.g. ``fs.foods.search_v5(...)`` --
-and are grouped under top-level guide categories matching FatSecret's
-official documentation layout (`platform.fatsecret.com/docs/guides/
-<https://platform.fatsecret.com/docs/guides/>`_). Each guide contains one
-subsection per OpenAPI tag (sourced from
-``docs/api-spec/openapi.generated.yaml``). Client-only helpers (auth
-handshake, session lifecycle, time conversion) are listed at the bottom
-under **Client utilities**.
+with one section per Python resource class (the actual import path you
+use). Client-only helpers (auth handshake, session lifecycle, time
+conversion) are listed at the bottom under **Client utilities**.
 
-.. fatsecret-api-groups::
+FoodsResource
+-------------
+
+.. autoclass:: fatsecret.resources.foods.FoodsResource
+   :members:
+
+ClassificationResource
+----------------------
+
+.. autoclass:: fatsecret.resources.classification.ClassificationResource
+   :members:
+
+RecipesResource
+---------------
+
+.. autoclass:: fatsecret.resources.recipes.RecipesResource
+   :members:
+
+ProfileFoodsResource
+--------------------
+
+.. autoclass:: fatsecret.resources.profile_foods.ProfileFoodsResource
+   :members:
+
+DiaryResource
+-------------
+
+.. autoclass:: fatsecret.resources.diary.DiaryResource
+   :members:
+
+ExercisesResource
+-----------------
+
+.. autoclass:: fatsecret.resources.exercises.ExercisesResource
+   :members:
+
+WeightResource
+--------------
+
+.. autoclass:: fatsecret.resources.weight.WeightResource
+   :members:
+
+ProfileResource
+---------------
+
+.. autoclass:: fatsecret.resources.profile.ProfileResource
+   :members:
+
+MealsResource
+-------------
+
+.. autoclass:: fatsecret.resources.meals.MealsResource
+   :members:
+
+NativeResource
+--------------
+
+.. autoclass:: fatsecret.resources.native.NativeResource
+   :members:
+
+FeedbackResource
+----------------
+
+.. autoclass:: fatsecret.resources.feedback.FeedbackResource
+   :members:
+
+Client utilities
+----------------
+
+.. automethod:: fatsecret.Fatsecret.authenticate
+
+.. automethod:: fatsecret.Fatsecret.close
+
+.. automethod:: fatsecret.Fatsecret.fatsecret_authenticate
+
+.. automethod:: fatsecret.Fatsecret.get_authorize_url
+
+.. automethod:: fatsecret.Fatsecret.unix_time
+
+.. automethod:: fatsecret.Fatsecret.valid_response
+
+.. Models section added by separate PR (docs/autodoc-pydantic-and-hide-generated).
