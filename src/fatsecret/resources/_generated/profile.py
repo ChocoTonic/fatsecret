@@ -76,4 +76,6 @@ class ProfileResource(BaseResource):
         return Profile.model_validate(raw)
 
 
+ProfileResource.__module__ = "fatsecret.resources.profile"
+
 __all__ = ["ProfileResource"]

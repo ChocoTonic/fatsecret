@@ -61,4 +61,6 @@ class FeedbackResource(BaseResource):
         return payload
 
 
+FeedbackResource.__module__ = "fatsecret.resources.feedback"
+
 __all__ = ["FeedbackResource"]

@@ -568,7 +568,12 @@ def _render_module(tag: str, methods: list[dict[str, Any]]) -> str:
     for m in methods:
         buf.write("\n")
         buf.write(_render_method(m))
-    buf.write(f'\n\n__all__ = ["{class_name}"]\n')
+    # Re-home the class onto the public re-export module so Sphinx autodoc
+    # renders ``fatsecret.resources.<slug>.<Class>`` instead of leaking the
+    # internal ``_generated`` directory into user-facing IDs / cross-refs.
+    public_module = f"fatsecret.resources.{_tag_slug(tag)}"
+    buf.write(f'\n\n{class_name}.__module__ = "{public_module}"\n')
+    buf.write(f'\n__all__ = ["{class_name}"]\n')
     return buf.getvalue()
 
 

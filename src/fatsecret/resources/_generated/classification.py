@@ -186,4 +186,6 @@ class ClassificationResource(BaseResource):
         return raw
 
 
+ClassificationResource.__module__ = "fatsecret.resources.classification"
+
 __all__ = ["ClassificationResource"]

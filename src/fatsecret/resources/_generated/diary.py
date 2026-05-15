@@ -253,4 +253,6 @@ class DiaryResource(BaseResource):
         return self._client._mutator_success(payload)
 
 
+DiaryResource.__module__ = "fatsecret.resources.diary"
+
 __all__ = ["DiaryResource"]

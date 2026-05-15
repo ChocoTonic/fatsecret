@@ -347,4 +347,6 @@ class RecipesResource(BaseResource):
         return raw
 
 
+RecipesResource.__module__ = "fatsecret.resources.recipes"
+
 __all__ = ["RecipesResource"]

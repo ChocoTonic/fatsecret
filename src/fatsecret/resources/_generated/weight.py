@@ -99,4 +99,6 @@ class WeightResource(BaseResource):
         return self._client._mutator_success(payload)
 
 
+WeightResource.__module__ = "fatsecret.resources.weight"
+
 __all__ = ["WeightResource"]
