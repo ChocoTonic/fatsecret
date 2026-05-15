@@ -5,7 +5,8 @@ endpoints:
   exists: true
   http_verb: POST
   method: saved_meal.create
-  notes: ''
+  notes: Records a saved meal for the user according to the parameters specified. The result of the call
+    is the new unique identifier of the newly created saved meal.
   oauth:
   - oauth1
   - oauth2
@@ -38,7 +39,7 @@ endpoints:
   exists: true
   http_verb: DELETE
   method: saved_meal.delete
-  notes: ''
+  notes: Deletes the specified saved meal for the user.
   oauth:
   - oauth1
   - oauth2
@@ -61,7 +62,7 @@ endpoints:
   exists: true
   http_verb: PUT
   method: saved_meal.edit
-  notes: ''
+  notes: Records a change to a user's saved meal.
   oauth:
   - oauth1
   - oauth2
@@ -99,7 +100,8 @@ endpoints:
   exists: true
   http_verb: POST
   method: saved_meal_item.add
-  notes: ''
+  notes: Adds a food to a user's saved meal according to the parameters specified. The result of the call
+    is the new unique identifier of the newly created saved meal item.
   oauth:
   - oauth1
   - oauth2
@@ -145,7 +147,7 @@ endpoints:
   exists: true
   http_verb: DELETE
   method: saved_meal_item.delete
-  notes: ''
+  notes: Deletes the specified saved meal item for the user.
   oauth:
   - oauth1
   - oauth2
@@ -168,7 +170,10 @@ endpoints:
   exists: true
   http_verb: PUT
   method: saved_meal_item.edit
-  notes: ''
+  notes: Records a change to a user's saved meal item. Note that the serving_id of the saved meal item
+    may not be adjusted, however one or more of the other remaining properties – saved_meal_item_name
+    or number_of_units may be altered. In order to adjust a serving_id for which a saved_meal_item was
+    recorded the original item must be deleted and a new item recorded.
   oauth:
   - oauth1
   - oauth2
@@ -204,7 +209,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: saved_meal_items.get
-  notes: ''
+  notes: Returns saved meal items for a specified saved meal.
   oauth:
   - oauth1
   - oauth2
@@ -229,7 +234,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: saved_meal_items.get
-  notes: ''
+  notes: Returns saved meal items for a specified saved meal.
   oauth:
   - oauth1
   - oauth2
@@ -254,7 +259,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: saved_meals.get
-  notes: ''
+  notes: Returns saved meals for the specified user.
   oauth:
   - oauth1
   - oauth2
@@ -279,7 +284,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: saved_meals.get
-  notes: ''
+  notes: Returns saved meals for the specified user.
   oauth:
   - oauth1
   - oauth2

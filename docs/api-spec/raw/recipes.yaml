@@ -5,7 +5,7 @@ endpoints:
   exists: true
   http_verb: POST
   method: recipe.add_favorite
-  notes: ''
+  notes: Add a recipe to a user's favorite.
   oauth:
   - oauth1
   - oauth2
@@ -28,7 +28,7 @@ endpoints:
   exists: true
   http_verb: DELETE
   method: recipe.delete_favorite
-  notes: ''
+  notes: Deletes the specified recipe from the user's favorite.
   oauth:
   - oauth1
   - oauth2
@@ -51,7 +51,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipe.get
-  notes: ''
+  notes: Returns detailed information for the specified recipe for the standard serving.
   oauth:
   - oauth1
   - oauth2
@@ -81,7 +81,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipe.get
-  notes: ''
+  notes: Returns detailed information for the specified recipe for the standard serving.
   oauth:
   - oauth1
   - oauth2
@@ -111,7 +111,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipe_types.get
-  notes: ''
+  notes: This is a utility method, returning the full list of all supported recipe type names.
   oauth:
   - oauth1
   - oauth2
@@ -132,7 +132,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipe_types.get
-  notes: ''
+  notes: This is a utility method, returning the full list of all supported recipe type names.
   oauth:
   - oauth1
   - oauth2
@@ -165,7 +165,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipes.get_favorites
-  notes: ''
+  notes: Returns the favorite recipes for the specified user.
   oauth:
   - oauth1
   - oauth2
@@ -186,7 +186,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipes.get_favorites
-  notes: ''
+  notes: Returns the favorite recipes for the specified user.
   oauth:
   - oauth1
   - oauth2
@@ -207,7 +207,11 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipes.search
-  notes: ''
+  notes: Conducts a search of the recipe database using the search expression specified. The results are
+    paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by
+    specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+    of 4 will return results numbered 41-50. An interactive demonstration of our Recipe Search API can
+    be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -248,7 +252,11 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipes.search
-  notes: ''
+  notes: Conducts a search of the recipe database using the search expression specified. The results are
+    paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by
+    specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+    of 4 will return results numbered 41-50. An interactive demonstration of our Recipe Search API can
+    be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -352,7 +360,11 @@ endpoints:
   exists: true
   http_verb: GET
   method: recipes.search
-  notes: ''
+  notes: Conducts a search of the recipe database using the search expression specified. The results are
+    paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by
+    specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+    of 4 will return results numbered 41-50. An interactive demonstration of our Recipe Search API can
+    be accessed here
   oauth:
   - oauth1
   - oauth2

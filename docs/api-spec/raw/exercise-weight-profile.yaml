@@ -5,7 +5,14 @@ endpoints:
   exists: true
   http_verb: POST
   method: exercise_entries.commit_day
-  notes: ''
+  notes: Saves the default exercise entries for the user on a nominated date. The API will always return
+    24 hours worth of exercise entries for a given user on a given date. Users can set up and save standard
+    routines for the activities they do on any given day of the week, known as "template" exercise entries.
+    When the exercise entries are retrieved for a day that has not previously been committed or adjusted
+    by the user a set of 24 hours worth of "template" or default entries will be returned. The exercise_entries.commit_day
+    method takes the current "template" exercise entries and saves them to the exercise diary. Calling
+    this method is in effect an acknowledgement on behalf of a user that they undertook the activities
+    presented in the template.
   oauth:
   - oauth1
   - oauth2
@@ -28,7 +35,13 @@ endpoints:
   exists: true
   http_verb: GET
   method: exercise_entries.get
-  notes: ''
+  notes: Returns the daily exercise entries for the user on a nominated date. The API will always return
+    24 hours worth of exercise entries for a given user on a given date. These entries will either be
+    "template" entries (which a user may override for any given day of the week) or saved exercise entry
+    values. Once a user saves or updates the entries on any given day, all entries for that day are saved.
+    All adjustments to the day involve reducing the time for an existing activity in order to either add
+    or increase the time taken for another activity. The default entries presented for a user for a given
+    day of the week can be overridden using exercise_entries.save_template.
   oauth:
   - oauth1
   - oauth2
@@ -53,7 +66,13 @@ endpoints:
   exists: true
   http_verb: GET
   method: exercise_entries.get
-  notes: ''
+  notes: Returns the daily exercise entries for the user on a nominated date. The API will always return
+    24 hours worth of exercise entries for a given user on a given date. These entries will either be
+    "template" entries (which a user may override for any given day of the week) or saved exercise entry
+    values. Once a user saves or updates the entries on any given day, all entries for that day are saved.
+    All adjustments to the day involve reducing the time for an existing activity in order to either add
+    or increase the time taken for another activity. The default entries presented for a user for a given
+    day of the week can be overridden using exercise_entries.save_template.
   oauth:
   - oauth1
   - oauth2
@@ -78,7 +97,10 @@ endpoints:
   exists: true
   http_verb: GET
   method: exercise_entries.get_month
-  notes: ''
+  notes: Returns the summary estimated daily calories expended for a user's exercise diary entries for
+    the month specified. Use this call to display total energy expenditure information to users about
+    their exercise and activities for a nominated month. Days with no saved exercise diary entries are
+    not included.
   oauth:
   - oauth1
   - oauth2
@@ -103,7 +125,10 @@ endpoints:
   exists: true
   http_verb: GET
   method: exercise_entries.get_month
-  notes: ''
+  notes: Returns the summary estimated daily calories expended for a user's exercise diary entries for
+    the month specified. Use this call to display total energy expenditure information to users about
+    their exercise and activities for a nominated month. Days with no saved exercise diary entries are
+    not included.
   oauth:
   - oauth1
   - oauth2
@@ -128,7 +153,13 @@ endpoints:
   exists: true
   http_verb: POST
   method: exercise_entries.save_template
-  notes: ''
+  notes: 'Takes the set of exercise entries on a nominated date and saves these entries as "template"
+    entries for nominated days of the week. By default, the template daily exercise entries for all users
+    for all days of the week are: his method is used to take the saved entries on for a nominated date
+    and to copy them for one or more days of the week as the template daily exercise entries. So, for
+    instance, if a user records 1 hour of walking, 8 hours of sleeping and 15 hours of resting for a particular
+    day in their exercise diary, and then saves that date as a template for Saturday and Sunday, these
+    three activities will be presented as the default exercise entries for all future Saturdays and Sundays.'
   oauth:
   - oauth1
   - oauth2
@@ -159,7 +190,14 @@ endpoints:
   exists: true
   http_verb: PUT
   method: exercise_entry.edit
-  notes: ''
+  notes: Records a change to a user's exercise diary entry for a nominated date. All changes to an exercise
+    diary involve either increasing the duration of an existing activity or introducing a new activity
+    for a nominated duration. Because there are always 24 hours worth of exercise entries on any given
+    date, the user must nominate the exercise or activity from which the time was taken to balance out
+    the total duration of activities and exercises for the 24 hour period. As such, each change to the
+    exercise entries on a given day is a "shifting" operation where time is moved from one activity to
+    another. An exercise is removed from the day when all of the time allocated to it is shifted to other
+    exercises.
   oauth:
   - oauth1
   - oauth2
@@ -215,7 +253,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: exercises.get
-  notes: ''
+  notes: This is a utility method, returning the full list of all supported exercise type names and their
+    associated unique identifiers.
   oauth:
   - oauth1
   - oauth2
@@ -248,7 +287,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: exercises.get
-  notes: ''
+  notes: This is a utility method, returning the full list of all supported exercise type names and their
+    associated unique identifiers.
   oauth:
   - oauth1
   - oauth2
@@ -281,7 +321,17 @@ endpoints:
   exists: true
   http_verb: POST
   method: profile.create
-  notes: ''
+  notes: Creates a new profile and returns the oauth_token and oauth_secret for the new profile. The token
+    and secret returned by this method are persisted indefinitely and may be used in order to provide
+    profile-specific information storage for users including food and exercise diaries and weight tracking.
+    The response is a newly allocated oauth_token and associated oauth_secret which should be stored and
+    re-used to provide ongoing API services on behalf of a user. The results from this call should be
+    saved and subsequently used to provide ongoing storage to users of your site or service. You are obliged
+    to ensure that the values are held securely and to not disclose any oauth_secret values. You should
+    maintain the relationship between your users and the token and secret values you allocate for them.
+    In addition to creating profiles for your own users, you can also use the full 3-legged OAuth provided
+    by fatsecret.com to attain an access token for a profile that is linked to a user account on fatsecret.com.
+    For more information click here.
   oauth:
   - oauth1
   - oauth2
@@ -305,7 +355,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: profile.get
-  notes: ''
+  notes: Returns general status information for a nominated user.
   oauth:
   - oauth1
   - oauth2
@@ -324,7 +374,9 @@ endpoints:
   exists: true
   http_verb: GET
   method: profile.get_auth
-  notes: ''
+  notes: Returns the authentication information for a nominated user. You can also use the full 3-legged
+    OAuth provided by fatsecret.com to attain an access token for a profile that is linked to a user account
+    on fatsecret.com. For more information click here.
   oauth:
   - oauth1
   - oauth2
@@ -348,7 +400,10 @@ endpoints:
   exists: true
   http_verb: POST
   method: weight.update
-  notes: ''
+  notes: Records a user's weight for a nominated date. First time weigh-ins require the goal_weight_kg
+    and current_height_cm parameters. Please note as per the API Terms of Use that it is your responsibility
+    to ensure that the information generated by using the API is not be interpreted as a substitute for
+    medical physician consultation, evaluation, or treatment.
   oauth:
   - oauth1
   - oauth2
@@ -404,7 +459,10 @@ endpoints:
   exists: true
   http_verb: GET
   method: weights.get_month
-  notes: ''
+  notes: Returns the recorded weights for a user for the month specified. Use this call to display a user's
+    weight chart or log of weight changes for a nominated month. The day elements returned are those where
+    the user entered or updated their weight for the specified month. Days with no recorded weight are
+    not included.
   oauth:
   - oauth1
   - oauth2
@@ -429,7 +487,10 @@ endpoints:
   exists: true
   http_verb: GET
   method: weights.get_month
-  notes: ''
+  notes: Returns the recorded weights for a user for the month specified. Use this call to display a user's
+    weight chart or log of weight changes for a nominated month. The day elements returned are those where
+    the user entered or updated their weight for the specified month. Days with no recorded weight are
+    not included.
   oauth:
   - oauth1
   - oauth2

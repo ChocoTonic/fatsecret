@@ -24,7 +24,23 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. image.recognition (v1). Premier-only."""
+        """This API detects foods within an image and returns a list of foods from the fatsecret database By passing a list of eaten foods, we will also attempt to determine if any of the inputs match in order to improve the accuracy of the response. NOTE: If an appropriate serving is not found, nutritional information may not be present. This typically occurs when a non-standard serving description is provided for a restaurant-based food. In such scenarios, we recommend using the default serving size returned via the API, indicated by the serving object with "is_default": true. Additionally, for mobile app interfaces, we recommend not automatically logging all foods and associated serving amounts directly into the user's food diary. Instead, we recommend displaying an intermittent screen that allows the user to: This approach improves user experience and ensures more accurate food diary entries. NOTE: The entire request body is limited to 1MB characters (1.048M) and as such we recommend to check the request size before hitting the API.
+
+        :param image_b64: A Base64 image of one or more foods. This field is limited to 999,982 characters
+        :param eaten_foods_food_id: The ID of the food that has been previously consumed
+        :param eaten_foods_food_name: The name of the food that has been previously consumed
+        :param include_food_data: Include full food data in the response (see our food.get API)
+        :param eaten_foods: An array of previously consumed foods. This may be provided to assist with more accurate matching of foods identified in the input with previously consumed foods
+        :param eaten_foods_food_brand: The brand name of the food that has been previously consumed
+        :param eaten_foods_serving_description: The serving description of the food that has been previously consumed
+        :param eaten_foods_serving_size: The serving size of the food that has been previously consumed
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            image.recognition (v1). Premier-only.
+        """
         body: dict[str, Any] = {}
         body["image_b64"] = image_b64
         body["eaten_foods.food_id"] = eaten_foods_food_id
@@ -58,7 +74,23 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. image.recognition (v2). Premier-only."""
+        """This API identifies food items and their corresponding portion sizes or weights within an image. It returns a list of matched foods from the local, verified fatsecret country database, along with detailed nutritional information for each detected portion. By passing a list of eaten foods, we will also attempt to determine if any of the inputs match in order to improve the accuracy of the response. NOTE: If an appropriate serving is not found, nutritional information may not be present. This typically occurs when a non-standard serving description is provided for a restaurant-based food. In such scenarios, we recommend using the default serving size returned via the API, indicated by the serving object with "is_default": true. Additionally, for mobile app interfaces, we recommend not automatically logging all foods and associated serving amounts directly into the user's food diary. Instead, we recommend displaying an intermittent screen that allows the user to: This approach improves user experience and ensures more accurate food diary entries. We support jpg, png and webp formats, with a size of up to 1.09MB. We recommend resizing images to a resolution of either 256x256 or 512x512 pixels.
+
+        :param image_b64: A Base64 image of one or more foods. This field is limited to 999,982 characters
+        :param eaten_foods_food_id: The ID of the food that has been previously consumed
+        :param eaten_foods_food_name: The name of the food that has been previously consumed
+        :param include_food_data: Include full food data in the response (see our food.get API)
+        :param eaten_foods: An array of previously consumed foods. This may be provided to assist with more accurate matching of foods identified in the input with previously consumed foods
+        :param eaten_foods_food_brand: The brand name of the food that has been previously consumed
+        :param eaten_foods_serving_description: The serving description of the food that has been previously consumed
+        :param eaten_foods_serving_size: The serving size of the food that has been previously consumed
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            image.recognition (v2). Premier-only.
+        """
         body: dict[str, Any] = {}
         body["image_b64"] = image_b64
         body["eaten_foods.food_id"] = eaten_foods_food_id
@@ -92,7 +124,23 @@ class NativeResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. natural.language.processing (v1). Premier-only."""
+        """This API breaks down natural language and returns a list of foods from the fatsecret database By passing a list of eaten foods, we will also attempt to determine if any of the inputs match in order to improve the accuracy of the response. Example: For breakfast I ate a slice of toast with butter NOTE: If an appropriate serving is not found, nutritional information may not be present. This will typically occur for a non-standard serving description provided for a restaurant based food. NOTE: The request body may not exceed 1MB in size. This is inclusive of all body parameters.
+
+        :param user_input: A description of what a user has eaten. May contain multiple items. e.g. "A toast with ham and cheese, an apple, a banana and a cappuccino". This field is limited to 1000 characters
+        :param eaten_foods_food_id: The ID of the food that has been previously consumed
+        :param eaten_foods_food_name: The name of the food that has been previously consumed
+        :param include_food_data: Include full food data in the response (see our food.get API)
+        :param eaten_foods: An array of previously consumed foods. This may be provided to assist with more accurate matching of foods identified in the input with previously consumed foods
+        :param eaten_foods_food_brand: The brand name of the food that has been previously consumed
+        :param eaten_foods_serving_description: The serving description of the food that has been previously consumed
+        :param eaten_foods_serving_size: The serving size of the food that has been previously consumed
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            natural.language.processing (v1). Premier-only.
+        """
         body: dict[str, Any] = {}
         body["user_input"] = user_input
         body["eaten_foods.food_id"] = eaten_foods_food_id

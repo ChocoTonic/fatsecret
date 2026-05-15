@@ -5,7 +5,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: food.get
-  notes: ''
+  notes: Returns detailed nutritional information for the specified food for each available standard serving
+    size. Use this call to display nutrition values for a food to users.
   oauth:
   - oauth1
   - oauth2
@@ -52,7 +53,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: food.get
-  notes: ''
+  notes: Returns detailed nutritional information for the specified food for each available standard serving
+    size. Use this call to display nutrition values for a food to users.
   oauth:
   - oauth1
   - oauth2
@@ -99,7 +101,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: food.get
-  notes: ''
+  notes: Returns detailed nutritional information for the specified food for each available standard serving
+    size. Use this call to display nutrition values for a food to users.
   oauth:
   - oauth1
   - oauth2
@@ -146,7 +149,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: food.get
-  notes: ''
+  notes: Returns detailed nutritional information for the specified food for each available standard serving
+    size. Use this call to display nutrition values for a food to users.
   oauth:
   - oauth1
   - oauth2
@@ -205,7 +209,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: food.get
-  notes: ''
+  notes: Returns detailed nutritional information for the specified food for each available standard serving
+    size. Use this call to display nutrition values for a food to users.
   oauth:
   - oauth1
   - oauth2
@@ -264,7 +269,11 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.search
-  notes: ''
+  notes: Conducts a search of the food database using the search expression specified. The results are
+    paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by
+    specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+    of 4 will return results numbered 41-50. Search results will be refined according to the user's prior
+    saved food entries. An interactive demonstration of our Food Search API can be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -323,7 +332,12 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.search
-  notes: ''
+  notes: Conducts a search of the food database using the search expression specified. The results are
+    paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by
+    specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+    of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified
+    food. Use this call to display nutrition values for a food to users. An interactive demonstration
+    of our Food Search API can be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -384,7 +398,12 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.search
-  notes: ''
+  notes: Conducts a search of the food database using the search expression specified. The results are
+    paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by
+    specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+    of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified
+    food. Use this call to display nutrition values for a food to users. An interactive demonstration
+    of our Food Search API can be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -457,7 +476,12 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.search
-  notes: ''
+  notes: Conducts a search of the food database using the search expression specified. The results are
+    paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by
+    specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+    of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified
+    food. Use this call to display nutrition values for a food to users. An interactive demonstration
+    of our Food Search API can be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -530,7 +554,12 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.search
-  notes: ''
+  notes: Conducts a search of the food database using the search expression specified. The results are
+    paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by
+    specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number
+    of 4 will return results numbered 41-50. Returns detailed nutritional information for the specified
+    food. Use this call to display nutrition values for a food to users. An interactive demonstration
+    of our Food Search API can be accessed here
   oauth:
   - oauth1
   - oauth2

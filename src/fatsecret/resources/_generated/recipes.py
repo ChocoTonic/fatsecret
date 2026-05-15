@@ -17,7 +17,13 @@ class RecipesResource(BaseResource):
         self,
         recipe_id: int,
     ) -> bool:
-        """recipe.add_favorite (v1). Premier-only."""
+        """Add a recipe to a user's favorite.
+
+        :param recipe_id: Unique recipe identifier
+
+        Notes:
+            recipe.add_favorite (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipe.add_favorite"}
         params["recipe_id"] = recipe_id
         payload = self._client._call(params, method="POST")
@@ -27,7 +33,13 @@ class RecipesResource(BaseResource):
         self,
         recipe_id: int,
     ) -> bool:
-        """recipe.delete_favorite (v1). Premier-only."""
+        """Deletes the specified recipe from the user's favorite.
+
+        :param recipe_id: Unique recipe identifier
+
+        Notes:
+            recipe.delete_favorite (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipe.delete_favorite"}
         params["recipe_id"] = recipe_id
         payload = self._client._call(params, method="DELETE")
@@ -36,7 +48,13 @@ class RecipesResource(BaseResource):
     def get_favorites_v1(
         self,
     ) -> list[RecipesRecipe]:
-        """recipes.get_favorites (v1). DEPRECATED upstream. Premier-only."""
+        """Returns the favorite recipes for the specified user.
+
+        :return: List of :class:`RecipesRecipe` instances.
+
+        Notes:
+            recipes.get_favorites (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipes.get_favorites"}
         payload = self._client._call(params)
         raw = self._client._unwrap(payload, "recipes", list_key="recipe")
@@ -45,7 +63,13 @@ class RecipesResource(BaseResource):
     def get_favorites_v2(
         self,
     ) -> list[RecipesRecipe]:
-        """recipes.get_favorites (v2). Premier-only."""
+        """Returns the favorite recipes for the specified user.
+
+        :return: List of :class:`RecipesRecipe` instances.
+
+        Notes:
+            recipes.get_favorites (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipes.get_favorites.v2"}
         payload = self._client._call(params)
         raw = self._client._unwrap(payload, "recipes", list_key="recipe")
@@ -56,7 +80,15 @@ class RecipesResource(BaseResource):
         recipe_id: int,
         region: Optional[str] = None,
     ) -> Optional[RecipesRecipe]:
-        """recipe.get (v1). DEPRECATED upstream. Premier-only."""
+        """Returns detailed information for the specified recipe for the standard serving.
+
+        :param recipe_id: Unique recipe identifier
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :return: :class:`RecipesRecipe` instance, or ``None`` when the response is empty.
+
+        Notes:
+            recipe.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipe.get"}
         params["recipe_id"] = recipe_id
         self._client._set_optional(
@@ -76,7 +108,15 @@ class RecipesResource(BaseResource):
         recipe_id: int,
         region: Optional[str] = None,
     ) -> Optional[RecipesRecipe]:
-        """recipe.get (v2). Premier-only."""
+        """Returns detailed information for the specified recipe for the standard serving.
+
+        :param recipe_id: Unique recipe identifier
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :return: :class:`RecipesRecipe` instance, or ``None`` when the response is empty.
+
+        Notes:
+            recipe.get (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipe.get.v2"}
         params["recipe_id"] = recipe_id
         self._client._set_optional(
@@ -98,7 +138,17 @@ class RecipesResource(BaseResource):
         page_number: Optional[int] = None,
         max_results: Optional[int] = None,
     ) -> list[RecipesRecipe]:
-        """recipes.search (v1). DEPRECATED upstream. Premier-only."""
+        """Conducts a search of the recipe database using the search expression specified. The results are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number of 4 will return results numbered 41-50. An interactive demonstration of our Recipe Search API can be accessed here
+
+        :param search_expression: Search expression to match on food names
+        :param recipe_type: Recipe type E.G.: "Appetizer"
+        :param page_number: Zero-based offset into the results for the query
+        :param max_results: Maximum number of results to return (default value is 20). This number cannot be greater than 50
+        :return: List of :class:`RecipesRecipe` instances.
+
+        Notes:
+            recipes.search (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipes.search"}
         self._client._set_optional(
             params,
@@ -132,7 +182,29 @@ class RecipesResource(BaseResource):
         sort_by: Optional[str] = None,
         region: Optional[str] = None,
     ) -> list[RecipesRecipe]:
-        """recipes.search (v2). DEPRECATED upstream. Premier-only."""
+        """Conducts a search of the recipe database using the search expression specified. The results are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number of 4 will return results numbered 41-50. An interactive demonstration of our Recipe Search API can be accessed here
+
+        :param search_expression: Search expression to match on food names
+        :param must_have_images: This option will restrict results to recipes with at least one image
+        :param calories_from: Minimum calories that are contained in the recipe
+        :param calories_to: Maximum calories that are contained in the recipe
+        :param carb_percentage_from: Minimum percentage of the calories composed of carbohydrate
+        :param carb_percentage_to: Maximum percentage of the calories composed of carbohydrate
+        :param protein_percentage_from: Minimum percentage of the calories composed of protein
+        :param protein_percentage_to: Maximum percentage of the calories composed of protein
+        :param fat_percentage_from: Minimum percentage of the calories composed of fat
+        :param fat_percentage_to: Maximum percentage of the calories composed of fat
+        :param prep_time_from: Minimum preparation and cook time in minutes required to create the recipe
+        :param prep_time_to: Maximum preparation and cook time in minutes required to create the recipe
+        :param page_number: Zero-based offset into the results for the query
+        :param max_results: Maximum number of results to return (default value is 20). This number cannot be greater than 50
+        :param sort_by: This option will order results. Valid options include: newest, oldest, caloriesPerServingAscending, caloriesPerServingDescending. When not explicitly set, the ordering will be returned by newest
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :return: List of :class:`RecipesRecipe` instances.
+
+        Notes:
+            recipes.search (v2). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipes.search.v2"}
         self._client._set_optional(
             params,
@@ -180,7 +252,31 @@ class RecipesResource(BaseResource):
         sort_by: Optional[str] = None,
         region: Optional[str] = None,
     ) -> list[RecipesRecipe]:
-        """recipes.search (v3). Premier-only."""
+        """Conducts a search of the recipe database using the search expression specified. The results are paginated according to a zero-based "page" offset. Successive pages of results may be retrieved by specifying a starting page offset value. For instance, specifying a max_results of 10 and page_number of 4 will return results numbered 41-50. An interactive demonstration of our Recipe Search API can be accessed here
+
+        :param recipe_types: This option filters by specified recipe types and should be provided as a comma separated string of recipe type names. The values are provided via the api: Recipe Types Get All
+        :param recipe_types_matchall: This option will affect recipe type filters. If true, a recipe must match all provided recipe types, if false (default) then recipes matching any of the supplied types will be returned, The values are provided via the api: Recipe Types Get All
+        :param search_expression: Search expression to match on food names
+        :param must_have_images: This option will restrict results to recipes with at least one image
+        :param calories_from: Minimum calories that are contained in the recipe
+        :param calories_to: Maximum calories that are contained in the recipe
+        :param carb_percentage_from: Minimum percentage of the calories composed of carbohydrate
+        :param carb_percentage_to: Maximum percentage of the calories composed of carbohydrate
+        :param protein_percentage_from: Minimum percentage of the calories composed of protein
+        :param protein_percentage_to: Maximum percentage of the calories composed of protein
+        :param fat_percentage_from: Minimum percentage of the calories composed of fat
+        :param fat_percentage_to: Maximum percentage of the calories composed of fat
+        :param prep_time_from: Minimum preparation and cook time in minutes required to create the recipe
+        :param prep_time_to: Maximum preparation and cook time in minutes required to create the recipe
+        :param page_number: Zero-based offset into the results for the query
+        :param max_results: Maximum number of results to return (default value is 20). This number cannot be greater than 50
+        :param sort_by: This option will order results. Valid options include: newest, oldest, caloriesPerServingAscending, caloriesPerServingDescending. When not explicitly set, the ordering will be returned by newest
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :return: List of :class:`RecipesRecipe` instances.
+
+        Notes:
+            recipes.search (v3). Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipes.search.v3"}
         self._client._set_optional(
             params,
@@ -212,7 +308,13 @@ class RecipesResource(BaseResource):
     def types_get_v1(
         self,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. recipe_types.get (v1). DEPRECATED upstream. Premier-only."""
+        """This is a utility method, returning the full list of all supported recipe type names.
+
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            recipe_types.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipe_types.get"}
         payload = self._client._call(params)
         raw = self._client._unwrap(payload, "recipe_types", list_key="recipe_type")
@@ -223,7 +325,15 @@ class RecipesResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. recipe_types.get (v2). Premier-only."""
+        """This is a utility method, returning the full list of all supported recipe type names.
+
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            recipe_types.get (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "recipe_types.get.v2"}
         self._client._set_optional(
             params,

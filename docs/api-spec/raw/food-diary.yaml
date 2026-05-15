@@ -5,7 +5,7 @@ endpoints:
   exists: true
   http_verb: POST
   method: food_entries.copy
-  notes: ''
+  notes: Copies the food entries for a specified meal from a nominated date to a nominated date.
   oauth:
   - oauth1
   - oauth2
@@ -39,7 +39,7 @@ endpoints:
   exists: true
   http_verb: POST
   method: food_entries.copy_saved_meal
-  notes: ''
+  notes: Copies the food entries for a specified saved meal to a specified meal.
   oauth:
   - oauth1
   - oauth2
@@ -72,7 +72,9 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_entries.get
-  notes: ''
+  notes: Returns saved food diary entries for the user according to the filter specified. This method
+    can be used to return all food diary entries recorded on a nominated date or a single food diary entry
+    with a nominated food_entry_id.
   oauth:
   - oauth1
   - oauth2
@@ -102,7 +104,9 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_entries.get
-  notes: ''
+  notes: Returns saved food diary entries for the user according to the filter specified. This method
+    can be used to return all food diary entries recorded on a nominated date or a single food diary entry
+    with a nominated food_entry_id.
   oauth:
   - oauth1
   - oauth2
@@ -132,7 +136,9 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_entries.get_month
-  notes: ''
+  notes: Returns summary daily nutritional information for a user's food diary entries for the month specified.
+    Use this call to display nutritional information to users about their food intake for a nominated
+    month. Days with no food diary entries are not included.
   oauth:
   - oauth1
   - oauth2
@@ -157,7 +163,9 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_entries.get_month
-  notes: ''
+  notes: Returns summary daily nutritional information for a user's food diary entries for the month specified.
+    Use this call to display nutritional information to users about their food intake for a nominated
+    month. Days with no food diary entries are not included.
   oauth:
   - oauth1
   - oauth2
@@ -182,7 +190,7 @@ endpoints:
   exists: true
   http_verb: POST
   method: food_entry.create
-  notes: ''
+  notes: Records a food diary entry for the user according to the parameters specified.
   oauth:
   - oauth1
   - oauth2
@@ -236,7 +244,7 @@ endpoints:
   exists: true
   http_verb: DELETE
   method: food_entry.delete
-  notes: ''
+  notes: Deletes the specified food entry for the user.
   oauth:
   - oauth1
   - oauth2
@@ -259,7 +267,10 @@ endpoints:
   exists: true
   http_verb: PUT
   method: food_entry.edit
-  notes: ''
+  notes: Adjusts the recorded values for a food diary entry. Note that the date of the entry may not be
+    adjusted, however one or more of the other remaining properties – food_entry_name, serving_id, number_of_units,
+    or meal may be altered. In order to shift the date for which a food diary entry was recorded the original
+    entry must be deleted and a new entry recorded.
   oauth:
   - oauth1
   - oauth2

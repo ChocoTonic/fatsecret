@@ -18,7 +18,17 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_brands.get (v1). DEPRECATED upstream. Premier-only."""
+        """This is a utility method, returning the list of food brands.
+
+        :param starts_with: Food brands that begin with the first letter is returned. The "*" will return all food brands beginning with a numeric character. If this is not specified then the most popular food brands at the time is returned
+        :param brand_type: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food_brands.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_brands.get"}
         params["starts_with"] = starts_with
         self._client._set_optional(
@@ -40,7 +50,17 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_brands.get (v2). Premier-only."""
+        """This is a utility method, returning the list of food brands.
+
+        :param starts_with: Food brands that begin with the first letter is returned. The "*" will return all food brands beginning with a numeric character. If this is not specified then the most popular food brands at the time is returned
+        :param brand_type: Either "manufacturer", "restaurant" or "supermarket" (default value is "manufacturer")
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food_brands.get (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_brands.get.v2"}
         params["starts_with"] = starts_with
         self._client._set_optional(
@@ -60,7 +80,15 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_categories.get (v1). DEPRECATED upstream. Premier-only."""
+        """This is a utility method, returning the full list of all food categories and their associated unique identifiers.
+
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food_categories.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_categories.get"}
         self._client._set_optional(
             params,
@@ -78,7 +106,15 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_categories.get (v2). Premier-only."""
+        """This is a utility method, returning the full list of all food categories and their associated unique identifiers.
+
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food_categories.get (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_categories.get.v2"}
         self._client._set_optional(
             params,
@@ -97,7 +133,16 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_sub_categories.get (v1). DEPRECATED upstream. Premier-only."""
+        """This is a utility method, returning the full list of all food sub categories for a food category.
+
+        :param food_category_id: Unique identifier of the food category entry
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food_sub_categories.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_sub_categories.get"}
         params["food_category_id"] = food_category_id
         self._client._set_optional(
@@ -117,7 +162,16 @@ class ClassificationResource(BaseResource):
         region: Optional[str] = None,
         language: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. food_sub_categories.get (v2). Premier-only."""
+        """This is a utility method, returning the full list of all food sub categories for a food category.
+
+        :param food_category_id: Unique identifier of the food category entry
+        :param region: Results will be filtered by region. E.G.: "FR" returns results from France. If not specified this will default to "US" (United States). Click here for full documentation on localization.
+        :param language: (Ignored unless region is also specified) Results will be in the specified language. E.G.: "fr" returns results in French
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            food_sub_categories.get (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "food_sub_categories.get.v2"}
         params["food_category_id"] = food_category_id
         self._client._set_optional(

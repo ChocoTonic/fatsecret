@@ -102,6 +102,38 @@ def _text(node: Node | None) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _extract_description(tree: HTMLParser) -> str:
+    """Pull the operation-level prose from the docs page.
+
+    The FatSecret docs put the prose under ``<div class="doc__description">``
+    with an internal ``<h5>Description</h5>`` heading followed by one or more
+    ``<p>`` elements.  After the prose come nested ``<div>`` blocks with
+    sub-headings such as "Why are we introducing this version?" / "Updates
+    to food labels"; we skip those and surface only the leading paragraph(s)
+    so the generated docstring stays focused on what the endpoint *does*.
+
+    Returns ``""`` when the description block is absent — callers preserve
+    the existing empty-``notes`` behavior in that case.
+    """
+    desc = tree.css_first("div.doc__description")
+    if desc is None:
+        return ""
+    paragraphs: list[str] = []
+    for child in desc.iter(include_text=False):
+        if child.tag in ("h5", "h6"):
+            continue
+        if child.tag == "p":
+            text = " ".join((child.text() or "").split())
+            if text:
+                paragraphs.append(text)
+        elif child.tag == "div":
+            # First nested div ends the leading prose; everything after is
+            # version-history / change-notes that doesn't belong in a method
+            # docstring.
+            break
+    return " ".join(paragraphs).strip()
+
+
 def _detect_deprecated(tree: HTMLParser) -> bool:
     for node in tree.css("[class*='deprecat'], [class*='warning'], [class*='banner']"):
         if "deprecat" in (node.text() or "").lower():
@@ -419,6 +451,7 @@ def parse_page(ref: MethodRef, html: str) -> EndpointSpec:
         (ref.method, ref.version), frozenset()
     )
     spec.parameters = _parse_parameters(_body_html(tree, html), extra_force_opt)
+    spec.notes = _extract_description(tree)
 
     # Response shape: prefer the XSD (canonical, typed) for endpoints it
     # covers; fall back to walking the HTML "Example Response" JSON block for

@@ -17,7 +17,16 @@ class MealsResource(BaseResource):
         saved_meal_description: Optional[str] = None,
         meals: Optional[str] = None,
     ) -> Any:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meal.create (v1). Premier-only."""
+        """Records a saved meal for the user according to the parameters specified. The result of the call is the new unique identifier of the newly created saved meal.
+
+        :param saved_meal_name: New name of the saved meal
+        :param saved_meal_description: New description of the saved meal
+        :param meals: Comma separated list of meals the saved meal is suitable for
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            saved_meal.create (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meal.create"}
         params["saved_meal_name"] = saved_meal_name
         self._client._set_optional(
@@ -35,7 +44,13 @@ class MealsResource(BaseResource):
         self,
         saved_meal_id: int,
     ) -> bool:
-        """saved_meal.delete (v1). Premier-only."""
+        """Deletes the specified saved meal for the user.
+
+        :param saved_meal_id: Unique saved meal identifier
+
+        Notes:
+            saved_meal.delete (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meal.delete"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params, method="DELETE")
@@ -48,7 +63,16 @@ class MealsResource(BaseResource):
         saved_meal_description: Optional[str] = None,
         meals: Optional[str] = None,
     ) -> bool:
-        """saved_meal.edit (v1). Premier-only."""
+        """Records a change to a user's saved meal.
+
+        :param saved_meal_id: Unique saved meal identifier
+        :param saved_meal_name: New name of the saved meal
+        :param saved_meal_description: New description of the saved meal
+        :param meals: Comma separated list of meals the saved meal is suitable for
+
+        Notes:
+            saved_meal.edit (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meal.edit"}
         params["saved_meal_id"] = saved_meal_id
         self._client._set_optional(
@@ -66,7 +90,14 @@ class MealsResource(BaseResource):
         self,
         meal: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meals.get (v1). DEPRECATED upstream. Premier-only."""
+        """Returns saved meals for the specified user.
+
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            saved_meals.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meals.get"}
         self._client._set_optional(
             params,
@@ -82,7 +113,14 @@ class MealsResource(BaseResource):
         self,
         meal: Optional[str] = None,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meals.get (v2). Premier-only."""
+        """Returns saved meals for the specified user.
+
+        :param meal: Type of meal eaten. Valid meal types are "breakfast", "lunch", "dinner" and "other"
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            saved_meals.get (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meals.get.v2"}
         self._client._set_optional(
             params,
@@ -102,7 +140,18 @@ class MealsResource(BaseResource):
         serving_id: int,
         number_of_units: float,
     ) -> Any:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meal_item.add (v1). Premier-only."""
+        """Adds a food to a user's saved meal according to the parameters specified. The result of the call is the new unique identifier of the newly created saved meal item.
+
+        :param saved_meal_id: Unique saved meal identifier
+        :param food_id: Unique food identifier
+        :param saved_meal_item_name: New name of the saved meal item
+        :param serving_id: Unique serving identifier
+        :param number_of_units: Number of units in this standard serving size. For instance, if the serving description is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for "Brand" the number of units will always be "1"
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            saved_meal_item.add (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meal_item.add"}
         params["saved_meal_id"] = saved_meal_id
         params["food_id"] = food_id
@@ -117,7 +166,13 @@ class MealsResource(BaseResource):
         self,
         saved_meal_item_id: int,
     ) -> bool:
-        """saved_meal_item.delete (v1). Premier-only."""
+        """Deletes the specified saved meal item for the user.
+
+        :param saved_meal_item_id: Unique saved meal item identifier
+
+        Notes:
+            saved_meal_item.delete (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meal_item.delete"}
         params["saved_meal_item_id"] = saved_meal_item_id
         payload = self._client._call(params, method="DELETE")
@@ -129,7 +184,15 @@ class MealsResource(BaseResource):
         saved_meal_item_name: Optional[str] = None,
         number_of_units: Optional[float] = None,
     ) -> bool:
-        """saved_meal_item.edit (v1). Premier-only."""
+        """Records a change to a user's saved meal item. Note that the serving_id of the saved meal item may not be adjusted, however one or more of the other remaining properties – saved_meal_item_name or number_of_units may be altered. In order to adjust a serving_id for which a saved_meal_item was recorded the original item must be deleted and a new item recorded.
+
+        :param saved_meal_item_id: Unique saved meal item identifier
+        :param saved_meal_item_name: New name of the saved meal item
+        :param number_of_units: Number of units in this standard serving size. For instance, if the serving description is "2 tablespoons" the number of units is "2", while if the serving size is "1 cup" the number of units is "1". Please note that this is only applicable for when food_type is "Generic" whereas for "Brand" the number of units will always be "1"
+
+        Notes:
+            saved_meal_item.edit (v1). Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meal_item.edit"}
         params["saved_meal_item_id"] = saved_meal_item_id
         self._client._set_optional(
@@ -146,7 +209,14 @@ class MealsResource(BaseResource):
         self,
         saved_meal_id: int,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meal_items.get (v1). DEPRECATED upstream. Premier-only."""
+        """Returns saved meal items for a specified saved meal.
+
+        :param saved_meal_id: Unique saved meal identifier
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            saved_meal_items.get (v1). DEPRECATED upstream. Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meal_items.get"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params)
@@ -157,7 +227,14 @@ class MealsResource(BaseResource):
         self,
         saved_meal_id: int,
     ) -> list:
-        """No typed model — returns the raw FatSecret response shape. See ``docs/migration-v3.rst`` for details. saved_meal_items.get (v2). Premier-only."""
+        """Returns saved meal items for a specified saved meal.
+
+        :param saved_meal_id: Unique saved meal identifier
+        :return: Raw FatSecret response shape (no typed model — see ``docs/migration-v3.rst``).
+
+        Notes:
+            saved_meal_items.get (v2). Premier-only.
+        """
         params: dict[str, Any] = {"method": "saved_meal_items.get.v2"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params)

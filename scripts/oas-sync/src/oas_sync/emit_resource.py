@@ -210,6 +210,8 @@ def _is_rest_url(path: str) -> bool:
 
 
 def _docstring_for(operation: dict[str, Any]) -> str:
+    """Legacy single-line docstring (kept for tests/callers that don't render
+    the structured Sphinx form)."""
     parts: list[str] = []
     summary = operation.get("summary") or ""
     description = operation.get("description") or ""
@@ -267,6 +269,7 @@ def _extract_method(
             "wire": wire,
             "type": _param_type_hint(p),
             "is_date": _is_date_param(p),
+            "description": (p.get("description") or "").strip(),
         }
         (required if p.get("required") else optional).append(item)
 
@@ -278,17 +281,20 @@ def _extract_method(
 
     model = _RESPONSE_MODEL_MAP.get((tag, tuple(unwrap_path), list_key))
     docstring = _docstring_for(operation)
-    # Surface the typed/dict split in IDE tooltips.  Methods that lack a
-    # Pydantic model return the raw FatSecret response shape; flag them so
-    # users don't have to cross-reference the migration guide.  Mutators
-    # already advertise their ``bool`` return via the type annotation, so
-    # they don't need the note.
+    # Operation-level prose pulled from the docs (raw YAML ``notes`` field,
+    # surfaced as ``description`` in the OAS).  Used as the leading paragraph
+    # of the structured Sphinx docstring.
+    op_description = (operation.get("description") or "").strip()
+    op_summary = (operation.get("summary") or "").strip()
+    # Build the dict-only ``:return:`` note when this method has no typed
+    # model (preserves the wording introduced in PR #143).
     if model is None and not is_mutator:
-        note = (
-            "No typed model — returns the raw FatSecret response shape. "
-            "See ``docs/migration-v3.rst`` for details."
+        return_note = (
+            "Raw FatSecret response shape (no typed model — see "
+            "``docs/migration-v3.rst``)."
         )
-        docstring = f"{note} {docstring}".strip()
+    else:
+        return_note = ""
     return {
         "method_name": _method_name_for(tag, op_id),
         "operation_id": op_id,
@@ -302,6 +308,11 @@ def _extract_method(
         "list_key": list_key,
         "is_mutator": is_mutator,
         "docstring": docstring,
+        "op_summary": op_summary,
+        "op_description": op_description,
+        "return_note": return_note,
+        "deprecated": bool(operation.get("deprecated")),
+        "premier": bool(operation.get("x-fatsecret-premier")),
         # (model_module, model_class) when this method's response is
         # XSD-modelled; ``None`` when it falls back to a raw dict.
         "model": model,
@@ -311,6 +322,99 @@ def _extract_method(
 # ---------------------------------------------------------------------------
 # Renderer
 # ---------------------------------------------------------------------------
+
+
+def _return_description(m: dict[str, Any]) -> str:
+    """Sphinx ``:return:`` line text for a method.
+
+    Mutators don't get one (the ``-> bool`` annotation already carries the
+    meaning).  Methods with a typed model document the model class.  Methods
+    without a typed model carry the dict-only note preserved from PR #143.
+    """
+    if m["is_mutator"]:
+        return ""
+    model = m.get("model")
+    if model is not None:
+        cls = model[1]
+        if m["list_key"]:
+            return f"List of :class:`{cls}` instances."
+        return f":class:`{cls}` instance, or ``None`` when the response is empty."
+    return m.get("return_note") or ""
+
+
+def _build_docstring_lines(m: dict[str, Any]) -> list[str]:
+    """Assemble the Sphinx-friendly docstring for a generated method.
+
+    Layout::
+
+        <operation description, falling back to summary>
+
+        :param NAME: <param description>
+        ...
+        :return: <return-type note>
+
+        Notes:
+            <method.name (vN)>.  DEPRECATED upstream.  Premier-only.
+
+    Empty sections are omitted.  ``:param:`` lines that lack a description
+    in the OAS are emitted as ``:param NAME:`` so Sphinx still renders the
+    name+type row from the type annotation (with
+    ``autodoc_typehints = "description"``).
+    """
+    lines: list[str] = []
+    lead = m.get("op_description") or m.get("op_summary") or ""
+    if not lead:
+        # Fall back to the legacy single-line docstring so we never emit an
+        # empty triple-quoted block.
+        lead = m.get("docstring") or "Auto-generated method."
+    lines.append(lead)
+
+    params = list(m.get("required_params") or []) + list(m.get("optional_params") or [])
+    if params:
+        lines.append("")
+        for p in params:
+            desc = (p.get("description") or "").strip()
+            arg = p["arg"]
+            if desc:
+                lines.append(f":param {arg}: {desc}")
+            else:
+                lines.append(f":param {arg}:")
+
+    ret = _return_description(m)
+    if ret:
+        if not params:
+            lines.append("")
+        lines.append(f":return: {ret}")
+
+    notes_bits: list[str] = []
+    op_summary = m.get("op_summary") or ""
+    if op_summary:
+        notes_bits.append(f"{op_summary}.")
+    if m.get("deprecated"):
+        notes_bits.append("DEPRECATED upstream.")
+    if m.get("premier"):
+        notes_bits.append("Premier-only.")
+    if notes_bits:
+        lines.append("")
+        lines.append("Notes:")
+        lines.append("    " + " ".join(notes_bits))
+
+    return lines
+
+
+def _render_docstring(m: dict[str, Any], indent: str = "        ") -> str:
+    """Render the docstring as a triple-quoted block at the given indent.
+
+    Single-line docstrings stay on one line; multi-line blocks open and
+    close on their own lines so Sphinx parses the field list cleanly.
+    """
+    lines = _build_docstring_lines(m)
+    # Defensively replace any stray triple-quotes inside the body.
+    lines = [ln.replace('"""', "'''") for ln in lines]
+    if len(lines) == 1:
+        return f'{indent}"""{lines[0]}"""\n'
+    tail = "\n".join((f"{indent}{ln}" if ln else "") for ln in lines[1:])
+    return f'{indent}"""{lines[0]}\n{tail}\n{indent}"""\n'
 
 
 def _render_method(m: dict[str, Any]) -> str:
@@ -340,8 +444,7 @@ def _render_method(m: dict[str, Any]) -> str:
     buf.write(f"    ) -> {ret}:\n")
 
     # Docstring.
-    doc = m["docstring"].replace('"""', "'''")
-    buf.write(f'        """{doc}"""\n')
+    buf.write(_render_docstring(m))
 
     # Body.
     if m["is_rest_url"]:

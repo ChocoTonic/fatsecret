@@ -5,7 +5,14 @@ endpoints:
   exists: true
   http_verb: POST
   method: feedback
-  notes: ''
+  notes: This API method enables developers to submit user feedback regarding potentially incorrect or
+    missing food and/or barcode data. It supports a variety of issue types, including potential food or
+    brand naming errors, incorrect nutrition facts, missing serving sizes, and unrecognized barcodes.
+    To facilitate rapid verification, the API returns signed upload URLs, allowing developers to optionally
+    (but ideally) upload up to three user submitted supporting images of the Barcode, Packaging, and Nutrition
+    Facts via subsequent PUT requests. The subsequent PUT requests will be required to use both the provided
+    URL and the "contentTypeHeader" field in the response as a 'Content-Type' header to successfully validate
+    with the signed upload URL(s)
   oauth:
   - oauth1
   - oauth2
@@ -79,7 +86,10 @@ endpoints:
   exists: true
   http_verb: GET
   method: food.find_id_for_barcode
-  notes: ''
+  notes: Returns the food_id matching the barcode specified. Barcodes must be specified as GTIN-13 numbers
+    - a 13-digit number filled in with zeros for the spaces to the left. UPC-A, EAN-13 and EAN-8 barcodes
+    may be specified. UPC-E barcodes should be converted to their UPC-A equivalent (and then specified
+    as GTIN-13 numbers). An interactive demonstration of our Barcode API can be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -115,7 +125,11 @@ endpoints:
   exists: true
   http_verb: GET
   method: food.find_id_for_barcode
-  notes: ''
+  notes: Returns detailed nutritional information for the specified food matching the barcode specified.
+    Barcodes must be specified as GTIN-13 numbers - a 13-digit number filled in with zeros for the spaces
+    to the left. UPC-A, EAN-13 and EAN-8 barcodes may be specified. UPC-E barcodes should be converted
+    to their UPC-A equivalent (and then specified as GTIN-13 numbers). An interactive demonstration of
+    our Barcode API can be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -174,7 +188,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_brands.get
-  notes: ''
+  notes: This is a utility method, returning the list of food brands.
   oauth:
   - oauth1
   - oauth2
@@ -219,7 +233,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_brands.get
-  notes: ''
+  notes: This is a utility method, returning the list of food brands.
   oauth:
   - oauth1
   - oauth2
@@ -264,7 +278,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_categories.get
-  notes: ''
+  notes: This is a utility method, returning the full list of all food categories and their associated
+    unique identifiers.
   oauth:
   - oauth1
   - oauth2
@@ -297,7 +312,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_categories.get
-  notes: ''
+  notes: This is a utility method, returning the full list of all food categories and their associated
+    unique identifiers.
   oauth:
   - oauth1
   - oauth2
@@ -330,7 +346,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_sub_categories.get
-  notes: ''
+  notes: This is a utility method, returning the full list of all food sub categories for a food category.
   oauth:
   - oauth1
   - oauth2
@@ -368,7 +384,7 @@ endpoints:
   exists: true
   http_verb: GET
   method: food_sub_categories.get
-  notes: ''
+  notes: This is a utility method, returning the full list of all food sub categories for a food category.
   oauth:
   - oauth1
   - oauth2
@@ -406,7 +422,9 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.autocomplete
-  notes: ''
+  notes: 'Returns food elements best matching the search expression specified, ordered by their relevancy
+    to the search expression. An interactive demonstration of our Autocomplete API can be accessed here
+    Note: foods.autocomplete only works for the default region / language combination.'
   oauth:
   - oauth1
   - oauth2
@@ -445,7 +463,8 @@ endpoints:
   exists: true
   http_verb: GET
   method: foods.autocomplete
-  notes: ''
+  notes: Returns food elements best matching the search expression specified, ordered by their relevancy
+    to the search expression. An interactive demonstration of our Autocomplete API can be accessed here
   oauth:
   - oauth1
   - oauth2
@@ -484,7 +503,17 @@ endpoints:
   exists: true
   http_verb: POST
   method: image.recognition
-  notes: ''
+  notes: 'This API detects foods within an image and returns a list of foods from the fatsecret database
+    By passing a list of eaten foods, we will also attempt to determine if any of the inputs match in
+    order to improve the accuracy of the response. NOTE: If an appropriate serving is not found, nutritional
+    information may not be present. This typically occurs when a non-standard serving description is provided
+    for a restaurant-based food. In such scenarios, we recommend using the default serving size returned
+    via the API, indicated by the serving object with "is_default": true. Additionally, for mobile app
+    interfaces, we recommend not automatically logging all foods and associated serving amounts directly
+    into the user''s food diary. Instead, we recommend displaying an intermittent screen that allows the
+    user to: This approach improves user experience and ensures more accurate food diary entries. NOTE:
+    The entire request body is limited to 1MB characters (1.048M) and as such we recommend to check the
+    request size before hitting the API.'
   oauth:
   - oauth1
   - oauth2
@@ -557,7 +586,18 @@ endpoints:
   exists: true
   http_verb: POST
   method: image.recognition
-  notes: ''
+  notes: 'This API identifies food items and their corresponding portion sizes or weights within an image.
+    It returns a list of matched foods from the local, verified fatsecret country database, along with
+    detailed nutritional information for each detected portion. By passing a list of eaten foods, we will
+    also attempt to determine if any of the inputs match in order to improve the accuracy of the response.
+    NOTE: If an appropriate serving is not found, nutritional information may not be present. This typically
+    occurs when a non-standard serving description is provided for a restaurant-based food. In such scenarios,
+    we recommend using the default serving size returned via the API, indicated by the serving object
+    with "is_default": true. Additionally, for mobile app interfaces, we recommend not automatically logging
+    all foods and associated serving amounts directly into the user''s food diary. Instead, we recommend
+    displaying an intermittent screen that allows the user to: This approach improves user experience
+    and ensures more accurate food diary entries. We support jpg, png and webp formats, with a size of
+    up to 1.09MB. We recommend resizing images to a resolution of either 256x256 or 512x512 pixels.'
   oauth:
   - oauth1
   - oauth2
@@ -630,7 +670,12 @@ endpoints:
   exists: true
   http_verb: POST
   method: natural.language.processing
-  notes: ''
+  notes: 'This API breaks down natural language and returns a list of foods from the fatsecret database
+    By passing a list of eaten foods, we will also attempt to determine if any of the inputs match in
+    order to improve the accuracy of the response. Example: For breakfast I ate a slice of toast with
+    butter NOTE: If an appropriate serving is not found, nutritional information may not be present. This
+    will typically occur for a non-standard serving description provided for a restaurant based food.
+    NOTE: The request body may not exceed 1MB in size. This is inclusive of all body parameters.'
   oauth:
   - oauth1
   - oauth2
