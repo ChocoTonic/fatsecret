@@ -395,4 +395,6 @@ class ProfileFoodsResource(BaseResource):
         return [Food.model_validate(r) for r in raw]
 
 
+ProfileFoodsResource.__module__ = "fatsecret.resources.profile_foods"
+
 __all__ = ["ProfileFoodsResource"]

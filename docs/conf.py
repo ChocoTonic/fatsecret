@@ -18,7 +18,19 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.viewcode",
     "fatsecret_oas",
+    "sphinxcontrib.autodoc_pydantic",
 ]
+
+# autodoc-pydantic settings: keep model rendering compact -- just the class
+# name plus a field table with types and defaults.
+autodoc_pydantic_model_show_json = False  # JSON schema dumps are noisy
+autodoc_pydantic_model_show_config_summary = False  # don't show ConfigDict
+autodoc_pydantic_model_show_validator_summary = False
+autodoc_pydantic_model_show_field_summary = False  # the field list below covers it
+autodoc_pydantic_field_list_validators = False
+autodoc_pydantic_field_show_alias = False
+autodoc_pydantic_field_doc_policy = "description"  # use docstring not Field(description=...)
+autodoc_pydantic_model_member_order = "bysource"
 
 exclude_patterns = ["_build"]
 add_module_names = False

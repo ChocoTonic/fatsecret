@@ -564,4 +564,6 @@ class FoodsResource(BaseResource):
         return [Food.model_validate(r) for r in raw]
 
 
+FoodsResource.__module__ = "fatsecret.resources.foods"
+
 __all__ = ["FoodsResource"]

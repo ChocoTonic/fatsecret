@@ -242,4 +242,6 @@ class MealsResource(BaseResource):
         return raw
 
 
+MealsResource.__module__ = "fatsecret.resources.meals"
+
 __all__ = ["MealsResource"]

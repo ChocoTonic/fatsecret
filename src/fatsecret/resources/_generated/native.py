@@ -162,4 +162,6 @@ class NativeResource(BaseResource):
         return raw
 
 
+NativeResource.__module__ = "fatsecret.resources.native"
+
 __all__ = ["NativeResource"]

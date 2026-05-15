@@ -242,4 +242,6 @@ class ExercisesResource(BaseResource):
         return [Exercise.model_validate(r) for r in raw]
 
 
+ExercisesResource.__module__ = "fatsecret.resources.exercises"
+
 __all__ = ["ExercisesResource"]

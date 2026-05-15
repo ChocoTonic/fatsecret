@@ -97,4 +97,67 @@ Client utilities
 
 .. automethod:: fatsecret.Fatsecret.valid_response
 
-.. Models section added by separate PR (docs/autodoc-pydantic-and-hide-generated).
+Models
+------
+
+v3 typed response models. Returned by the methods above; access fields via
+attribute access (``food.food_id`` not ``food["food_id"]``). All inherit from
+``_FS_Base`` which sets ``extra="allow"`` and provides ``.to_dict()`` for the
+v2 dict shape.
+
+Foods
+~~~~~
+
+.. autopydantic_model:: fatsecret.models.Food
+.. autopydantic_model:: fatsecret.models.Foods
+.. autopydantic_model:: fatsecret.models.FoodsSearch
+.. autopydantic_model:: fatsecret.models.FoodResults
+.. autopydantic_model:: fatsecret.models.FoodSubCategories
+.. autopydantic_model:: fatsecret.models.FoodAttributes
+.. autopydantic_model:: fatsecret.models.FoodImage
+.. autopydantic_model:: fatsecret.models.FoodImages
+.. autopydantic_model:: fatsecret.models.Serving
+.. autopydantic_model:: fatsecret.models.Allergen
+.. autopydantic_model:: fatsecret.models.Allergens
+.. autopydantic_model:: fatsecret.models.Preference
+.. autopydantic_model:: fatsecret.models.Preferences
+
+Recipes
+~~~~~~~
+
+.. autopydantic_model:: fatsecret.models.Recipe
+.. autopydantic_model:: fatsecret.models.Recipes
+.. autopydantic_model:: fatsecret.models.RecipesRecipeRecipeIngredients
+.. autopydantic_model:: fatsecret.models.RecipesRecipeRecipeNutrition
+.. autopydantic_model:: fatsecret.models.RecipesRecipeRecipeTypes
+
+Diary
+~~~~~
+
+Food diary entries (per-day / per-month nutrition logs).
+
+.. autopydantic_model:: fatsecret.models.Day
+.. autopydantic_model:: fatsecret.models.Month
+.. autopydantic_model:: fatsecret.models.FoodEntry
+.. autopydantic_model:: fatsecret.models.FoodEntries
+
+Profile
+~~~~~~~
+
+.. autopydantic_model:: fatsecret.models.Profile
+
+Exercises
+~~~~~~~~~
+
+.. autopydantic_model:: fatsecret.models.Exercise
+.. autopydantic_model:: fatsecret.models.ExerciseEntry
+.. autopydantic_model:: fatsecret.models.ExerciseEntries
+.. autopydantic_model:: fatsecret.models.ExerciseTypes
+.. autopydantic_model:: fatsecret.models.ExerciseDay
+.. autopydantic_model:: fatsecret.models.ExerciseMonth
+
+Weight
+~~~~~~
+
+.. autopydantic_model:: fatsecret.models.WeightDay
+.. autopydantic_model:: fatsecret.models.WeightMonth
