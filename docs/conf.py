@@ -5,6 +5,8 @@ from pathlib import Path
 
 _root = Path(__file__).parent.parent
 sys.path.insert(0, str(_root / "src"))
+sys.path.insert(0, str(_root / "docs" / "_ext"))
+sys.path.insert(0, str(_root / "docs" / "_ext"))
 
 project = "fatsecret"
 copyright = "2026"
@@ -15,6 +17,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
     "sphinx.ext.viewcode",
+    "fatsecret_oas",
 ]
 
 exclude_patterns = ["_build"]
