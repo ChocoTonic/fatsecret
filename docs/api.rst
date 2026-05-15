@@ -12,7 +12,10 @@ warnings during development, run Python with::
 
 The endpoint methods below are exposed via resource sub-objects on a
 :class:`fatsecret.Fatsecret` instance -- e.g. ``fs.foods.search_v5(...)`` --
-and are grouped by their OpenAPI tag (sourced from
+and are grouped under top-level guide categories matching FatSecret's
+official documentation layout (`platform.fatsecret.com/docs/guides/
+<https://platform.fatsecret.com/docs/guides/>`_). Each guide contains one
+subsection per OpenAPI tag (sourced from
 ``docs/api-spec/openapi.generated.yaml``). Client-only helpers (auth
 handshake, session lifecycle, time conversion) are listed at the bottom
 under **Client utilities**.
