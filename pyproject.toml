@@ -42,4 +42,5 @@ dev = [
     "sphinx>=7.4.7",
     "pyyaml>=6.0",
     "autodoc-pydantic>=2.0",
+    "readthedocs-sphinx-search>=0.3.2",
 ]
