@@ -14,26 +14,26 @@ from .._common import _FS_Base, FoodType, Ternary
 class Allergen(_FS_Base):
     """Generated from XSD ``allergen``."""
 
-    id: int
-    name: str
-    value: Ternary
+    id: Optional[int] = Field(default=None)
+    name: Optional[str] = Field(default=None)
+    value: Optional[Ternary] = Field(default=None)
 
 
 class FoodEntry(_FS_Base):
     """Generated from XSD ``food_entry``."""
 
-    food_entry_id: int
-    food_entry_description: str
-    date_int: int
-    meal: Literal['Breakfast', 'Lunch', 'Dinner', 'Other']
-    food_id: int
-    serving_id: int
-    number_of_units: Decimal
-    food_entry_name: str
-    calories: Decimal
-    carbohydrate: Decimal
-    protein: Decimal
-    fat: Decimal
+    food_entry_id: Optional[int] = Field(default=None)
+    food_entry_description: Optional[str] = Field(default=None)
+    date_int: Optional[int] = Field(default=None)
+    meal: Optional[Literal['Breakfast', 'Lunch', 'Dinner', 'Other']] = Field(default=None)
+    food_id: Optional[int] = Field(default=None)
+    serving_id: Optional[int] = Field(default=None)
+    number_of_units: Optional[Decimal] = Field(default=None)
+    food_entry_name: Optional[str] = Field(default=None)
+    calories: Optional[Decimal] = Field(default=None)
+    carbohydrate: Optional[Decimal] = Field(default=None)
+    protein: Optional[Decimal] = Field(default=None)
+    fat: Optional[Decimal] = Field(default=None)
     saturated_fat: Optional[Decimal] = Field(default=None)
     polyunsaturated_fat: Optional[Decimal] = Field(default=None)
     monounsaturated_fat: Optional[Decimal] = Field(default=None)
@@ -52,45 +52,45 @@ class FoodEntry(_FS_Base):
 class FoodFoodSubCategories(_FS_Base):
     """Generated from XSD ``<inline FoodFoodSubCategories>``."""
 
-    food_sub_category: List[str]
+    food_sub_category: Optional[List[str]] = Field(default=None)
 
 
 class FoodImage(_FS_Base):
     """Generated from XSD ``food_image``."""
 
-    image_url: str
-    image_type: int
+    image_url: Optional[str] = Field(default=None)
+    image_type: Optional[int] = Field(default=None)
 
 
 class FoodSubCategories(_FS_Base):
     """Generated from XSD ``food_sub_categories``."""
 
-    food_sub_category: str
+    food_sub_category: Optional[str] = Field(default=None)
 
 
 class Preference(_FS_Base):
     """Generated from XSD ``preference``."""
 
-    id: int
-    name: str
-    value: Ternary
+    id: Optional[int] = Field(default=None)
+    name: Optional[str] = Field(default=None)
+    value: Optional[Ternary] = Field(default=None)
 
 
 class Serving(_FS_Base):
     """Generated from XSD ``serving``."""
 
-    serving_id: int
-    serving_description: str
-    serving_url: str
+    serving_id: Optional[int] = Field(default=None)
+    serving_description: Optional[str] = Field(default=None)
+    serving_url: Optional[str] = Field(default=None)
     metric_serving_amount: Optional[Decimal] = Field(default=None)
     metric_serving_unit: Optional[str] = Field(default=None)
-    number_of_units: Decimal
-    measurement_description: str
-    is_default: bool
-    calories: Decimal
-    carbohydrate: Decimal
-    protein: Decimal
-    fat: Decimal
+    number_of_units: Optional[Decimal] = Field(default=None)
+    measurement_description: Optional[str] = Field(default=None)
+    is_default: Optional[bool] = Field(default=None)
+    calories: Optional[Decimal] = Field(default=None)
+    carbohydrate: Optional[Decimal] = Field(default=None)
+    protein: Optional[Decimal] = Field(default=None)
+    fat: Optional[Decimal] = Field(default=None)
     saturated_fat: Optional[Decimal] = Field(default=None)
     polyunsaturated_fat: Optional[Decimal] = Field(default=None)
     monounsaturated_fat: Optional[Decimal] = Field(default=None)
@@ -111,7 +111,7 @@ class Serving(_FS_Base):
 class Allergens(_FS_Base):
     """Generated from XSD ``allergens``."""
 
-    allergen: Allergen
+    allergen: Optional[Allergen] = Field(default=None)
 
 
 class FoodEntries(_FS_Base):
@@ -123,41 +123,41 @@ class FoodEntries(_FS_Base):
 class FoodFoodImages(_FS_Base):
     """Generated from XSD ``<inline FoodFoodImages>``."""
 
-    food_image: List[FoodImage]
+    food_image: Optional[List[FoodImage]] = Field(default=None)
 
 
 class FoodImages(_FS_Base):
     """Generated from XSD ``food_images``."""
 
-    food_image: FoodImage
+    food_image: Optional[FoodImage] = Field(default=None)
 
 
 class FoodServings(_FS_Base):
     """Generated from XSD ``<inline FoodServings>``."""
 
-    serving: List[Serving]
+    serving: Optional[List[Serving]] = Field(default=None)
 
 
 class Preferences(_FS_Base):
     """Generated from XSD ``preferences``."""
 
-    preference: Preference
+    preference: Optional[Preference] = Field(default=None)
 
 
 class FoodAttributes(_FS_Base):
     """Generated from XSD ``food_attributes``."""
 
-    preferences: Preferences
+    preferences: Optional[Preferences] = Field(default=None)
 
 
 class Food(_FS_Base):
     """Generated from XSD ``food``."""
 
-    food_id: int
-    food_name: str
+    food_id: Optional[int] = Field(default=None)
+    food_name: Optional[str] = Field(default=None)
     brand_name: Optional[str] = Field(default=None)
-    food_type: FoodType
-    food_url: str
+    food_type: Optional[FoodType] = Field(default=None)
+    food_url: Optional[str] = Field(default=None)
     food_description: Optional[str] = Field(default=None)
     servings: Optional[FoodServings] = Field(default=None)
     food_sub_categories: Optional[FoodFoodSubCategories] = Field(default=None)
@@ -174,9 +174,9 @@ class FoodResults(_FS_Base):
 class Foods(_FS_Base):
     """Generated from XSD ``foods``."""
 
-    max_results: int
-    total_results: int
-    page_number: int
+    max_results: Optional[int] = Field(default=None)
+    total_results: Optional[int] = Field(default=None)
+    page_number: Optional[int] = Field(default=None)
     food: Optional[List[Food]] = Field(default=None)
 
 
@@ -189,7 +189,7 @@ class FoodsSearchResults(_FS_Base):
 class FoodsSearch(_FS_Base):
     """Generated from XSD ``foods_search``."""
 
-    max_results: int
-    total_results: int
-    page_number: int
-    results: FoodsSearchResults
+    max_results: Optional[int] = Field(default=None)
+    total_results: Optional[int] = Field(default=None)
+    page_number: Optional[int] = Field(default=None)
+    results: Optional[FoodsSearchResults] = Field(default=None)

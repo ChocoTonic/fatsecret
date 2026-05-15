@@ -344,10 +344,15 @@ def _build_class_from_complex(
             continue
         type_name = elem.get("type")
         inline = elem.find(XSD_NS + "complexType")
-        min_occ = elem.get("minOccurs", "1")
         max_occ = elem.get("maxOccurs", "1")
         is_list = max_occ == "unbounded" or (max_occ.isdigit() and int(max_occ) > 1)
-        optional = min_occ == "0"
+        # Force every element field to Optional with default=None. The XSD's
+        # "required" claim does not match FatSecret's live behaviour
+        # (e.g. `serving.is_default` is declared required but the live API
+        # often omits it). Tolerating drift here matches the `extra="allow"`
+        # philosophy on `_FS_Base` — accept real responses rather than
+        # raise ValidationError on a field FatSecret silently dropped.
+        optional = True
 
         annotation, imports, aliases, deps = _resolve_field_type(
             type_name, inline, simple_types, complex_types, pending_inline, class_name, name

@@ -14,7 +14,7 @@ from .._common import _FS_Base
 class Day(_FS_Base):
     """Generated from XSD ``day``."""
 
-    date_int: int
+    date_int: Optional[int] = Field(default=None)
     calories: Optional[Decimal] = Field(default=None)
     carbohydrate: Optional[Decimal] = Field(default=None)
     protein: Optional[Decimal] = Field(default=None)
@@ -26,18 +26,18 @@ class Day(_FS_Base):
 class FoodEntry(_FS_Base):
     """Generated from XSD ``food_entry``."""
 
-    food_entry_id: int
-    food_entry_description: str
-    date_int: int
-    meal: Literal['Breakfast', 'Lunch', 'Dinner', 'Other']
-    food_id: int
-    serving_id: int
-    number_of_units: Decimal
-    food_entry_name: str
-    calories: Decimal
-    carbohydrate: Decimal
-    protein: Decimal
-    fat: Decimal
+    food_entry_id: Optional[int] = Field(default=None)
+    food_entry_description: Optional[str] = Field(default=None)
+    date_int: Optional[int] = Field(default=None)
+    meal: Optional[Literal['Breakfast', 'Lunch', 'Dinner', 'Other']] = Field(default=None)
+    food_id: Optional[int] = Field(default=None)
+    serving_id: Optional[int] = Field(default=None)
+    number_of_units: Optional[Decimal] = Field(default=None)
+    food_entry_name: Optional[str] = Field(default=None)
+    calories: Optional[Decimal] = Field(default=None)
+    carbohydrate: Optional[Decimal] = Field(default=None)
+    protein: Optional[Decimal] = Field(default=None)
+    fat: Optional[Decimal] = Field(default=None)
     saturated_fat: Optional[Decimal] = Field(default=None)
     polyunsaturated_fat: Optional[Decimal] = Field(default=None)
     monounsaturated_fat: Optional[Decimal] = Field(default=None)
@@ -62,6 +62,6 @@ class FoodEntries(_FS_Base):
 class Month(_FS_Base):
     """Generated from XSD ``month``."""
 
-    from_date_int: int
-    to_date_int: int
+    from_date_int: Optional[int] = Field(default=None)
+    to_date_int: Optional[int] = Field(default=None)
     day: Optional[List[Day]] = Field(default=None)

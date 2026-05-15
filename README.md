@@ -5,6 +5,10 @@
 
 This library provides a lightweight python wrapper for the Fatsecret API with the goal of making it easier to visualize the data retrieved from the API. To that end, this library will usually return lists of identical elements for ease of plotting, discarding extra header fields that the Fatsecret API otherwise includes. All API calls return either a single or list of JSON dictionaries.
 
+## What's new in v3
+
+Methods on the namespaced surface (`fs.foods.*`, `fs.recipes.*`, `fs.diary.*`, `fs.profile.*`, `fs.weight.*`, `fs.exercises.*`) now return typed Pydantic v2 models — `Food`, `Recipe`, `Profile`, `FoodEntry`, `ExerciseEntry`, `Day`, etc. — instead of plain `dict`s. Use dotted attribute access (`food.food_id`, not `food["food_id"]`) or call `.to_dict()` on any model for the v2 dict shape. `pydantic>=2.7` is now a base dependency. See the [v3 migration guide](https://fatsecret.readthedocs.io/en/latest/migration-v3.html) for side-by-side examples and the four resources (Food Classification, Saved Meals, Native APIs, Feedback) that intentionally still return dicts.
+
 ## Installation
 
 ```sh

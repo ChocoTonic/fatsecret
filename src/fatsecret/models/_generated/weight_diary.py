@@ -14,7 +14,7 @@ from .._common import _FS_Base
 class Day(_FS_Base):
     """Generated from XSD ``day``."""
 
-    date_int: int
+    date_int: Optional[int] = Field(default=None)
     calories: Optional[Decimal] = Field(default=None)
     carbohydrate: Optional[Decimal] = Field(default=None)
     protein: Optional[Decimal] = Field(default=None)
@@ -26,6 +26,6 @@ class Day(_FS_Base):
 class Month(_FS_Base):
     """Generated from XSD ``month``."""
 
-    from_date_int: int
-    to_date_int: int
+    from_date_int: Optional[int] = Field(default=None)
+    to_date_int: Optional[int] = Field(default=None)
     day: Optional[List[Day]] = Field(default=None)
