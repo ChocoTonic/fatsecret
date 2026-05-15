@@ -19,6 +19,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "fatsecret_oas",
     "sphinxcontrib.autodoc_pydantic",
+    "sphinx_search.extension",
 ]
 
 # autodoc-pydantic settings: keep model rendering compact -- just the class
