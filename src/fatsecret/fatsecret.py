@@ -13,10 +13,12 @@ from typing import Any, List, Literal, Optional, Tuple, Union
 from urllib.parse import parse_qs
 
 import requests
+import tenacity
 from bs4 import BeautifulSoup
 from oauthlib.oauth1 import SIGNATURE_TYPE_QUERY
 from requests_oauthlib import OAuth1Session
 
+from ._retry import default_policy
 from .errors import (
     ApplicationError,
     AuthenticationError,
@@ -46,6 +48,7 @@ class Fatsecret:
         session_token: Optional[Tuple[str, str]] = None,
         auth: Literal["oauth1", "oauth2"] = "oauth1",
         scopes: Optional[List[str]] = None,
+        retries: Union[bool, tenacity.Retrying] = True,
     ):
         """Initialize the FatSecret API session.
 
@@ -59,11 +62,24 @@ class Fatsecret:
                     Valid scopes: basic, premier, barcode, localization, nlp,
                     image-recognition, feedback. None requests all scopes the
                     client has access to.
+            retries: Retry policy for transient GET failures. ``True`` (default)
+                installs the SDK's exponential-backoff + full-jitter policy
+                (3 attempts, 30s total cap, honors numeric ``Retry-After``).
+                ``False`` disables retries entirely. Pass a configured
+                ``tenacity.Retrying`` instance for full custom control.
+                Mutating requests (POST/PUT/DELETE) are never retried.
         """
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.auth_mode: Literal["oauth1", "oauth2"] = auth
         self.scopes = scopes
+        self._retries: Optional[tenacity.Retrying] = (
+            None
+            if retries is False
+            else retries
+            if isinstance(retries, tenacity.Retrying)
+            else default_policy()
+        )
 
         self.request_token = None
         self.request_token_secret = None
@@ -168,13 +184,31 @@ class Fatsecret:
 
         if self.auth_mode == "oauth2":
             headers = {"Authorization": f"Bearer {self._get_oauth2_token()}"}
-            resp = self.session.request(
-                method, target, params=params, json=json_body, headers=headers, timeout=30
-            )
         else:
-            resp = self.session.request(
-                method, target, params=params, json=json_body, timeout=30
+            headers = None
+
+        def _do() -> requests.Response:
+            r = self.session.request(
+                method,
+                target,
+                params=params,
+                json=json_body,
+                headers=headers,
+                timeout=30,
             )
+            # Surface transport-level HTTP failures (5xx, 429, etc.) as
+            # `HTTPError` so the retry policy can classify them. FatSecret's
+            # own error envelopes are served with HTTP 200 and handled below
+            # by `_check_errors`, so this does not regress that path. A
+            # non-transient 4xx (e.g. 401) propagates straight out — the
+            # retry classifier only matches the transient set.
+            r.raise_for_status()
+            return r
+
+        if self._retries is not None and method == "GET":
+            resp = self._retries(_do)
+        else:
+            resp = _do()
 
         payload = resp.json()
         self._check_errors(payload)
