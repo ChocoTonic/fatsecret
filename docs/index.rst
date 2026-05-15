@@ -50,18 +50,6 @@ Once you have created a session then you can start reading from Fatsecret's publ
 
     foods = fs.foods_search_v5("Tacos")        # latest upstream version
 
-Migrating to v3
----------------
-
-v3.0 returns typed Pydantic models from the namespaced API surface
-instead of plain dicts. See the migration guide for side-by-side
-v2-vs-v3 examples and the ``.to_dict()`` escape hatch.
-
-.. toctree::
-    :maxdepth: 2
-
-    migration-v3
-
 OAuth Examples
 --------------
 
