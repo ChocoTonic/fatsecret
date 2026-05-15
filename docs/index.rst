@@ -62,6 +62,16 @@ v2-vs-v3 examples and the ``.to_dict()`` escape hatch.
 
     migration-v3
 
+Usage Examples
+--------------
+
+Task-oriented recipes for common workflows on the v3 namespaced surface.
+
+.. toctree::
+    :maxdepth: 2
+
+    examples
+
 OAuth Examples
 --------------
 
