@@ -12,72 +12,74 @@ warnings during development, run Python with::
 
 The endpoint methods below are exposed via resource sub-objects on a
 :class:`fatsecret.Fatsecret` instance -- e.g. ``fs.foods.search_v5(...)`` --
-with one section per Python resource class (the actual import path you
-use). Client-only helpers (auth handshake, session lifecycle, time
-conversion) are listed at the bottom under **Client utilities**.
+with one section per FatSecret API category. Each section's class
+signature shows the Python class you use (e.g. ``FoodsResource`` for the
+``Foods`` category). Client-only helpers (auth handshake, session
+lifecycle, time conversion) are listed at the bottom under **Client
+utilities**.
 
-FoodsResource
--------------
+Foods
+-----
 
 .. autoclass:: fatsecret.resources.foods.FoodsResource
    :members:
 
-ClassificationResource
-----------------------
+Food Classification
+-------------------
 
 .. autoclass:: fatsecret.resources.classification.ClassificationResource
    :members:
 
-RecipesResource
----------------
+Recipes
+-------
 
 .. autoclass:: fatsecret.resources.recipes.RecipesResource
    :members:
 
-ProfileFoodsResource
---------------------
+Profile Foods
+-------------
 
 .. autoclass:: fatsecret.resources.profile_foods.ProfileFoodsResource
    :members:
 
-DiaryResource
--------------
+Food Diary
+----------
 
 .. autoclass:: fatsecret.resources.diary.DiaryResource
    :members:
 
-ExercisesResource
------------------
+Exercise Diary
+--------------
 
 .. autoclass:: fatsecret.resources.exercises.ExercisesResource
    :members:
 
-WeightResource
---------------
+Weight
+------
 
 .. autoclass:: fatsecret.resources.weight.WeightResource
    :members:
 
-ProfileResource
----------------
+Profile
+-------
 
 .. autoclass:: fatsecret.resources.profile.ProfileResource
    :members:
 
-MealsResource
--------------
+Saved Meals
+-----------
 
 .. autoclass:: fatsecret.resources.meals.MealsResource
    :members:
 
-NativeResource
---------------
+AI
+--
 
 .. autoclass:: fatsecret.resources.native.NativeResource
    :members:
 
-FeedbackResource
-----------------
+Feedback
+--------
 
 .. autoclass:: fatsecret.resources.feedback.FeedbackResource
    :members:
