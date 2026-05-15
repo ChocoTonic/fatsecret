@@ -38,7 +38,7 @@ dev = [
     "pytest-cov",
     "pytest",
     "ruff",
-    "sphinx-rtd-theme>=3.0.2",
+    "furo>=2024.8.6",
     "sphinx>=7.4.7",
     "pyyaml>=6.0",
     "autodoc-pydantic>=2.0",

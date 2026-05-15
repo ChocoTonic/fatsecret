@@ -36,7 +36,7 @@ exclude_patterns = ["_build"]
 add_module_names = False
 templates_path = ["_templates"]
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 
 # Wrap signatures longer than 80 chars onto multiple lines (Sphinx 7.1+).
 # Generated mutator/create methods can take 20+ optional args; rendering them
