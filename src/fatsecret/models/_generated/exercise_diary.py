@@ -14,7 +14,7 @@ from .._common import _FS_Base
 class Day(_FS_Base):
     """Generated from XSD ``day``."""
 
-    date_int: int
+    date_int: Optional[int] = Field(default=None)
     calories: Optional[Decimal] = Field(default=None)
     carbohydrate: Optional[Decimal] = Field(default=None)
     protein: Optional[Decimal] = Field(default=None)
@@ -26,35 +26,35 @@ class Day(_FS_Base):
 class Exercise(_FS_Base):
     """Generated from XSD ``exercise``."""
 
-    exercise_id: int
-    exercise_name: str
+    exercise_id: Optional[int] = Field(default=None)
+    exercise_name: Optional[str] = Field(default=None)
 
 
 class ExerciseEntry(_FS_Base):
     """Generated from XSD ``exercise_entry``."""
 
-    is_template_value: bool
-    exercise_id: int
-    exercise_name: str
-    minutes: int
-    calories: Decimal
+    is_template_value: Optional[bool] = Field(default=None)
+    exercise_id: Optional[int] = Field(default=None)
+    exercise_name: Optional[str] = Field(default=None)
+    minutes: Optional[int] = Field(default=None)
+    calories: Optional[Decimal] = Field(default=None)
 
 
 class ExerciseEntries(_FS_Base):
     """Generated from XSD ``exercise_entries``."""
 
-    exercise_entry: List[ExerciseEntry]
+    exercise_entry: Optional[List[ExerciseEntry]] = Field(default=None)
 
 
 class ExerciseTypes(_FS_Base):
     """Generated from XSD ``exercise_types``."""
 
-    exercise: List[Exercise]
+    exercise: Optional[List[Exercise]] = Field(default=None)
 
 
 class Month(_FS_Base):
     """Generated from XSD ``month``."""
 
-    from_date_int: int
-    to_date_int: int
+    from_date_int: Optional[int] = Field(default=None)
+    to_date_int: Optional[int] = Field(default=None)
     day: Optional[List[Day]] = Field(default=None)

@@ -20,10 +20,10 @@ class RecipesRecipeRecipeIngredients(_FS_Base):
 class RecipesRecipeRecipeNutrition(_FS_Base):
     """Generated from XSD ``<inline RecipesRecipeRecipeNutrition>``."""
 
-    calories: Decimal
-    carbohydrate: Decimal
-    protein: Decimal
-    fat: Decimal
+    calories: Optional[Decimal] = Field(default=None)
+    carbohydrate: Optional[Decimal] = Field(default=None)
+    protein: Optional[Decimal] = Field(default=None)
+    fat: Optional[Decimal] = Field(default=None)
 
 
 class RecipesRecipeRecipeTypes(_FS_Base):
@@ -35,9 +35,9 @@ class RecipesRecipeRecipeTypes(_FS_Base):
 class RecipesRecipe(_FS_Base):
     """Generated from XSD ``<inline RecipesRecipe>``."""
 
-    recipe_id: int
-    recipe_name: str
-    recipe_description: str
+    recipe_id: Optional[int] = Field(default=None)
+    recipe_name: Optional[str] = Field(default=None)
+    recipe_description: Optional[str] = Field(default=None)
     recipe_image: Optional[str] = Field(default=None)
     recipe_nutrition: Optional[RecipesRecipeRecipeNutrition] = Field(default=None)
     recipe_ingredients: Optional[RecipesRecipeRecipeIngredients] = Field(default=None)
@@ -47,7 +47,7 @@ class RecipesRecipe(_FS_Base):
 class Recipes(_FS_Base):
     """Generated from XSD ``recipes``."""
 
-    max_results: int
-    total_results: int
-    page_number: int
-    recipe: RecipesRecipe
+    max_results: Optional[int] = Field(default=None)
+    total_results: Optional[int] = Field(default=None)
+    page_number: Optional[int] = Field(default=None)
+    recipe: Optional[RecipesRecipe] = Field(default=None)
