@@ -64,6 +64,24 @@ def test_unix_time_v2_invalid_type():
         assert False, "TypeError not raised for invalid input type"
 
 
+def test_from_unix_time_epoch():
+    assert Fatsecret.from_unix_time(0) == datetime.datetime(1970, 1, 1)
+
+
+def test_from_unix_time_one_day():
+    assert Fatsecret.from_unix_time(1) == datetime.datetime(1970, 1, 2)
+
+
+def test_from_unix_time_roundtrip():
+    dt = datetime.datetime(2025, 6, 15)
+    assert Fatsecret.from_unix_time(Fatsecret.unix_time(dt)) == dt
+
+
+def test_from_unix_time_roundtrip_v2():
+    dt = datetime.datetime(2025, 6, 15)
+    assert Fatsecret.from_unix_time(Fatsecret.unix_time_v2(dt)) == dt
+
+
 def test_unix_time_v2_leap_year():
     dt = datetime.datetime(1972, 1, 1)
     epoch = datetime.datetime(1970, 1, 1)
