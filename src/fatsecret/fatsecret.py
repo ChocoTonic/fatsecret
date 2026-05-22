@@ -512,49 +512,57 @@ class Fatsecret:
         Note:
         This uses HTML form emulation against FatSecret's login flow and may break if the website changes.
         It is provided for convenience and developer testing, not production OAuth flows.
+
+        Raises:
+            Any exception encountered during the request/parse/authenticate
+            chain — including ``requests.exceptions.HTTPError`` on 4xx/5xx
+            responses from FatSecret (commonly 400 if the OAuth1
+            consumer_key/secret pair is wrong), ``KeyError`` if the
+            login page's hidden form fields aren't present, and
+            ``RuntimeError`` if the PIN can't be extracted after login.
+            Callers must handle these — silent failure (returning None)
+            previously hid credential mistakes for minutes inside caller
+            retry loops.
         """
-        try:
-            session = requests.Session()
-            fatsecret_client = Fatsecret(consumer_key, consumer_secret)
-            authorize_url = fatsecret_client.get_authorize_url().replace(
-                "authorize", "authorize.aspx"
+        session = requests.Session()
+        fatsecret_client = Fatsecret(consumer_key, consumer_secret)
+        authorize_url = fatsecret_client.get_authorize_url().replace(
+            "authorize", "authorize.aspx"
+        )
+
+        # Fetch viewstate and generator dynamically.
+        login_page_response = session.get(url=authorize_url)
+        login_page_response.raise_for_status()
+        login_page_soup = BeautifulSoup(login_page_response.text, "lxml")
+        viewstate_value = login_page_soup.find("input", {"name": "__VIEWSTATE"})[
+            "value"
+        ]
+        viewstate_generator_value = login_page_soup.find(
+            "input", {"name": "__VIEWSTATEGENERATOR"}
+        )["value"]
+
+        payload = {
+            "__VIEWSTATE": viewstate_value,
+            "__VIEWSTATEGENERATOR": viewstate_generator_value,
+            "Name": username,
+            "Password": password,
+            "Login.x": 0,
+            "Login.y": 0,
+        }
+
+        pin_response = session.post(url=authorize_url, data=payload)
+        pin_response.raise_for_status()
+        pin_soup = BeautifulSoup(pin_response.content, "lxml")
+        verifier_tag = pin_soup.find("b")
+        if not verifier_tag:
+            raise RuntimeError(
+                "Failed to find PIN in response. Login may have failed."
             )
-
-            # Fetch viewstate and generator dynamically
-            login_page_response = session.get(url=authorize_url)
-            login_page_soup = BeautifulSoup(login_page_response.text, "lxml")
-            viewstate_value = login_page_soup.find("input", {"name": "__VIEWSTATE"})[
-                "value"
-            ]
-            viewstate_generator_value = login_page_soup.find(
-                "input", {"name": "__VIEWSTATEGENERATOR"}
-            )["value"]
-
-            payload = {
-                "__VIEWSTATE": viewstate_value,
-                "__VIEWSTATEGENERATOR": viewstate_generator_value,
-                "Name": username,
-                "Password": password,
-                "Login.x": 0,
-                "Login.y": 0,
-            }
-
-            pin_response = session.post(url=authorize_url, data=payload)
-            pin_soup = BeautifulSoup(pin_response.content, "lxml")
-            verifier_tag = pin_soup.find("b")
-            if not verifier_tag:
-                raise RuntimeError(
-                    "Failed to find PIN in response. Login may have failed."
-                )
-            verifier_pin = verifier_tag.text.strip()
-            print(f"Obtained verifier PIN. {len(verifier_pin) = }")
-            fatsecret_client.authenticate(verifier_pin)
-            print("Authentication successful.")
-            return fatsecret_client
-        except Exception as error:
-            message = f"Failed to authenticate:\n{error}"
-            print(message)
-            return None
+        verifier_pin = verifier_tag.text.strip()
+        print(f"Obtained verifier PIN. {len(verifier_pin) = }")
+        fatsecret_client.authenticate(verifier_pin)
+        print("Authentication successful.")
+        return fatsecret_client
 
     # ========================= HELPERS =========================
     # Shared helpers used by the namespaced resource implementations.
