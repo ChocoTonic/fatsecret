@@ -410,6 +410,18 @@ class Fatsecret:
             raise TypeError("dt must be datetime, date, int, or float")
 
     @staticmethod
+    def from_unix_time(days: int) -> datetime.datetime:
+        """Convert FatSecret-style days-since-epoch back to a naive ``datetime``.
+
+        Inverse of :meth:`unix_time` / :meth:`unix_time_v2`. Returns midnight
+        UTC of the day corresponding to ``days`` (1970-01-01 + ``days``).
+
+        :param days: Number of days since 1970-01-01 (as returned by ``unix_time``).
+        :return: Naive ``datetime.datetime`` at midnight of that day.
+        """
+        return datetime.datetime(1970, 1, 1) + datetime.timedelta(days=days)
+
+    @staticmethod
     def valid_response(response: requests.Response):
         """Validate a JSON API response and extract its data or raise an error."""
         if response.json():
