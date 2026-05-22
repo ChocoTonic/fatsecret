@@ -1,6 +1,6 @@
 [project]
 name = "fatsecret"
-version = "3.1.7"
+version = "3.1.8"
 description = "Python wrapper for the Fatsecret API"
 readme = "README.md"
 requires-python = ">=3.11"
