@@ -42,6 +42,7 @@ def _resolve(obj, dotted_path):
 # Phase 2 helpers: pad XSD-required fields so model_validate succeeds
 # ---------------------------------------------------------------------------
 
+
 def _food(**overrides):
     base = {
         "food_id": "1",
@@ -273,9 +274,7 @@ def test_food_create_v2_does_not_accept_other_carbohydrate(fs):
 # --- v2-only optionals (added_sugars, vitamin_d) -----------------------------
 
 
-@pytest.mark.parametrize(
-    "kwarg,value", [("added_sugars", 4.0), ("vitamin_d", 2.5)]
-)
+@pytest.mark.parametrize("kwarg,value", [("added_sugars", 4.0), ("vitamin_d", 2.5)])
 def test_food_create_v2_accepts_v2_only_optionals(fs, kwarg, value):
     payload = _food(food_id="1")
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
@@ -354,7 +353,9 @@ def test_food_add_favorite_v1_with_number_of_units_only(fs):
 def test_food_add_favorite_v1_with_both_optionals(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
-        fs.profile_foods.add_favorite_v1("fid-1", serving_id="sid-9", number_of_units=2.5)
+        fs.profile_foods.add_favorite_v1(
+            "fid-1", serving_id="sid-9", number_of_units=2.5
+        )
     params = mock_call.call_args.args[0]
     assert params["serving_id"] == "sid-9"
     assert params["number_of_units"] == 2.5
@@ -398,7 +399,7 @@ def test_food_delete_favorite_v1_happy_path(fs):
     assert params["food_id"] == "fid-1"
     assert "serving_id" not in params
     assert "number_of_units" not in params
-    assert mock_call.call_args.kwargs.get("method") == "DELETE"
+    assert mock_call.call_args.kwargs.get("method") == "POST"
     assert result is True
 
 
@@ -492,7 +493,7 @@ def test_foods_get_favorites_empty_response_returns_empty_list(
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)()
-    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
+    assert [r.model_dump(mode="json", exclude_unset=True) for r in result] == []
 
 
 # ---------------------------------------------------------------------------
@@ -551,7 +552,7 @@ def test_foods_get_most_eaten_empty_response_returns_empty_list(
 ):
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)()
-    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
+    assert [r.model_dump(mode="json", exclude_unset=True) for r in result] == []
 
 
 # ---------------------------------------------------------------------------
@@ -598,9 +599,7 @@ def test_foods_get_recently_eaten_meal_absent_when_none(fs, method_name, _api):
 
 
 @pytest.mark.parametrize("method_name,_api", RECENTLY_EATEN_VERSIONS)
-def test_foods_get_recently_eaten_single_dict_coerced_to_list(
-    fs, method_name, _api
-):
+def test_foods_get_recently_eaten_single_dict_coerced_to_list(fs, method_name, _api):
     payload = {"foods": {"food": _food(food_id="999")}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)()

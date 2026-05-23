@@ -5,9 +5,8 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from .._base import BaseResource
-
 from ...models._generated.recipes import RecipesRecipe
+from .._base import BaseResource
 
 
 class RecipesResource(BaseResource):
@@ -42,7 +41,7 @@ class RecipesResource(BaseResource):
         """
         params: dict[str, Any] = {"method": "recipe.delete_favorite"}
         params["recipe_id"] = recipe_id
-        payload = self._client._call(params, method="DELETE")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def get_favorites_v1(

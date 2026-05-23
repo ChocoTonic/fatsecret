@@ -101,9 +101,7 @@ def test_saved_meal_create_v1_empty_response(fs):
 
 
 def test_saved_meal_edit_v1_happy_path(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value={"success": 1}
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
         result = fs.meals.edit_v1("123")
 
     params = mock_call.call_args.args[0]
@@ -112,14 +110,12 @@ def test_saved_meal_edit_v1_happy_path(fs):
     assert "saved_meal_name" not in params
     assert "saved_meal_description" not in params
     assert "meals" not in params
-    assert mock_call.call_args.kwargs.get("method") == "PUT"
+    assert mock_call.call_args.kwargs.get("method") == "POST"
     assert result is True
 
 
 def test_saved_meal_edit_v1_with_all_optionals(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value={"success": 1}
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
         result = fs.meals.edit_v1(
             "123",
             saved_meal_name="Renamed",
@@ -153,15 +149,13 @@ def test_saved_meal_edit_v1_non_success_payload_passthrough(fs):
 
 
 def test_saved_meal_delete_v1_happy_path(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value={"success": 1}
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
         result = fs.meals.delete_v1("123")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "saved_meal.delete"
     assert params["saved_meal_id"] == "123"
-    assert mock_call.call_args.kwargs.get("method") == "DELETE"
+    assert mock_call.call_args.kwargs.get("method") == "POST"
     assert result is True
 
 
@@ -235,9 +229,7 @@ def test_saved_meals_get_empty_response(fs, method_name, _):
 
 @pytest.mark.parametrize("method_name,_", SAVED_MEALS_GET_VERSIONS)
 def test_saved_meals_get_null_inner_response(fs, method_name, _):
-    with patch.object(
-        Fatsecret, "_call", return_value={"saved_meals": None}
-    ):
+    with patch.object(Fatsecret, "_call", return_value={"saved_meals": None}):
         result = _resolve(fs, method_name)()
     assert result == []
 
@@ -281,9 +273,7 @@ def test_saved_meal_item_add_v1_empty_response(fs):
 
 
 def test_saved_meal_item_edit_v1_happy_path(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value={"success": 1}
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
         result = fs.meals.item_edit_v1("77")
 
     params = mock_call.call_args.args[0]
@@ -291,14 +281,12 @@ def test_saved_meal_item_edit_v1_happy_path(fs):
     assert params["saved_meal_item_id"] == "77"
     assert "saved_meal_item_name" not in params
     assert "number_of_units" not in params
-    assert mock_call.call_args.kwargs.get("method") == "PUT"
+    assert mock_call.call_args.kwargs.get("method") == "POST"
     assert result is True
 
 
 def test_saved_meal_item_edit_v1_with_all_optionals(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value={"success": 1}
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
         result = fs.meals.item_edit_v1(
             "77",
             saved_meal_item_name="Renamed Apple",
@@ -330,9 +318,7 @@ def test_saved_meal_item_edit_v1_cannot_change_serving_id(fs):
 
 
 def test_saved_meal_item_edit_v1_partial_optional_only_name(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value={"success": 1}
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
         fs.meals.item_edit_v1("77", saved_meal_item_name="x")
 
     params = mock_call.call_args.args[0]
@@ -346,15 +332,13 @@ def test_saved_meal_item_edit_v1_partial_optional_only_name(fs):
 
 
 def test_saved_meal_item_delete_v1_happy_path(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value={"success": 1}
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value={"success": 1}) as mock_call:
         result = fs.meals.item_delete_v1("77")
 
     params = mock_call.call_args.args[0]
     assert params["method"] == "saved_meal_item.delete"
     assert params["saved_meal_item_id"] == "77"
-    assert mock_call.call_args.kwargs.get("method") == "DELETE"
+    assert mock_call.call_args.kwargs.get("method") == "POST"
     assert result is True
 
 
@@ -375,9 +359,7 @@ SAVED_MEAL_ITEMS_GET_VERSIONS = [
 ]
 
 
-@pytest.mark.parametrize(
-    "method_name,api_method", SAVED_MEAL_ITEMS_GET_VERSIONS
-)
+@pytest.mark.parametrize("method_name,api_method", SAVED_MEAL_ITEMS_GET_VERSIONS)
 def test_saved_meal_items_get_happy_path(fs, method_name, api_method):
     payload = {
         "saved_meal_items": {
@@ -402,9 +384,7 @@ def test_saved_meal_items_get_happy_path(fs, method_name, api_method):
 
 @pytest.mark.parametrize("method_name,_", SAVED_MEAL_ITEMS_GET_VERSIONS)
 def test_saved_meal_items_get_single_dict_coerced(fs, method_name, _):
-    payload = {
-        "saved_meal_items": {"saved_meal_item": {"saved_meal_item_id": "1"}}
-    }
+    payload = {"saved_meal_items": {"saved_meal_item": {"saved_meal_item_id": "1"}}}
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _resolve(fs, method_name)("10")
     assert result == [{"saved_meal_item_id": "1"}]
@@ -419,8 +399,6 @@ def test_saved_meal_items_get_empty_response(fs, method_name, _):
 
 @pytest.mark.parametrize("method_name,_", SAVED_MEAL_ITEMS_GET_VERSIONS)
 def test_saved_meal_items_get_null_inner_response(fs, method_name, _):
-    with patch.object(
-        Fatsecret, "_call", return_value={"saved_meal_items": None}
-    ):
+    with patch.object(Fatsecret, "_call", return_value={"saved_meal_items": None}):
         result = _resolve(fs, method_name)("10")
     assert result == []

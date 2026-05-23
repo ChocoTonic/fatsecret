@@ -82,7 +82,9 @@ def authenticate_from_env(
         )
 
     if username and password:
-        print("\nAuthenticating via FATSECRET_USERNAME / FATSECRET_PASSWORD (HTML scrape).")
+        print(
+            "\nAuthenticating via FATSECRET_USERNAME / FATSECRET_PASSWORD (HTML scrape)."
+        )
         # `Fatsecret.fatsecret_authenticate` is a helper defined on the class
         # (no `self`) that drives the 3-legged OAuth flow programmatically.
         return Fatsecret.fatsecret_authenticate(

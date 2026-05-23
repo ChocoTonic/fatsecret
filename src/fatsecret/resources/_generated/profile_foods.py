@@ -5,9 +5,8 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from .._base import BaseResource
-
 from ...models._generated.foods import Food
+from .._base import BaseResource
 
 
 class ProfileFoodsResource(BaseResource):
@@ -269,7 +268,7 @@ class ProfileFoodsResource(BaseResource):
                 ("number_of_units", number_of_units),
             ],
         )
-        payload = self._client._call(params, method="DELETE")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def get_favorites_v1(

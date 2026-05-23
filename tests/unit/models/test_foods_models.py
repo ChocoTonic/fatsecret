@@ -11,8 +11,8 @@ import pytest
 from pydantic import ValidationError
 
 from fatsecret.models import Food, Serving
-from fatsecret.models._common import Ternary  # noqa: F401  (used in annotation tests)
-
+from fatsecret.models._common import \
+    Ternary  # noqa: F401  (used in annotation tests)
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 GEN_FILE = REPO_ROOT / "src" / "fatsecret" / "models" / "_generated" / "foods.py"
@@ -21,7 +21,12 @@ OAS_SYNC_DIR = REPO_ROOT / "scripts" / "oas-sync"
 
 def test_food_coerces_string_id_to_int() -> None:
     food = Food.model_validate(
-        {"food_id": "36421", "food_name": "Banana", "food_type": "Generic", "food_url": "x"}
+        {
+            "food_id": "36421",
+            "food_name": "Banana",
+            "food_type": "Generic",
+            "food_url": "x",
+        }
     )
     assert food.food_id == 36421
     assert isinstance(food.food_id, int)
@@ -31,7 +36,12 @@ def test_food_coerces_string_id_to_int() -> None:
 
 def test_food_accepts_native_int_id() -> None:
     food = Food.model_validate(
-        {"food_id": 36421, "food_name": "Banana", "food_type": "Generic", "food_url": "x"}
+        {
+            "food_id": 36421,
+            "food_name": "Banana",
+            "food_type": "Generic",
+            "food_url": "x",
+        }
     )
     assert food.food_id == 36421
 

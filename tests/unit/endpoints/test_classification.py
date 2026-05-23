@@ -168,9 +168,7 @@ def test_food_categories_get_happy_path(fs, method_name, api_method):
 
 
 @pytest.mark.parametrize("method_name,_api", CATEGORIES_VERSIONS)
-@pytest.mark.parametrize(
-    "kwarg,value", [("region", "US"), ("language", "en")]
-)
+@pytest.mark.parametrize("kwarg,value", [("region", "US"), ("language", "en")])
 def test_food_categories_get_optional_present_when_supplied(
     fs, method_name, _api, kwarg, value
 ):
@@ -237,9 +235,7 @@ SUB_CATEGORIES_VERSIONS = [
 @pytest.mark.parametrize("method_name,api_method", SUB_CATEGORIES_VERSIONS)
 def test_food_sub_categories_get_happy_path(fs, method_name, api_method):
     payload = {
-        "food_sub_categories": {
-            "food_sub_category": ["Breads", "Cakes", "Cookies"]
-        }
+        "food_sub_categories": {"food_sub_category": ["Breads", "Cakes", "Cookies"]}
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = _resolve(fs, method_name)("1")
@@ -253,9 +249,7 @@ def test_food_sub_categories_get_happy_path(fs, method_name, api_method):
 
 
 @pytest.mark.parametrize("method_name,_api", SUB_CATEGORIES_VERSIONS)
-@pytest.mark.parametrize(
-    "kwarg,value", [("region", "US"), ("language", "en")]
-)
+@pytest.mark.parametrize("kwarg,value", [("region", "US"), ("language", "en")])
 def test_food_sub_categories_get_optional_present_when_supplied(
     fs, method_name, _api, kwarg, value
 ):

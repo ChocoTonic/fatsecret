@@ -189,13 +189,15 @@ def _detect_scope(tree: HTMLParser) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _section(html: str, start_re: re.Pattern[str], end_re: re.Pattern[str]) -> str | None:
+def _section(
+    html: str, start_re: re.Pattern[str], end_re: re.Pattern[str]
+) -> str | None:
     m1 = start_re.search(html)
     if m1 is None:
         return None
     m2 = end_re.search(html, m1.end())
     end = m2.start() if m2 else len(html)
-    return html[m1.end():end]
+    return html[m1.end() : end]
 
 
 def _body_html(tree: HTMLParser, raw_html: str) -> str:
@@ -381,10 +383,7 @@ def _walk_response(node: Any, parent_key: str | None) -> Any:
     # Repair the docs-typo case: parent key (e.g. ``recipe_types``) has a
     # single child whose key is identical to the parent.  The wire format
     # uses the singular form; substitute it.
-    if (
-        len(node) == 1
-        and parent_key is not None
-    ):
+    if len(node) == 1 and parent_key is not None:
         only_key = next(iter(node))
         if only_key == parent_key:
             singular = _singular_of(parent_key)
