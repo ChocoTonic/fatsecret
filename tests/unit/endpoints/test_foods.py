@@ -33,7 +33,6 @@ import pytest
 from fatsecret import Fatsecret
 from fatsecret.errors import PremierRequiredError
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -48,6 +47,7 @@ def fs():
 # ---------------------------------------------------------------------------
 # Phase 2 helpers: fixture padding for Pydantic-typed responses
 # ---------------------------------------------------------------------------
+
 
 def _food(**overrides):
     """Minimal Food stub with all required XSD fields."""
@@ -151,7 +151,9 @@ def _call_search(fs, version, **kwargs):
 @pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
 def test_foods_search_happy_path(fs, version):
     items = [_food(food_id="1"), _food(food_id="2")]
-    payload = _search_payload_v1(items) if version == 1 else _search_payload_v2plus(items)
+    payload = (
+        _search_payload_v1(items) if version == 1 else _search_payload_v2plus(items)
+    )
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = _call_search(fs, version)
 
@@ -208,7 +210,9 @@ def test_foods_search_optionals_absent_when_none(fs, version):
 @pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
 def test_foods_search_single_dict_coerced_to_list(fs, version):
     single = _food(food_id="42")
-    payload = _search_payload_v1(single) if version == 1 else _search_payload_v2plus(single)
+    payload = (
+        _search_payload_v1(single) if version == 1 else _search_payload_v2plus(single)
+    )
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = _call_search(fs, version)
     assert len(result) == 1

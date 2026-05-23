@@ -4,15 +4,9 @@ _check_errors and _unwrap."""
 import pytest
 
 from fatsecret import Fatsecret
-from fatsecret.errors import (
-    ApplicationError,
-    AuthenticationError,
-    GeneralError,
-    ParameterError,
-    PremierRequiredError,
-    ScopeRequiredError,
-)
-
+from fatsecret.errors import (ApplicationError, AuthenticationError,
+                              GeneralError, ParameterError,
+                              PremierRequiredError, ScopeRequiredError)
 
 # --------------------------- _check_errors ---------------------------
 

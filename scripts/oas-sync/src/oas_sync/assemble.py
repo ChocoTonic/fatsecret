@@ -47,9 +47,18 @@ CATEGORY_DEFAULT_TAG = {
 # extract these (its regex was foiled by the rendered HTML), so we encode
 # them here. Same inputs → same output, so this is still deterministic.
 NATIVE_REST_URLS: dict[tuple[str, str], str] = {
-    ("natural.language.processing", "v1"): "https://platform.fatsecret.com/rest/natural-language-processing/v1",
-    ("image.recognition", "v1"): "https://platform.fatsecret.com/rest/image-recognition/v1",
-    ("image.recognition", "v2"): "https://platform.fatsecret.com/rest/image-recognition/v2",
+    (
+        "natural.language.processing",
+        "v1",
+    ): "https://platform.fatsecret.com/rest/natural-language-processing/v1",
+    (
+        "image.recognition",
+        "v1",
+    ): "https://platform.fatsecret.com/rest/image-recognition/v1",
+    (
+        "image.recognition",
+        "v2",
+    ): "https://platform.fatsecret.com/rest/image-recognition/v2",
     ("feedback", "v1"): "https://platform.fatsecret.com/rest/feedback/v1",
     # food_entries.get.v2 was historically routed through the REST URL
     # /rest/food-entries/v2, but the hand-written resource calls it
@@ -137,7 +146,11 @@ def _tag_for_endpoint(category: str, method: str) -> str:
     if category == "foods-aux-and-native":
         if method in {"foods.autocomplete", "food.find_id_for_barcode"}:
             return "Foods"
-        if method in {"food_brands.get", "food_categories.get", "food_sub_categories.get"}:
+        if method in {
+            "food_brands.get",
+            "food_categories.get",
+            "food_sub_categories.get",
+        }:
             return "Food Classification"
         if method in {"natural.language.processing", "image.recognition"}:
             return "Native APIs"
@@ -260,12 +273,18 @@ def _build_info(global_doc: dict[str, Any]) -> dict[str, Any]:
 
 
 def _build_servers(global_doc: dict[str, Any]) -> list[dict[str, Any]]:
-    base_urls = (global_doc.get("base_urls") or {}) if isinstance(global_doc, dict) else {}
-    method_style = base_urls.get("method_style") or "https://platform.fatsecret.com/rest/server.api"
+    base_urls = (
+        (global_doc.get("base_urls") or {}) if isinstance(global_doc, dict) else {}
+    )
+    method_style = (
+        base_urls.get("method_style")
+        or "https://platform.fatsecret.com/rest/server.api"
+    )
     return [
         {
             "description": "Method-parameter style endpoint. Operations whose path begins with /rest/server.api hang off this server.",
-            "url": method_style.rsplit("/rest/server.api", 1)[0] or "https://platform.fatsecret.com",
+            "url": method_style.rsplit("/rest/server.api", 1)[0]
+            or "https://platform.fatsecret.com",
         },
         {
             "description": "REST-URL style base. Native APIs (NLP, image recognition, feedback) and a few v2 endpoints mount under /rest/...",
@@ -275,7 +294,9 @@ def _build_servers(global_doc: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _build_security_schemes(global_doc: dict[str, Any]) -> dict[str, Any]:
-    oauth2_block = (global_doc.get("oauth2") or {}) if isinstance(global_doc, dict) else {}
+    oauth2_block = (
+        (global_doc.get("oauth2") or {}) if isinstance(global_doc, dict) else {}
+    )
     scopes_src = oauth2_block.get("scopes") or {}
     # Deterministic alphabetical order is enforced by the dumper; we just
     # pass the dict through.
@@ -288,7 +309,9 @@ def _build_security_schemes(global_doc: dict[str, Any]) -> dict[str, Any]:
         "image-recognition": "Image-based food recognition features",
         "feedback": "Feedback-related endpoints",
     }
-    token_url = oauth2_block.get("token_url") or "https://oauth.fatsecret.com/connect/token"
+    token_url = (
+        oauth2_block.get("token_url") or "https://oauth.fatsecret.com/connect/token"
+    )
     return {
         "oauth1": {
             "description": (
@@ -331,7 +354,11 @@ def _build_error_response(global_doc: dict[str, Any]) -> dict[str, Any]:
             "summary": f"{entry.get('type', 'Error')} ({code})",
             "value": {
                 "error": {
-                    "code": int(code) if isinstance(code, (int, str)) and str(code).isdigit() else code,
+                    "code": (
+                        int(code)
+                        if isinstance(code, (int, str)) and str(code).isdigit()
+                        else code
+                    ),
                     "message": str(entry.get("message", "")),
                 }
             },
@@ -450,9 +477,24 @@ def _build_operation(
     is_method_style = native_url is None
 
     if is_method_style:
-        api_method_value = _api_method_param(method, version, endpoint.get("api_method_param"))
+        api_method_value = _api_method_param(
+            method, version, endpoint.get("api_method_param")
+        )
         path = f"/rest/server.api#{api_method_value}"
-        verb = (endpoint.get("http_verb") or "GET").lower()
+        # FatSecret's docs document an HTTP verb (DELETE/PUT/POST) for the
+        # path-based URL form alongside the method-param form, e.g. for
+        # food_entry.delete:
+        #   "URL (new): /rest/food-entries/v1
+        #    HTTP DELETE
+        #    OR
+        #    method String Required: food_entry.delete"
+        # The scraper's _detect_http_verb extracts that verb, but it belongs
+        # to the path-based URL, NOT to the legacy /rest/server.api endpoint.
+        # The legacy endpoint accepts GET (reads) and POST (writes), but
+        # rejects DELETE/PUT with 404. Map DELETE/PUT down to POST; leave
+        # GET/POST as-is so reads stay GET and writes stay POST.
+        extracted = (endpoint.get("http_verb") or "GET").lower()
+        verb = "post" if extracted in ("delete", "put") else extracted
     else:
         api_method_value = None
         path = native_url
@@ -471,7 +513,9 @@ def _build_operation(
     responses: dict[str, Any] = {
         "200": {
             "content": {
-                "application/json": {"schema": {"$ref": f"#/components/schemas/{schema_name}"}}
+                "application/json": {
+                    "schema": {"$ref": f"#/components/schemas/{schema_name}"}
+                }
             },
             "description": "Successful response.",
         },
@@ -566,16 +610,40 @@ def build_openapi_document(raw_dir: Path = OUT_RAW_DIR) -> dict[str, Any]:
         "security": [{"oauth2": ["basic"]}, {"oauth1": []}],
         "servers": _build_servers(global_doc),
         "tags": [
-            {"description": "Foods search, food.get, autocomplete, barcode.", "name": "Foods"},
-            {"description": "Brands, categories, sub-categories.", "name": "Food Classification"},
+            {
+                "description": "Foods search, food.get, autocomplete, barcode.",
+                "name": "Foods",
+            },
+            {
+                "description": "Brands, categories, sub-categories.",
+                "name": "Food Classification",
+            },
             {"description": "Recipe retrieval, search, favorites.", "name": "Recipes"},
-            {"description": "User-scoped food creation, favorites, eaten lists.", "name": "Profile Foods"},
-            {"description": "User-scoped saved meals and saved-meal-items CRUD.", "name": "Saved Meals"},
-            {"description": "Daily food diary entries and monthly summaries.", "name": "Food Diary"},
-            {"description": "Exercise catalog and diary entries.", "name": "Exercise Diary"},
+            {
+                "description": "User-scoped food creation, favorites, eaten lists.",
+                "name": "Profile Foods",
+            },
+            {
+                "description": "User-scoped saved meals and saved-meal-items CRUD.",
+                "name": "Saved Meals",
+            },
+            {
+                "description": "Daily food diary entries and monthly summaries.",
+                "name": "Food Diary",
+            },
+            {
+                "description": "Exercise catalog and diary entries.",
+                "name": "Exercise Diary",
+            },
             {"description": "Weight tracking endpoints.", "name": "Weight Diary"},
-            {"description": "Profile creation and authentication retrieval.", "name": "Profile Auth"},
-            {"description": "REST-URL native APIs: NLP and image recognition.", "name": "Native APIs"},
+            {
+                "description": "Profile creation and authentication retrieval.",
+                "name": "Profile Auth",
+            },
+            {
+                "description": "REST-URL native APIs: NLP and image recognition.",
+                "name": "Native APIs",
+            },
             {"description": "Issue/feedback reporting.", "name": "Feedback"},
         ],
     }

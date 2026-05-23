@@ -269,7 +269,7 @@ class ProfileFoodsResource(BaseResource):
                 ("number_of_units", number_of_units),
             ],
         )
-        payload = self._client._call(params, method="DELETE")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def get_favorites_v1(

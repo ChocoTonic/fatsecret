@@ -53,7 +53,7 @@ class MealsResource(BaseResource):
         """
         params: dict[str, Any] = {"method": "saved_meal.delete"}
         params["saved_meal_id"] = saved_meal_id
-        payload = self._client._call(params, method="DELETE")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def edit_v1(
@@ -83,7 +83,7 @@ class MealsResource(BaseResource):
                 ("meals", meals),
             ],
         )
-        payload = self._client._call(params, method="PUT")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def get_v1(
@@ -175,7 +175,7 @@ class MealsResource(BaseResource):
         """
         params: dict[str, Any] = {"method": "saved_meal_item.delete"}
         params["saved_meal_item_id"] = saved_meal_item_id
-        payload = self._client._call(params, method="DELETE")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def item_edit_v1(
@@ -202,7 +202,7 @@ class MealsResource(BaseResource):
                 ("number_of_units", number_of_units),
             ],
         )
-        payload = self._client._call(params, method="PUT")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def items_get_v1(

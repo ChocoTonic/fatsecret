@@ -119,4 +119,8 @@ def group_by_category(refs: Iterable[MethodRef]) -> dict[str, list[MethodRef]]:
             buckets["exercise-weight-profile"].append(r)
         else:
             buckets.setdefault("uncategorized", []).append(r)
-    return {k: sorted(v, key=lambda r: (r.method, r.version)) for k, v in buckets.items() if v}
+    return {
+        k: sorted(v, key=lambda r: (r.method, r.version))
+        for k, v in buckets.items()
+        if v
+    }

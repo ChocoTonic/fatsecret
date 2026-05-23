@@ -21,10 +21,10 @@ import pytest
 
 from fatsecret import Fatsecret
 
-
 # ---------------------------------------------------------------------------
 # Phase 2 helpers: pad XSD-required fields so model_validate succeeds
 # ---------------------------------------------------------------------------
+
 
 def _food(**overrides):
     base = {
@@ -114,14 +114,18 @@ def test_recipe_get_v1_happy_path(fs):
 
 
 def test_recipe_get_v1_optional_region_absent_when_none(fs):
-    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
+    with patch.object(
+        Fatsecret, "_call", return_value={"recipe": _recipe()}
+    ) as mock_call:
         fs.recipes.get_v1("42")
     params = mock_call.call_args.args[0]
     assert "region" not in params
 
 
 def test_recipe_get_v1_optional_region_present_when_set(fs):
-    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
+    with patch.object(
+        Fatsecret, "_call", return_value={"recipe": _recipe()}
+    ) as mock_call:
         fs.recipes.get_v1("42", region="US")
     params = mock_call.call_args.args[0]
     assert params["region"] == "US"
@@ -129,7 +133,9 @@ def test_recipe_get_v1_optional_region_present_when_set(fs):
 
 def test_recipe_get_v1_does_not_send_grams_per_portion(fs):
     """grams_per_portion is a v2-only response field, never sent on v1 calls."""
-    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
+    with patch.object(
+        Fatsecret, "_call", return_value={"recipe": _recipe()}
+    ) as mock_call:
         fs.recipes.get_v1("42", region="US")
     params = mock_call.call_args.args[0]
     assert "grams_per_portion" not in params
@@ -143,7 +149,9 @@ def test_recipe_get_v1_does_not_send_grams_per_portion(fs):
 
 def test_recipe_get_v2_happy_path(fs):
     payload = {
-        "recipe": _recipe(recipe_id="42", recipe_name="Pancakes", grams_per_portion="120.0")
+        "recipe": _recipe(
+            recipe_id="42", recipe_name="Pancakes", grams_per_portion="120.0"
+        )
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.get_v2("42")
@@ -154,14 +162,18 @@ def test_recipe_get_v2_happy_path(fs):
 
 
 def test_recipe_get_v2_optional_region_absent_when_none(fs):
-    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
+    with patch.object(
+        Fatsecret, "_call", return_value={"recipe": _recipe()}
+    ) as mock_call:
         fs.recipes.get_v2("42")
     params = mock_call.call_args.args[0]
     assert "region" not in params
 
 
 def test_recipe_get_v2_optional_region_present_when_set(fs):
-    with patch.object(Fatsecret, "_call", return_value={"recipe": _recipe()}) as mock_call:
+    with patch.object(
+        Fatsecret, "_call", return_value={"recipe": _recipe()}
+    ) as mock_call:
         fs.recipes.get_v2("42", region="FR")
     assert mock_call.call_args.args[0]["region"] == "FR"
 
@@ -178,9 +190,7 @@ def test_recipe_get_v2_empty_payload_returns_none(fs):
 
 
 def test_recipes_search_v1_happy_path(fs):
-    payload = {
-        "recipes": {"recipe": [_recipe(recipe_id="1"), _recipe(recipe_id="2")]}
-    }
+    payload = {"recipes": {"recipe": [_recipe(recipe_id="1"), _recipe(recipe_id="2")]}}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.search_v1(
             search_expression="cake",
@@ -515,7 +525,7 @@ def test_recipe_add_favorite_v1_passthrough_when_no_success_key(fs):
 # =========================================================================
 
 
-def test_recipe_delete_favorite_v1_uses_singular_method_name_and_delete_verb(fs):
+def test_recipe_delete_favorite_v1_uses_singular_method_name_and_post_verb(fs):
     payload = {"success": 1}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         result = fs.recipes.delete_favorite_v1("rid-2")
@@ -523,7 +533,7 @@ def test_recipe_delete_favorite_v1_uses_singular_method_name_and_delete_verb(fs)
     assert params["method"] == "recipe.delete_favorite"
     assert params["method"] != "recipes.delete_favorites"
     assert params["recipe_id"] == "rid-2"
-    assert mock_call.call_args.kwargs.get("method") == "DELETE"
+    assert mock_call.call_args.kwargs.get("method") == "POST"
     assert result is True
 
 

@@ -5,7 +5,8 @@ from __future__ import annotations
 import datetime
 from typing import Optional, Union
 
-from ._generated.exercises import ExercisesResource as _GeneratedExercisesResource
+from ._generated.exercises import \
+    ExercisesResource as _GeneratedExercisesResource
 
 
 class ExercisesResource(_GeneratedExercisesResource):

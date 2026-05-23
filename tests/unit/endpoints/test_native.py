@@ -43,10 +43,10 @@ import pytest
 
 from fatsecret import Fatsecret, PremierRequiredError, ScopeRequiredError
 
-
 # ---------------------------------------------------------------------------
 # Fixtures / constants
 # ---------------------------------------------------------------------------
+
 
 def _resolve(obj, dotted_path):
     """Walk a dotted attribute path (e.g. 'native.image_recognition_v1')."""
@@ -166,9 +166,7 @@ def test_nlp_v1_response_with_list_passthrough(fs):
 
 
 def test_nlp_v1_response_with_empty_list_returns_empty(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value={"food_response": []}
-    ):
+    with patch.object(Fatsecret, "_call", return_value={"food_response": []}):
         result = fs.native.natural_language_processing_v1("nothing")
     assert result == []
 
@@ -184,7 +182,8 @@ def test_nlp_v1_response_without_food_response_passes_through(fs):
 
 def test_nlp_v1_propagates_premier_required(fs):
     with patch.object(
-        Fatsecret, "_call",
+        Fatsecret,
+        "_call",
         side_effect=PremierRequiredError(207, "Premier required"),
     ):
         with pytest.raises(PremierRequiredError):
@@ -193,7 +192,8 @@ def test_nlp_v1_propagates_premier_required(fs):
 
 def test_nlp_v1_propagates_scope_required(fs):
     with patch.object(
-        Fatsecret, "_call",
+        Fatsecret,
+        "_call",
         side_effect=ScopeRequiredError(208, "nlp scope required"),
     ):
         with pytest.raises(ScopeRequiredError):
@@ -246,17 +246,13 @@ def test_image_recognition_v2_accepts_webp_style_payload(fs):
     # v2 advertises WebP support; the wrapper itself takes no format hint, so
     # we just confirm a typical WebP-base64 prefix flows through unaltered.
     webp_b64 = "UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/v3AgAA="
-    with patch.object(
-        Fatsecret, "_call", return_value={"food_response": []}
-    ) as mc:
+    with patch.object(Fatsecret, "_call", return_value={"food_response": []}) as mc:
         fs.native.image_recognition_v2(webp_b64)
     assert mc.call_args.kwargs["json_body"]["image_b64"] == webp_b64
 
 
 @pytest.mark.parametrize("method_name,_url", IMG_VERSIONS)
-def test_image_recognition_all_optionals_present_when_supplied(
-    fs, method_name, _url
-):
+def test_image_recognition_all_optionals_present_when_supplied(fs, method_name, _url):
     payload = {"food_response": []}
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
         _resolve(fs, method_name)(
@@ -327,12 +323,8 @@ def test_image_recognition_response_list_passthrough(fs, method_name, _url):
 
 
 @pytest.mark.parametrize("method_name,_url", IMG_VERSIONS)
-def test_image_recognition_empty_food_response_returns_empty(
-    fs, method_name, _url
-):
-    with patch.object(
-        Fatsecret, "_call", return_value={"food_response": []}
-    ):
+def test_image_recognition_empty_food_response_returns_empty(fs, method_name, _url):
+    with patch.object(Fatsecret, "_call", return_value={"food_response": []}):
         result = _resolve(fs, method_name)("IMG")
     assert result == []
 
@@ -350,7 +342,8 @@ def test_image_recognition_response_without_food_response_passes_through(
 @pytest.mark.parametrize("method_name,_url", IMG_VERSIONS)
 def test_image_recognition_propagates_premier_required(fs, method_name, _url):
     with patch.object(
-        Fatsecret, "_call",
+        Fatsecret,
+        "_call",
         side_effect=PremierRequiredError(207, "Premier required"),
     ):
         with pytest.raises(PremierRequiredError):
@@ -360,7 +353,8 @@ def test_image_recognition_propagates_premier_required(fs, method_name, _url):
 @pytest.mark.parametrize("method_name,_url", IMG_VERSIONS)
 def test_image_recognition_propagates_scope_required(fs, method_name, _url):
     with patch.object(
-        Fatsecret, "_call",
+        Fatsecret,
+        "_call",
         side_effect=ScopeRequiredError(208, "image-recognition scope required"),
     ):
         with pytest.raises(ScopeRequiredError):
@@ -552,9 +546,7 @@ def test_feedback_v1_accepts_documented_issue_type_ids(fs, issue_type_id):
 def test_feedback_v1_returns_raw_payload_shape(fs):
     # The wrapper does NOT unwrap feedback responses - it returns the raw
     # dict containing the three signed PUT URLs + contentTypeHeader.
-    with patch.object(
-        Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE
-    ):
+    with patch.object(Fatsecret, "_call", return_value=FEEDBACK_PUT_RESPONSE):
         result = fs.feedback.submit_v1(issue_type_id=1, external_id="e")
     assert set(result.keys()) == {
         "barcode",
@@ -566,7 +558,8 @@ def test_feedback_v1_returns_raw_payload_shape(fs):
 
 def test_feedback_v1_propagates_premier_required(fs):
     with patch.object(
-        Fatsecret, "_call",
+        Fatsecret,
+        "_call",
         side_effect=PremierRequiredError(207, "Premier required"),
     ):
         with pytest.raises(PremierRequiredError):
@@ -575,7 +568,8 @@ def test_feedback_v1_propagates_premier_required(fs):
 
 def test_feedback_v1_propagates_scope_required(fs):
     with patch.object(
-        Fatsecret, "_call",
+        Fatsecret,
+        "_call",
         side_effect=ScopeRequiredError(208, "feedback scope required"),
     ):
         with pytest.raises(ScopeRequiredError):

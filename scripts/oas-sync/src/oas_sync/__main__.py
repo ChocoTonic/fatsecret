@@ -50,7 +50,9 @@ def sync(
 @app.command(name="assemble")
 def assemble_cmd(
     verbose: bool = typer.Option(False, "--verbose", "-v"),
-    no_lint: bool = typer.Option(False, "--no-lint", help="Skip redocly lint even if installed"),
+    no_lint: bool = typer.Option(
+        False, "--no-lint", help="Skip redocly lint even if installed"
+    ),
 ) -> None:
     """Assemble docs/api-spec/openapi.yaml from the per-category raw YAMLs.
 
@@ -72,7 +74,9 @@ def discover_cmd(verbose: bool = typer.Option(False, "--verbose", "-v")) -> None
 
 
 @app.command(name="fetch")
-def fetch_cmd(verbose: bool = typer.Option(False, "--verbose", "-v"), force: bool = False) -> None:
+def fetch_cmd(
+    verbose: bool = typer.Option(False, "--verbose", "-v"), force: bool = False
+) -> None:
     """Run discovery, then fetch every page into the on-disk cache."""
     _configure_logging(verbose)
     refs = discover()

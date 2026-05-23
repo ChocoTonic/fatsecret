@@ -186,7 +186,7 @@ class ExercisesResource(BaseResource):
                 ("kcal", kcal),
             ],
         )
-        payload = self._client._call(params, method="PUT")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def list_v1(

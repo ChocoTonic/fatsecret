@@ -61,9 +61,16 @@ def emit_inventory(refs: list[MethodRef], path: Path = OUT_INVENTORY) -> None:
     log.info("wrote %s", path)
 
 
-def emit_raw_yaml(category: str, specs: list[EndpointSpec], out_dir: Path = OUT_RAW_DIR) -> None:
+def emit_raw_yaml(
+    category: str, specs: list[EndpointSpec], out_dir: Path = OUT_RAW_DIR
+) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
-    doc = {"endpoints": [s.to_dict() for s in sorted(specs, key=lambda s: (s.ref.method, s.ref.version))]}
+    doc = {
+        "endpoints": [
+            s.to_dict()
+            for s in sorted(specs, key=lambda s: (s.ref.method, s.ref.version))
+        ]
+    }
     path = out_dir / f"{category}.yaml"
     path.write_text(_dump_yaml(doc), encoding="utf-8")
     log.info("wrote %s (%d endpoints)", path, len(specs))
@@ -87,20 +94,24 @@ def emit_openapi(specs: list[EndpointSpec], path: Path = OUT_OPENAPI) -> None:
 
         params: list[dict[str, Any]] = []
         if s.api_method_param:
-            params.append({
-                "name": "method",
-                "in": "query",
-                "required": True,
-                "schema": {"type": "string", "enum": [s.api_method_param]},
-            })
+            params.append(
+                {
+                    "name": "method",
+                    "in": "query",
+                    "required": True,
+                    "schema": {"type": "string", "enum": [s.api_method_param]},
+                }
+            )
         for p in s.parameters:
-            params.append({
-                "name": p.name,
-                "in": "query",
-                "required": p.required,
-                "description": p.description,
-                "schema": {"type": (p.type or "string").lower()},
-            })
+            params.append(
+                {
+                    "name": p.name,
+                    "in": "query",
+                    "required": p.required,
+                    "description": p.description,
+                    "schema": {"type": (p.type or "string").lower()},
+                }
+            )
 
         op = {
             "operationId": op_id,

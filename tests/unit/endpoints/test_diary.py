@@ -28,6 +28,7 @@ def fs():
 # Phase 2 helpers: pad XSD-required fields so model_validate succeeds
 # ---------------------------------------------------------------------------
 
+
 def _food(**overrides):
     base = {
         "food_id": "1",
@@ -138,7 +139,7 @@ def test_food_entry_create_v1_returns_new_food_entry_id(fs):
             meal="lunch",
         )
     # _unwrap walks "food_entries" key which is absent → returns []
-    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
+    assert [r.model_dump(mode="json", exclude_unset=True) for r in result] == []
 
 
 def test_food_entry_create_v1_date_optional_omitted_when_none(fs):
@@ -170,7 +171,7 @@ def test_food_entry_create_v1_date_coercion(fs, value):
 def test_food_entry_create_v1_empty_response_returns_empty_list(fs):
     with patch.object(Fatsecret, "_call", return_value={}):
         result = fs.diary.entry_create_v1("1", "n", "s", 1.0, "breakfast")
-    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
+    assert [r.model_dump(mode="json", exclude_unset=True) for r in result] == []
 
 
 # ============================================================================
@@ -184,7 +185,7 @@ def test_food_entry_edit_v1_happy_path(fs):
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entry.edit"
     assert params["food_entry_id"] == "fe1"
-    assert mock_call.call_args.kwargs["method"] == "PUT"
+    assert mock_call.call_args.kwargs["method"] == "POST"
     assert result is True
 
 
@@ -235,7 +236,7 @@ def test_food_entry_delete_v1_happy_path(fs):
     params = mock_call.call_args.args[0]
     assert params["method"] == "food_entry.delete"
     assert params["food_entry_id"] == "fe-9"
-    assert mock_call.call_args.kwargs["method"] == "DELETE"
+    assert mock_call.call_args.kwargs["method"] == "POST"
     assert result is True
 
 
@@ -344,7 +345,14 @@ def test_food_entries_get_v2_single_dict_coerced(fs):
 
 
 def test_food_entries_get_v2_list_passthrough(fs):
-    payload = {"food_entries": {"food_entry": [_food_entry(food_entry_id="1"), _food_entry(food_entry_id="2")]}}
+    payload = {
+        "food_entries": {
+            "food_entry": [
+                _food_entry(food_entry_id="1"),
+                _food_entry(food_entry_id="2"),
+            ]
+        }
+    }
     with patch.object(Fatsecret, "_call", return_value=payload):
         result = fs.diary.entries_get_v2(food_entry_id="1")
     assert [r.food_entry_id for r in result] == [1, 2]
