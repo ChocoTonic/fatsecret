@@ -53,14 +53,19 @@ Once you have created a session then you can start reading from Fatsecret's publ
 Documentation
 -------------
 
-v3.0 returns typed Pydantic models from the namespaced API surface
-instead of plain dicts. The guides below cover migration, task-oriented
-usage recipes, OAuth authentication, and the full API reference.
+v4.0 fixes an HTTP-verb mismatch in mutation endpoints (entry_delete,
+entry_edit, and several others were silently 404'ing in v3 because the
+auto-generated client sent DELETE/PUT to FatSecret's legacy URL, which
+only accepts GET/POST). v3.0 returns typed Pydantic models from the
+namespaced API surface instead of plain dicts. The guides below cover
+migration, task-oriented usage recipes, OAuth authentication, and the
+full API reference.
 
 .. toctree::
     :maxdepth: 2
     :caption: Guides
 
+    migration-v4
     migration-v3
     examples
 
