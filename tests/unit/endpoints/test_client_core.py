@@ -14,13 +14,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from fatsecret import Fatsecret
-from fatsecret.errors import (
-    ApplicationError,
-    AuthenticationError,
-    GeneralError,
-    ParameterError,
-)
-
+from fatsecret.errors import (ApplicationError, AuthenticationError,
+                              GeneralError, ParameterError)
 
 # --------------------------- helpers ---------------------------
 
@@ -246,9 +241,9 @@ class TestValidResponseBranches:
         ]
 
     def test_recipes_returns_recipe_inner(self):
-        assert Fatsecret.valid_response(
-            _resp({"recipes": {"recipe": [{"r": 1}]}})
-        ) == [{"r": 1}]
+        assert Fatsecret.valid_response(_resp({"recipes": {"recipe": [{"r": 1}]}})) == [
+            {"r": 1}
+        ]
 
     def test_saved_meals_returns_saved_meal_inner(self):
         assert Fatsecret.valid_response(
@@ -290,9 +285,7 @@ class TestValidResponseBranches:
         assert result == ("tok", "sec")
 
     def test_profile_without_auth_token_returns_dict(self):
-        result = Fatsecret.valid_response(
-            _resp({"profile": {"user_id": "u1"}})
-        )
+        result = Fatsecret.valid_response(_resp({"profile": {"user_id": "u1"}}))
         assert result == {"user_id": "u1"}
 
     @pytest.mark.parametrize(

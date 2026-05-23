@@ -57,7 +57,12 @@ class FeedbackResource(BaseResource):
                 ("language", language),
             ],
         )
-        payload = self._client._call({}, url="https://platform.fatsecret.com/rest/feedback/v1", method="POST", json_body=body)
+        payload = self._client._call(
+            {},
+            url="https://platform.fatsecret.com/rest/feedback/v1",
+            method="POST",
+            json_body=body,
+        )
         return payload
 
 

@@ -57,7 +57,12 @@ class NativeResource(BaseResource):
                 ("language", language),
             ],
         )
-        payload = self._client._call({}, url="https://platform.fatsecret.com/rest/image-recognition/v1", method="POST", json_body=body)
+        payload = self._client._call(
+            {},
+            url="https://platform.fatsecret.com/rest/image-recognition/v1",
+            method="POST",
+            json_body=body,
+        )
         raw = self._client._unwrap(payload, list_key="food_response")
         return raw
 
@@ -107,7 +112,12 @@ class NativeResource(BaseResource):
                 ("language", language),
             ],
         )
-        payload = self._client._call({}, url="https://platform.fatsecret.com/rest/image-recognition/v2", method="POST", json_body=body)
+        payload = self._client._call(
+            {},
+            url="https://platform.fatsecret.com/rest/image-recognition/v2",
+            method="POST",
+            json_body=body,
+        )
         raw = self._client._unwrap(payload, list_key="food_response")
         return raw
 
@@ -157,7 +167,12 @@ class NativeResource(BaseResource):
                 ("language", language),
             ],
         )
-        payload = self._client._call({}, url="https://platform.fatsecret.com/rest/natural-language-processing/v1", method="POST", json_body=body)
+        payload = self._client._call(
+            {},
+            url="https://platform.fatsecret.com/rest/natural-language-processing/v1",
+            method="POST",
+            json_body=body,
+        )
         raw = self._client._unwrap(payload, list_key="food_response")
         return raw
 

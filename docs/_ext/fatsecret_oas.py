@@ -52,12 +52,18 @@ _TAG_TO_RESOURCES: dict[str, list[str]] = {
 # Mirrors the structure of platform.fatsecret.com/docs/guides/. Any OAS tag
 # not listed here falls through to a synthetic "Other" group (logged).
 _TAG_GROUPS: list[tuple[str, list[str]]] = [
-    ("Foods", ["food", "food_brands", "food_categories", "food_sub_categories", "foods"]),
+    (
+        "Foods",
+        ["food", "food_brands", "food_categories", "food_sub_categories", "foods"],
+    ),
     ("Diary", ["food_entries", "food_entry", "exercise_entries", "exercise_entry"]),
     ("Exercises", ["exercises"]),
     ("Recipes", ["recipe", "recipe_types", "recipes"]),
     ("Profile", ["profile"]),
-    ("Saved Meals (Premier)", ["saved_meal", "saved_meal_item", "saved_meal_items", "saved_meals"]),
+    (
+        "Saved Meals (Premier)",
+        ["saved_meal", "saved_meal_item", "saved_meal_items", "saved_meals"],
+    ),
     ("Weight (Premier)", ["weight", "weights"]),
     ("AI (Premier)", ["image", "natural"]),
     ("Feedback", ["feedback"]),
@@ -108,7 +114,9 @@ def _load_spec(path: Path) -> Optional[dict]:
     try:
         import yaml  # type: ignore
     except ImportError:
-        _log.warning("fatsecret_oas: pyyaml not installed; falling back to flat autoclass")
+        _log.warning(
+            "fatsecret_oas: pyyaml not installed; falling back to flat autoclass"
+        )
         return None
     try:
         with path.open() as f:
@@ -161,7 +169,8 @@ def _resource_inventory(cls) -> tuple[dict[str, set[str]], dict[str, type]]:
         if BaseResource is None and not hasattr(val, "_client"):
             continue
         methods[name] = {
-            m for m in dir(val)
+            m
+            for m in dir(val)
             if not m.startswith("_") and callable(getattr(val, m, None))
         }
         classes[name] = type(val)
@@ -239,7 +248,8 @@ class FatsecretApiGroupsDirective(Directive):
         if leftovers:
             _log.warning(
                 "fatsecret_oas: %d tag(s) not in _TAG_GROUPS, placing under 'Other': %s",
-                len(leftovers), ", ".join(leftovers),
+                len(leftovers),
+                ", ".join(leftovers),
             )
         # Authentication, if it ever appears, stays at the top of "Other".
         if "Authentication" in leftovers:
@@ -289,7 +299,8 @@ class FatsecretApiGroupsDirective(Directive):
 
         try:
             util = sorted(
-                m for m in dir(Fatsecret)
+                m
+                for m in dir(Fatsecret)
                 if not m.startswith("_")
                 and callable(getattr(Fatsecret, m, None))
                 and m not in methods

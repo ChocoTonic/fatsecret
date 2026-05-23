@@ -29,7 +29,9 @@ class FoodEntry(_FS_Base):
     food_entry_id: Optional[int] = Field(default=None)
     food_entry_description: Optional[str] = Field(default=None)
     date_int: Optional[int] = Field(default=None)
-    meal: Optional[Literal['Breakfast', 'Lunch', 'Dinner', 'Other']] = Field(default=None)
+    meal: Optional[Literal["Breakfast", "Lunch", "Dinner", "Other"]] = Field(
+        default=None
+    )
     food_id: Optional[int] = Field(default=None)
     serving_id: Optional[int] = Field(default=None)
     number_of_units: Optional[Decimal] = Field(default=None)

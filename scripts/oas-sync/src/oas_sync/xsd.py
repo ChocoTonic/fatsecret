@@ -132,9 +132,7 @@ def _walk_complex(
             continue
         type_name = elem.get("type")
         max_occ = elem.get("maxOccurs", "1")
-        is_array = max_occ == "unbounded" or (
-            max_occ.isdigit() and int(max_occ) > 1
-        )
+        is_array = max_occ == "unbounded" or (max_occ.isdigit() and int(max_occ) > 1)
         inline_complex = elem.find(XSD_NS + "complexType")
         children.append((name, type_name, inline_complex, is_array))
 
@@ -159,7 +157,11 @@ def _walk_complex(
         sub = _walk_complex(inline, name, complex_types, simple_types)
     elif type_name and not _is_simple_type(type_name, simple_types):
         target = complex_types.get(type_name)
-        sub = _walk_complex(target, name, complex_types, simple_types) if target is not None else {}
+        sub = (
+            _walk_complex(target, name, complex_types, simple_types)
+            if target is not None
+            else {}
+        )
     else:
         sub = {}
 
@@ -167,11 +169,7 @@ def _walk_complex(
     # (the FatSecret XSD has known omissions, e.g. <recipes><recipe>...</recipes>),
     # if the parent name is the plural of this child name, the wire format is
     # an array.  Promote.
-    if (
-        not is_array
-        and parent_key is not None
-        and _is_plural_of(parent_key, name)
-    ):
+    if not is_array and parent_key is not None and _is_plural_of(parent_key, name):
         is_array = True
 
     if is_array:
@@ -213,9 +211,7 @@ def load_schema(force_fetch: bool = False) -> dict[str, Any]:
         s.get("name") for s in root.findall(XSD_NS + "simpleType") if s.get("name")
     }
     complex_types: dict[str, ET.Element] = {
-        c.get("name"): c
-        for c in root.findall(XSD_NS + "complexType")
-        if c.get("name")
+        c.get("name"): c for c in root.findall(XSD_NS + "complexType") if c.get("name")
     }
     out: dict[str, Any] = {}
     for elem in root.findall(XSD_NS + "element"):

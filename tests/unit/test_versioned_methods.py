@@ -22,8 +22,14 @@ def fs():
 # Phase 2 helpers
 # ---------------------------------------------------------------------------
 
+
 def _food(**overrides):
-    base = {"food_id": "1", "food_name": "Item", "food_type": "Generic", "food_url": "https://example.com/food"}
+    base = {
+        "food_id": "1",
+        "food_name": "Item",
+        "food_type": "Generic",
+        "food_url": "https://example.com/food",
+    }
     base.update(overrides)
     return base
 
@@ -129,7 +135,10 @@ def test_food_entries_get_v2_single_dict_coerced_to_list(fs):
 def test_food_entries_get_v2_list_passthrough(fs):
     payload = {
         "food_entries": {
-            "food_entry": [_food_entry(food_entry_id="10"), _food_entry(food_entry_id="11")]
+            "food_entry": [
+                _food_entry(food_entry_id="10"),
+                _food_entry(food_entry_id="11"),
+            ]
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload):
@@ -178,7 +187,7 @@ def test_profile_get_v1_unwraps_profile(fs):
     params = mock_call.call_args.args[0]
     assert params["method"] == "profile.get"
     _dump = result.model_dump(exclude_unset=True)
-    assert _dump.get('nickname') == 'alice'
+    assert _dump.get("nickname") == "alice"
 
 
 # --------------------------- recipes ---------------------------

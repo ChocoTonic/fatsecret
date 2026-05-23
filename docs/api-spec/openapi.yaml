@@ -1235,7 +1235,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: false
   /rest/server.api#exercise_entry.edit:
-    put:
+    post:
       description: Records a change to a user's exercise diary entry for a nominated date. All changes
         to an exercise diary involve either increasing the duration of an existing activity or introducing
         a new activity for a nominated duration. Because there are always 24 hours worth of exercise entries
@@ -1868,7 +1868,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: false
   /rest/server.api#food.delete_favorite:
-    delete:
+    post:
       description: Deletes the specified food from the user's favorite.
       operationId: food_delete_favorite_v1
       parameters:
@@ -2971,7 +2971,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: true
   /rest/server.api#food_entry.delete:
-    delete:
+    post:
       description: Deletes the specified food entry for the user.
       operationId: food_entry_delete_v1
       parameters:
@@ -3008,7 +3008,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: false
   /rest/server.api#food_entry.edit:
-    put:
+    post:
       description: Adjusts the recorded values for a food diary entry. Note that the date of the entry
         may not be adjusted, however one or more of the other remaining properties – food_entry_name,
         serving_id, number_of_units, or meal may be altered. In order to shift the date for which a food
@@ -4121,7 +4121,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: false
   /rest/server.api#recipe.delete_favorite:
-    delete:
+    post:
       description: Deletes the specified recipe from the user's favorite.
       operationId: recipe_delete_favorite_v1
       parameters:
@@ -4783,7 +4783,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal.delete:
-    delete:
+    post:
       description: Deletes the specified saved meal for the user.
       operationId: saved_meal_delete_v1
       parameters:
@@ -4820,7 +4820,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal.edit:
-    put:
+    post:
       description: Records a change to a user's saved meal.
       operationId: saved_meal_edit_v1
       parameters:
@@ -4940,7 +4940,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_item.delete:
-    delete:
+    post:
       description: Deletes the specified saved meal item for the user.
       operationId: saved_meal_item_delete_v1
       parameters:
@@ -4977,7 +4977,7 @@ paths:
       x-fatsecret-premier: true
       x-fatsecret-typed-response: false
   /rest/server.api#saved_meal_item.edit:
-    put:
+    post:
       description: Records a change to a user's saved meal item. Note that the serving_id of the saved
         meal item may not be adjusted, however one or more of the other remaining properties – saved_meal_item_name
         or number_of_units may be altered. In order to adjust a serving_id for which a saved_meal_item

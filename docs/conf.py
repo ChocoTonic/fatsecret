@@ -10,7 +10,9 @@ sys.path.insert(0, str(_root / "docs" / "_ext"))
 
 project = "fatsecret"
 copyright = "2026"
-release = re.search(r'^version = "([^"]+)"', (_root / "pyproject.toml").read_text(), re.M).group(1)
+release = re.search(
+    r'^version = "([^"]+)"', (_root / "pyproject.toml").read_text(), re.M
+).group(1)
 version = ".".join(release.split(".")[:2])
 
 extensions = [
@@ -30,7 +32,9 @@ autodoc_pydantic_model_show_validator_summary = False
 autodoc_pydantic_model_show_field_summary = False  # the field list below covers it
 autodoc_pydantic_field_list_validators = False
 autodoc_pydantic_field_show_alias = False
-autodoc_pydantic_field_doc_policy = "description"  # use docstring not Field(description=...)
+autodoc_pydantic_field_doc_policy = (
+    "description"  # use docstring not Field(description=...)
+)
 autodoc_pydantic_model_member_order = "bysource"
 
 exclude_patterns = ["_build"]

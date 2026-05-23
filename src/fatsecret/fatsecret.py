@@ -8,9 +8,9 @@ Simple python wrapper of the Fatsecret API
 
 import datetime
 import time
-from importlib.metadata import PackageNotFoundError, version as _pkg_version
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
 from typing import Any, List, Literal, Optional, Tuple, Union
-
 from urllib.parse import parse_qs
 
 import requests
@@ -20,14 +20,8 @@ from oauthlib.oauth1 import SIGNATURE_TYPE_QUERY
 from requests_oauthlib import OAuth1Session
 
 from ._retry import default_policy
-from .errors import (
-    ApplicationError,
-    AuthenticationError,
-    GeneralError,
-    ParameterError,
-    PremierRequiredError,
-    ScopeRequiredError,
-)
+from .errors import (ApplicationError, AuthenticationError, GeneralError,
+                     ParameterError, PremierRequiredError, ScopeRequiredError)
 
 
 def _user_agent() -> str:
@@ -85,9 +79,7 @@ class Fatsecret:
         self._retries: Optional[tenacity.Retrying] = (
             None
             if retries is False
-            else retries
-            if isinstance(retries, tenacity.Retrying)
-            else default_policy()
+            else retries if isinstance(retries, tenacity.Retrying) else default_policy()
         )
 
         self.request_token = None
@@ -127,19 +119,11 @@ class Fatsecret:
 
         # v2.0 resource-namespaced surface. Each resource exposes the
         # OAS-tag's endpoints via short names (e.g. fs.foods.search_v5).
-        from .resources import (
-            ClassificationResource,
-            DiaryResource,
-            ExercisesResource,
-            FeedbackResource,
-            FoodsResource,
-            MealsResource,
-            NativeResource,
-            ProfileFoodsResource,
-            ProfileResource,
-            RecipesResource,
-            WeightResource,
-        )
+        from .resources import (ClassificationResource, DiaryResource,
+                                ExercisesResource, FeedbackResource,
+                                FoodsResource, MealsResource, NativeResource,
+                                ProfileFoodsResource, ProfileResource,
+                                RecipesResource, WeightResource)
 
         self.foods = FoodsResource(self)
         self.classification = ClassificationResource(self)
@@ -244,7 +228,9 @@ class Fatsecret:
         message = err.get("message", "")
 
         if code == 2:
-            raise AuthenticationError(2, "This api call requires an authenticated session")
+            raise AuthenticationError(
+                2, "This api call requires an authenticated session"
+            )
         if code in (3, 4, 5, 6, 7, 8, 9):
             raise AuthenticationError(code, message)
         if code in (1, 10, 11, 12, 13, 14, 20, 21, 22, 23, 24):
@@ -555,9 +541,7 @@ class Fatsecret:
         pin_soup = BeautifulSoup(pin_response.content, "lxml")
         verifier_tag = pin_soup.find("b")
         if not verifier_tag:
-            raise RuntimeError(
-                "Failed to find PIN in response. Login may have failed."
-            )
+            raise RuntimeError("Failed to find PIN in response. Login may have failed.")
         verifier_pin = verifier_tag.text.strip()
         print(f"Obtained verifier PIN. {len(verifier_pin) = }")
         fatsecret_client.authenticate(verifier_pin)
