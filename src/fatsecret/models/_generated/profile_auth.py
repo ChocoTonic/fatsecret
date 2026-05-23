@@ -16,8 +16,8 @@ class Profile(_FS_Base):
 
     auth_token: Optional[str] = Field(default=None)
     auth_secret: Optional[str] = Field(default=None)
-    weight_measure: Optional[Literal['Kg', 'Lb']] = Field(default=None)
-    height_measure: Optional[Literal['Cm', 'Inch']] = Field(default=None)
+    weight_measure: Optional[Literal["Kg", "Lb"]] = Field(default=None)
+    height_measure: Optional[Literal["Cm", "Inch"]] = Field(default=None)
     last_weight_kg: Optional[Decimal] = Field(default=None)
     last_weight_date_int: Optional[int] = Field(default=None)
     last_weight_comment: Optional[str] = Field(default=None)

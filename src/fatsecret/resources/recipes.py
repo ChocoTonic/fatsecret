@@ -33,7 +33,7 @@ class RecipesResource(_GeneratedRecipesResource):
     def delete_favorite_v1(self, recipe_id: str):
         payload = self._client._call(
             {"method": "recipe.delete_favorite", "recipe_id": recipe_id},
-            method="DELETE",
+            method="POST",
         )
         return self._client._mutator_success(payload)
 

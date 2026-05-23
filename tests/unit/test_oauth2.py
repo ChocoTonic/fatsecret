@@ -24,9 +24,10 @@ class TestOAuth2Init:
     def test_oauth2_constructor_does_not_make_http_calls(self):
         # Patch BOTH requests.post (token fetch) and OAuth1Session so importing/instantiating
         # never touches the network even on accidental fallbacks.
-        with patch("fatsecret.fatsecret.requests.post") as mock_post, patch(
-            "fatsecret.fatsecret.OAuth1Session"
-        ) as mock_oauth1:
+        with (
+            patch("fatsecret.fatsecret.requests.post") as mock_post,
+            patch("fatsecret.fatsecret.OAuth1Session") as mock_oauth1,
+        ):
             fs = Fatsecret(
                 "ck",
                 "cs",

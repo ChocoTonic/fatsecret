@@ -16,7 +16,6 @@ place ensures the OAS flag and the generated Python stay in lockstep.
 
 from __future__ import annotations
 
-
 # Resources without XSD coverage (Food Classification, Saved Meals,
 # Weight Diary's non-month endpoints, Native APIs, Feedback) have no
 # entries here and continue to return raw ``dict`` / ``list[dict]``.
@@ -41,10 +40,12 @@ RESPONSE_MODEL_MAP: dict[
     ("Food Diary", ("month",), "day"): ("food_diary", "Day"),
     # Exercise Diary
     ("Exercise Diary", ("exercise_entries",), "exercise_entry"): (
-        "exercise_diary", "ExerciseEntry",
+        "exercise_diary",
+        "ExerciseEntry",
     ),
     ("Exercise Diary", ("exercise_types",), "exercise"): (
-        "exercise_diary", "Exercise",
+        "exercise_diary",
+        "Exercise",
     ),
     ("Exercise Diary", ("month",), "day"): ("exercise_diary", "Day"),
     # Weight Diary (only get_month is XSD-covered)

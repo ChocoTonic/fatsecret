@@ -59,91 +59,93 @@ class TestAuthenticationSuccess:
 
 
 class TestAuthenticationFailures:
-    """Aggressive failure testing with real API calls."""
+    """Aggressive failure testing with real API calls.
+
+    fatsecret_authenticate no longer swallows exceptions and returns
+    None on failure — it raises whatever the underlying HTTP/parse
+    layer raises (HTTPError, RuntimeError, KeyError, etc.). Tests
+    assert that *something* propagates rather than asserting a specific
+    type, because FatSecret's response shapes for bad input are not
+    contractual.
+    """
 
     def test_invalid_username_real_api(self, valid_credentials):
         """Test with completely invalid username against real API."""
         if not valid_credentials["consumer_key"]:
             pytest.skip("Missing consumer credentials")
 
-        result = Fatsecret.fatsecret_authenticate(
-            "nonexistent_user_" + os.urandom(16).hex() + "@fakeemail.xyz",
-            valid_credentials["password"],
-            valid_credentials["consumer_key"],
-            valid_credentials["consumer_secret"],
-        )
-
-        assert result is None, "Should fail with invalid username"
+        with pytest.raises(Exception):
+            Fatsecret.fatsecret_authenticate(
+                "nonexistent_user_" + os.urandom(16).hex() + "@fakeemail.xyz",
+                valid_credentials["password"],
+                valid_credentials["consumer_key"],
+                valid_credentials["consumer_secret"],
+            )
 
     def test_invalid_password_real_api(self, valid_credentials):
         """Test with wrong password against real API."""
         if not all(valid_credentials.values()):
             pytest.skip("Missing required environment variables")
 
-        result = Fatsecret.fatsecret_authenticate(
-            valid_credentials["username"],
-            "CompletelyWrongPassword123!@#" + os.urandom(8).hex(),
-            valid_credentials["consumer_key"],
-            valid_credentials["consumer_secret"],
-        )
-
-        assert result is None, "Should fail with invalid password"
+        with pytest.raises(Exception):
+            Fatsecret.fatsecret_authenticate(
+                valid_credentials["username"],
+                "CompletelyWrongPassword123!@#" + os.urandom(8).hex(),
+                valid_credentials["consumer_key"],
+                valid_credentials["consumer_secret"],
+            )
 
     def test_empty_username(self, valid_credentials):
         """Test with empty username."""
         if not valid_credentials["consumer_key"]:
             pytest.skip("Missing consumer credentials")
 
-        result = Fatsecret.fatsecret_authenticate(
-            "",
-            valid_credentials["password"],
-            valid_credentials["consumer_key"],
-            valid_credentials["consumer_secret"],
-        )
-
-        assert result is None, "Should fail with empty username"
+        with pytest.raises(Exception):
+            Fatsecret.fatsecret_authenticate(
+                "",
+                valid_credentials["password"],
+                valid_credentials["consumer_key"],
+                valid_credentials["consumer_secret"],
+            )
 
     def test_empty_password(self, valid_credentials):
         """Test with empty password."""
         if not all([valid_credentials["username"], valid_credentials["consumer_key"]]):
             pytest.skip("Missing required credentials")
 
-        result = Fatsecret.fatsecret_authenticate(
-            valid_credentials["username"],
-            "",
-            valid_credentials["consumer_key"],
-            valid_credentials["consumer_secret"],
-        )
-
-        assert result is None, "Should fail with empty password"
+        with pytest.raises(Exception):
+            Fatsecret.fatsecret_authenticate(
+                valid_credentials["username"],
+                "",
+                valid_credentials["consumer_key"],
+                valid_credentials["consumer_secret"],
+            )
 
     def test_invalid_consumer_key(self, valid_credentials):
         """Test with invalid consumer key."""
         if not valid_credentials["username"]:
             pytest.skip("Missing username")
 
-        result = Fatsecret.fatsecret_authenticate(
-            valid_credentials["username"],
-            valid_credentials["password"],
-            "invalid_consumer_key_" + os.urandom(16).hex(),
-            valid_credentials["consumer_secret"],
-        )
-
-        assert result is None, "Should fail with invalid consumer key"
+        with pytest.raises(Exception):
+            Fatsecret.fatsecret_authenticate(
+                valid_credentials["username"],
+                valid_credentials["password"],
+                "invalid_consumer_key_" + os.urandom(16).hex(),
+                valid_credentials["consumer_secret"],
+            )
 
     def test_invalid_consumer_secret(self, valid_credentials):
         """Test with invalid consumer secret."""
         if not valid_credentials["username"]:
             pytest.skip("Missing username")
 
-        result = Fatsecret.fatsecret_authenticate(
-            valid_credentials["username"],
-            valid_credentials["password"],
-            valid_credentials["consumer_key"],
-            "invalid_consumer_secret_" + os.urandom(16).hex(),
-        )
-
-        assert result is None, "Should fail with invalid consumer secret"
+        with pytest.raises(Exception):
+            Fatsecret.fatsecret_authenticate(
+                valid_credentials["username"],
+                valid_credentials["password"],
+                valid_credentials["consumer_key"],
+                "invalid_consumer_secret_" + os.urandom(16).hex(),
+            )
 
     def test_special_characters_in_username(self, valid_credentials):
         """Test with special characters that might break URL encoding."""
@@ -160,15 +162,13 @@ class TestAuthenticationFailures:
         ]
 
         for username in special_usernames:
-            result = Fatsecret.fatsecret_authenticate(
-                username,
-                valid_credentials["password"],
-                valid_credentials["consumer_key"],
-                valid_credentials["consumer_secret"],
-            )
-            assert (
-                result is None
-            ), f"Should handle special characters in username: {username}"
+            with pytest.raises(Exception):
+                Fatsecret.fatsecret_authenticate(
+                    username,
+                    valid_credentials["password"],
+                    valid_credentials["consumer_key"],
+                    valid_credentials["consumer_secret"],
+                )
 
     def test_special_characters_in_password(self, valid_credentials):
         """Test with special characters that might break form submission."""
@@ -187,15 +187,13 @@ class TestAuthenticationFailures:
         ]
 
         for password in special_passwords:
-            result = Fatsecret.fatsecret_authenticate(
-                valid_credentials["username"],
-                password,
-                valid_credentials["consumer_key"],
-                valid_credentials["consumer_secret"],
-            )
-            assert (
-                result is None
-            ), f"Should handle special characters in password: {password}"
+            with pytest.raises(Exception):
+                Fatsecret.fatsecret_authenticate(
+                    valid_credentials["username"],
+                    password,
+                    valid_credentials["consumer_key"],
+                    valid_credentials["consumer_secret"],
+                )
 
     def test_very_long_credentials(self, valid_credentials):
         """Test with extremely long credential strings."""
@@ -205,14 +203,13 @@ class TestAuthenticationFailures:
         long_username = "a" * 1000 + "@example.com"
         long_password = "P@ssw0rd" + "x" * 1000
 
-        result = Fatsecret.fatsecret_authenticate(
-            long_username,
-            long_password,
-            valid_credentials["consumer_key"],
-            valid_credentials["consumer_secret"],
-        )
-
-        assert result is None, "Should handle very long credentials"
+        with pytest.raises(Exception):
+            Fatsecret.fatsecret_authenticate(
+                long_username,
+                long_password,
+                valid_credentials["consumer_key"],
+                valid_credentials["consumer_secret"],
+            )
 
     def test_null_like_values(self, valid_credentials):
         """Test with null-like values."""
@@ -223,13 +220,13 @@ class TestAuthenticationFailures:
         null_values = ["null", "NULL", "None", "undefined", "nil"]
 
         for null_val in null_values:
-            result = Fatsecret.fatsecret_authenticate(
-                null_val,
-                null_val,
-                valid_credentials["consumer_key"],
-                valid_credentials["consumer_secret"],
-            )
-            assert result is None, f"Should fail with null-like value: {null_val}"
+            with pytest.raises(Exception):
+                Fatsecret.fatsecret_authenticate(
+                    null_val,
+                    null_val,
+                    valid_credentials["consumer_key"],
+                    valid_credentials["consumer_secret"],
+                )
 
     def test_sql_injection_attempts(self, valid_credentials):
         """Test with SQL injection patterns (should be safely handled)."""
@@ -245,13 +242,13 @@ class TestAuthenticationFailures:
         ]
 
         for pattern in injection_patterns:
-            result = Fatsecret.fatsecret_authenticate(
-                pattern,
-                pattern,
-                valid_credentials["consumer_key"],
-                valid_credentials["consumer_secret"],
-            )
-            assert result is None, f"Should safely handle injection pattern: {pattern}"
+            with pytest.raises(Exception):
+                Fatsecret.fatsecret_authenticate(
+                    pattern,
+                    pattern,
+                    valid_credentials["consumer_key"],
+                    valid_credentials["consumer_secret"],
+                )
 
     def test_xss_attempts(self, valid_credentials):
         """Test with XSS patterns (should be safely handled)."""
@@ -266,13 +263,13 @@ class TestAuthenticationFailures:
         ]
 
         for pattern in xss_patterns:
-            result = Fatsecret.fatsecret_authenticate(
-                pattern,
-                pattern,
-                valid_credentials["consumer_key"],
-                valid_credentials["consumer_secret"],
-            )
-            assert result is None, f"Should safely handle XSS pattern: {pattern}"
+            with pytest.raises(Exception):
+                Fatsecret.fatsecret_authenticate(
+                    pattern,
+                    pattern,
+                    valid_credentials["consumer_key"],
+                    valid_credentials["consumer_secret"],
+                )
 
     def test_unicode_credentials(self, valid_credentials):
         """Test with unicode characters in credentials."""
@@ -288,13 +285,13 @@ class TestAuthenticationFailures:
         ]
 
         for unicode_str in unicode_strings:
-            result = Fatsecret.fatsecret_authenticate(
-                unicode_str,
-                "password",
-                valid_credentials["consumer_key"],
-                valid_credentials["consumer_secret"],
-            )
-            assert result is None, f"Should handle unicode string: {unicode_str}"
+            with pytest.raises(Exception):
+                Fatsecret.fatsecret_authenticate(
+                    unicode_str,
+                    "password",
+                    valid_credentials["consumer_key"],
+                    valid_credentials["consumer_secret"],
+                )
 
     def test_whitespace_variations(self, valid_credentials):
         """Test with various whitespace in credentials."""
@@ -311,12 +308,10 @@ class TestAuthenticationFailures:
         ]
 
         for test_user in whitespace_tests:
-            result = Fatsecret.fatsecret_authenticate(
-                test_user,
-                valid_credentials["password"],
-                valid_credentials["consumer_key"],
-                valid_credentials["consumer_secret"],
-            )
-            assert (
-                result is None
-            ), f"Should handle whitespace variation: {repr(test_user)}"
+            with pytest.raises(Exception):
+                Fatsecret.fatsecret_authenticate(
+                    test_user,
+                    valid_credentials["password"],
+                    valid_credentials["consumer_key"],
+                    valid_credentials["consumer_secret"],
+                )

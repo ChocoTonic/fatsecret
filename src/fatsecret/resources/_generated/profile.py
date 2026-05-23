@@ -5,9 +5,8 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from .._base import BaseResource
-
 from ...models._generated.profile_auth import Profile
+from .._base import BaseResource
 
 
 class ProfileResource(BaseResource):

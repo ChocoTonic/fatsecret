@@ -172,7 +172,7 @@ def _method_name_for(tag: str, operation_id: str) -> str:
     stripped = operation_id
     for p in _TAG_PREFIXES.get(tag, ()):
         if operation_id.startswith(p):
-            stripped = operation_id[len(p):]
+            stripped = operation_id[len(p) :]
             break
     return _METHOD_NAME_OVERRIDES.get((tag, stripped), stripped)
 
@@ -482,7 +482,7 @@ def _render_method(m: dict[str, Any]) -> str:
 
     if m["is_rest_url"]:
         buf.write(
-            f'        payload = self._client._call('
+            f"        payload = self._client._call("
             f'{{}}, url="{m["rest_url"]}", method="{m["http_verb"]}", '
             f"json_body=body)\n"
         )
@@ -512,9 +512,7 @@ def _render_method(m: dict[str, Any]) -> str:
             f'list_key="{m["list_key"]}")\n'
         )
         if model is not None:
-            buf.write(
-                f"        return [{model[1]}.model_validate(r) for r in raw]\n"
-            )
+            buf.write(f"        return [{model[1]}.model_validate(r) for r in raw]\n")
         else:
             buf.write("        return raw\n")
     elif m["unwrap_path"]:
@@ -522,16 +520,12 @@ def _render_method(m: dict[str, Any]) -> str:
         if model is not None:
             buf.write("        if raw is None:\n")
             buf.write("            return None\n")
-            buf.write(
-                f"        return {model[1]}.model_validate(raw)\n"
-            )
+            buf.write(f"        return {model[1]}.model_validate(raw)\n")
         else:
             buf.write("        return raw\n")
     else:
         if model is not None:
-            buf.write(
-                f"        return {model[1]}.model_validate(payload)\n"
-            )
+            buf.write(f"        return {model[1]}.model_validate(payload)\n")
         else:
             buf.write("        return payload\n")
 
@@ -559,9 +553,7 @@ def _render_module(tag: str, methods: list[dict[str, Any]]) -> str:
         buf.write("\n")
         for module in sorted(model_imports):
             classes = ", ".join(sorted(model_imports[module]))
-            buf.write(
-                f"from ...models._generated.{module} import {classes}\n"
-            )
+            buf.write(f"from ...models._generated.{module} import {classes}\n")
     buf.write("\n\n")
     buf.write(f"class {class_name}(BaseResource):\n")
     buf.write(f'    """Resource methods for the OAS `{tag}` tag (generated)."""\n')

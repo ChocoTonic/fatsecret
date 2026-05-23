@@ -15,10 +15,10 @@ import pytest
 
 from fatsecret import Fatsecret
 
-
 # ---------------------------------------------------------------------------
 # Phase 2 helpers: pad XSD-required fields so model_validate succeeds
 # ---------------------------------------------------------------------------
+
 
 def _food(**overrides):
     base = {
@@ -209,13 +209,13 @@ def test_weights_get_month_v1_list_passthrough(fs):
     days = [{"date_int": "20000"}, {"date_int": "20001"}]
     with patch.object(Fatsecret, "_call", return_value=_month_payload(days)):
         result = fs.weight.get_month_v1()
-    assert [d.date_int for d in result] == [int(x['date_int']) for x in days]
+    assert [d.date_int for d in result] == [int(x["date_int"]) for x in days]
 
 
 def test_weights_get_month_v1_empty_response(fs):
     with patch.object(Fatsecret, "_call", return_value={"month": None}):
         result = fs.weight.get_month_v1()
-    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
+    assert [r.model_dump(mode="json", exclude_unset=True) for r in result] == []
 
 
 @pytest.mark.parametrize(
@@ -228,9 +228,7 @@ def test_weights_get_month_v1_empty_response(fs):
     ],
 )
 def test_weights_get_month_v1_date_coercion(fs, date_in):
-    with patch.object(
-        Fatsecret, "_call", return_value=_month_payload([])
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value=_month_payload([])) as mock_call:
         fs.weight.get_month_v1(date=date_in)
     params = mock_call.call_args.args[0]
     assert isinstance(params["date"], int)
@@ -240,13 +238,11 @@ def test_weights_get_month_v1_date_coercion(fs, date_in):
 
 
 def test_weights_get_month_v2_method_name(fs):
-    with patch.object(
-        Fatsecret, "_call", return_value=_month_payload([])
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value=_month_payload([])) as mock_call:
         result = fs.weight.get_month_v2()
     params = mock_call.call_args.args[0]
     assert params["method"] == "weights.get_month.v2"
-    assert [r.model_dump(mode='json', exclude_unset=True) for r in result] == []
+    assert [r.model_dump(mode="json", exclude_unset=True) for r in result] == []
 
 
 def test_weights_get_month_v2_single_dict_coerced(fs):
@@ -261,7 +257,7 @@ def test_weights_get_month_v2_list_passthrough(fs):
     days = [{"date_int": "20100"}, {"date_int": "20101"}]
     with patch.object(Fatsecret, "_call", return_value=_month_payload(days)):
         result = fs.weight.get_month_v2()
-    assert [d.date_int for d in result] == [int(x['date_int']) for x in days]
+    assert [d.date_int for d in result] == [int(x["date_int"]) for x in days]
 
 
 def test_weights_get_month_v2_empty_response(fs):
@@ -279,9 +275,7 @@ def test_weights_get_month_v2_empty_response(fs):
     ],
 )
 def test_weights_get_month_v2_date_coercion(fs, date_in):
-    with patch.object(
-        Fatsecret, "_call", return_value=_month_payload([])
-    ) as mock_call:
+    with patch.object(Fatsecret, "_call", return_value=_month_payload([])) as mock_call:
         fs.weight.get_month_v2(date=date_in)
     params = mock_call.call_args.args[0]
     assert isinstance(params["date"], int)
@@ -301,6 +295,7 @@ def test_profile_create_v1_with_user_id(fs):
     # v2.0: returns the unwrapped profile dict (no more tuple coercion).
     # Phase 2: result is now Profile typed model
     from fatsecret.models import Profile
+
     assert isinstance(result, Profile)
     _dump = result.model_dump(exclude_unset=True)
 
@@ -325,7 +320,7 @@ def test_profile_get_v1_returns_profile_dict(fs):
         "profile": {
             "nickname": "alice",
             "is_premier": "false",
-            "last_weight_date_int": 20000  # Pydantic coerces,
+            "last_weight_date_int": 20000,  # Pydantic coerces,
         }
     }
     with patch.object(Fatsecret, "_call", return_value=payload) as mock_call:
@@ -337,10 +332,11 @@ def test_profile_get_v1_returns_profile_dict(fs):
     assert result.model_dump(exclude_unset=True, exclude_none=True) == {
         "nickname": "alice",
         "is_premier": "false",
-        "last_weight_date_int": 20000  # Pydantic coerces,
+        "last_weight_date_int": 20000,  # Pydantic coerces,
     }
     # Phase 2: result is now Profile typed model
     from fatsecret.models import Profile
+
     assert isinstance(result, Profile)
 
 
@@ -369,6 +365,7 @@ def test_profile_get_auth_v1_returns_profile_dict(fs):
     # v2.0: returns the unwrapped profile dict (no more tuple coercion).
     # Phase 2: result is now Profile typed model
     from fatsecret.models import Profile
+
     assert isinstance(result, Profile)
     _dump = result.model_dump(exclude_unset=True)
 

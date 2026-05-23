@@ -5,9 +5,8 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from .._base import BaseResource
-
 from ...models._generated.food_diary import Day, FoodEntry
+from .._base import BaseResource
 
 
 class DiaryResource(BaseResource):
@@ -216,7 +215,7 @@ class DiaryResource(BaseResource):
         """
         params: dict[str, Any] = {"method": "food_entry.delete"}
         params["food_entry_id"] = food_entry_id
-        payload = self._client._call(params, method="DELETE")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
     def entry_edit_v1(
@@ -249,7 +248,7 @@ class DiaryResource(BaseResource):
                 ("meal", meal),
             ],
         )
-        payload = self._client._call(params, method="PUT")
+        payload = self._client._call(params, method="POST")
         return self._client._mutator_success(payload)
 
 
