@@ -5,8 +5,9 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from ...models._generated.exercise_diary import Day, Exercise, ExerciseEntry
 from .._base import BaseResource
+
+from ...models._generated.exercise_diary import Day, Exercise, ExerciseEntry
 
 
 class ExercisesResource(BaseResource):
@@ -99,9 +100,7 @@ class ExercisesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        raw = self._client._unwrap(
-            payload, "exercise_entries", list_key="exercise_entry"
-        )
+        raw = self._client._unwrap(payload, "exercise_entries", list_key="exercise_entry")
         return [ExerciseEntry.model_validate(r) for r in raw]
 
     def entries_get_v2(
@@ -124,9 +123,7 @@ class ExercisesResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        raw = self._client._unwrap(
-            payload, "exercise_entries", list_key="exercise_entry"
-        )
+        raw = self._client._unwrap(payload, "exercise_entries", list_key="exercise_entry")
         return [ExerciseEntry.model_validate(r) for r in raw]
 
     def entries_save_template_v1(

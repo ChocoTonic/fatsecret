@@ -5,8 +5,9 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from ...models._generated.food_diary import Day, FoodEntry
 from .._base import BaseResource
+
+from ...models._generated.food_diary import Day, FoodEntry
 
 
 class DiaryResource(BaseResource):

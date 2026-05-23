@@ -5,8 +5,9 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from ...models._generated.recipes import RecipesRecipe
 from .._base import BaseResource
+
+from ...models._generated.recipes import RecipesRecipe
 
 
 class RecipesResource(BaseResource):

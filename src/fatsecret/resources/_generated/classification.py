@@ -153,9 +153,7 @@ class ClassificationResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        raw = self._client._unwrap(
-            payload, "food_sub_categories", list_key="food_sub_category"
-        )
+        raw = self._client._unwrap(payload, "food_sub_categories", list_key="food_sub_category")
         return raw
 
     def sub_categories_get_v2(
@@ -184,9 +182,7 @@ class ClassificationResource(BaseResource):
             ],
         )
         payload = self._client._call(params)
-        raw = self._client._unwrap(
-            payload, "food_sub_categories", list_key="food_sub_category"
-        )
+        raw = self._client._unwrap(payload, "food_sub_categories", list_key="food_sub_category")
         return raw
 
 

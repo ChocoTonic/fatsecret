@@ -220,9 +220,7 @@ class MealsResource(BaseResource):
         params: dict[str, Any] = {"method": "saved_meal_items.get"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params)
-        raw = self._client._unwrap(
-            payload, "saved_meal_items", list_key="saved_meal_item"
-        )
+        raw = self._client._unwrap(payload, "saved_meal_items", list_key="saved_meal_item")
         return raw
 
     def items_get_v2(
@@ -240,9 +238,7 @@ class MealsResource(BaseResource):
         params: dict[str, Any] = {"method": "saved_meal_items.get.v2"}
         params["saved_meal_id"] = saved_meal_id
         payload = self._client._call(params)
-        raw = self._client._unwrap(
-            payload, "saved_meal_items", list_key="saved_meal_item"
-        )
+        raw = self._client._unwrap(payload, "saved_meal_items", list_key="saved_meal_item")
         return raw
 
 
