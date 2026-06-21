@@ -142,7 +142,16 @@ jobs:
           # bump even if everything else is a patch.
           COMMITS=$(git log --format='%B%n---commit-boundary---' "${RANGE}")
 
-          IS_DEPENDABOT=${{ github.actor == 'dependabot[bot]' }}
+          # Detect dep-update bots by HEAD commit author so the same skip
+          # logic applies whether the merge came from Dependabot's own
+          # auto-merge, Renovate's auto-merge, our nightly Renovate workflow
+          # using GITHUB_TOKEN, or a manual merge — github.actor only
+          # reflects the last case correctly.
+          HEAD_AUTHOR=$(git log -1 --format='%an' HEAD)
+          IS_BOT_BUMP="false"
+          case "$HEAD_AUTHOR" in
+            'dependabot[bot]'|'renovate[bot]') IS_BOT_BUMP="true" ;;
+          esac
 
           # Conventional-commit detection (anchored prefixes; prose-safe):
           #   * `feat!:` / `fix!:` / ... / `BREAKING CHANGE:` -> major
@@ -157,12 +166,12 @@ jobs:
             BUMP="minor"
           fi
 
-          if [ "$IS_DEPENDABOT" = "true" ]; then
+          if [ "$IS_BOT_BUMP" = "true" ]; then
             if echo "$COMMITS" | grep -qiE 'CVE|security|vulnerability'; then
               BUMP="patch"
             else
               echo "skip=true" >> "$GITHUB_OUTPUT"
-              echo "Skipping: dependabot bump without CVE keyword"
+              echo "Skipping: dep-bot bump (${HEAD_AUTHOR}) without CVE keyword"
               exit 0
             fi
           fi
