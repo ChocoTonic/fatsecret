@@ -1,0 +1,57 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "timezone": "America/Los_Angeles",
+  "schedule": ["before 6am on friday"],
+  "labels": ["dependencies"],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "commitMessagePrefix": null,
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 10,
+  "rangeStrategy": "widen",
+  "minimumReleaseAge": "5 days",
+  "separateMinorPatch": false,
+  "automerge": true,
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "platformAutomerge": false,
+  "transitiveRemediation": true,
+  "constraints": {
+    "python": ">=3.11"
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "minimumReleaseAge": null,
+    "schedule": ["at any time"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "ignorePaths": [
+    "**/.venv/**",
+    "**/node_modules/**"
+  ],
+  "packageRules": [
+    {
+      "description": "Major bumps queue for human review on the dependency dashboard. Libraries must test major bumps but should not auto-merge them.",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "automerge": false,
+      "addLabels": ["major"]
+    },
+    {
+      "description": "Group dev-tooling so review noise is one PR.",
+      "matchDepTypes": ["dev-dependencies", "devDependencies"],
+      "matchPackageNames": ["black", "isort", "ruff", "pytest", "pytest-cov", "mypy", "coverage"],
+      "groupName": "dev-tooling"
+    }
+  ]
+}

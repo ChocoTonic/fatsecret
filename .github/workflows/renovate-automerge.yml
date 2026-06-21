@@ -1,0 +1,102 @@
+name: renovate-automerge
+
+on:
+  schedule:
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List candidates without merging"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+concurrency:
+  group: renovate-automerge
+  cancel-in-progress: false
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge eligible Renovate PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t PRS < <(
+            gh pr list --repo "$REPO" --state open --limit 100 \
+              --search "author:app/renovate" \
+              --json number,headRefName,labels,mergeStateStatus,isDraft \
+              | jq -r '.[] | @base64'
+          )
+
+          merged=0
+          skipped=0
+          failed=0
+
+          for row in "${PRS[@]}"; do
+            pr_json=$(echo "$row" | base64 --decode)
+            number=$(echo "$pr_json" | jq -r '.number')
+            draft=$(echo "$pr_json" | jq -r '.isDraft')
+            merge_state=$(echo "$pr_json" | jq -r '.mergeStateStatus')
+            labels=$(echo "$pr_json" | jq -r '[.labels[].name] | join(",")')
+
+            echo "::group::PR #$number — labels=[$labels] state=$merge_state draft=$draft"
+
+            if [ "$draft" = "true" ]; then
+              echo "skip: draft"; skipped=$((skipped+1)); echo "::endgroup::"; continue
+            fi
+
+            # Major bumps must be reviewed manually — Renovate tags them with `major`.
+            if echo ",$labels," | grep -q ",major,"; then
+              echo "skip: major bump (manual review required)"; skipped=$((skipped+1)); echo "::endgroup::"; continue
+            fi
+
+            checks_json=$(gh pr checks "$number" --repo "$REPO" --json name,state,conclusion 2>/dev/null || echo "[]")
+            total=$(echo "$checks_json" | jq 'length')
+            if [ "$total" = "0" ]; then
+              echo "skip: no checks have run yet"; skipped=$((skipped+1)); echo "::endgroup::"; continue
+            fi
+
+            pending=$(echo "$checks_json" | jq '[.[] | select(.state != "SUCCESS" and .state != "SKIPPED")] | length')
+            if [ "$pending" != "0" ]; then
+              echo "skip: $pending checks not yet successful"
+              echo "$checks_json" | jq -r '.[] | select(.state != "SUCCESS" and .state != "SKIPPED") | "  - \(.name): \(.state)"'
+              skipped=$((skipped+1)); echo "::endgroup::"; continue
+            fi
+
+            case "$merge_state" in
+              CLEAN|HAS_HOOKS|UNSTABLE) ;;
+              *)
+                echo "skip: merge state $merge_state"
+                skipped=$((skipped+1)); echo "::endgroup::"; continue
+                ;;
+            esac
+
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "DRY RUN: would squash-merge #$number"
+              merged=$((merged+1)); echo "::endgroup::"; continue
+            fi
+
+            if gh pr merge "$number" --repo "$REPO" --squash --delete-branch; then
+              echo "merged #$number"
+              merged=$((merged+1))
+            else
+              echo "ERROR: merge failed for #$number"
+              failed=$((failed+1))
+            fi
+
+            echo "::endgroup::"
+          done
+
+          echo ""
+          echo "Summary: merged=$merged skipped=$skipped failed=$failed"
+          if [ "$failed" != "0" ]; then exit 1; fi
