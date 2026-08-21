@@ -22,9 +22,10 @@ files and the result of a fresh pipeline run.
 
 ## How to add a typed Pydantic model
 
-1. The XSD must declare the response shape. If FatSecret's XSD doesn't
-   model it, the method stays as `dict`. We DO NOT hand-write Pydantic
-   models. Use the dict path until upstream XSD coverage appears.
+1. For the supported Platform API, the XSD must declare the response shape. If
+   FatSecret's XSD doesn't model it, the method stays as `dict`. We DO NOT
+   hand-write Platform API Pydantic models. Use the dict path until upstream XSD
+   coverage appears.
 2. Add the seed types to `_<resource>_SEED_TYPES` in `emit_models.py`.
 3. Run `uv run oas-sync emit-models <resource>`.
 4. Add the response shape to `RESPONSE_MODEL_MAP` in
@@ -51,6 +52,18 @@ for per-resource hand-tuned overrides — for example dotted-key
 parameter translations, response unwrapping that the codegen can't
 infer, or convenience wrappers. These extend the generated class via
 subclassing. They are reviewed and preserved across regenerations.
+
+The unofficial authenticated member-website integration is a separate provider
+under `src/fatsecret/web/`. It is not represented in the generated Platform OAS
+because FatSecret does not document or support its HTML forms as API endpoints.
+Its request and response models are necessarily hand-written and must be backed
+by parser fixtures, strict parse failures, and mutation readback tests. Do not
+import member-website operations into `resources/` or generated API models.
+
+Its public facade contract is manually maintained in
+`docs/api-spec/member-web.openapi.yaml`. Changes to that file follow semantic
+versioning through `info.version`, are validated in unit tests, and are checked
+for breaking changes independently from the generated Platform specification.
 
 ## Discovering typed vs dict coverage programmatically
 

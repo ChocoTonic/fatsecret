@@ -29,12 +29,18 @@ uv run oas-sync parse <url>        # parse a single cached page for debugging
 Output paths (relative to repo root):
 - `docs/api-inventory.md` — list of every documented (method, version) pair
 - `docs/api-spec/raw/*.yaml` — per-category structured extraction
-- `docs/api-spec/openapi.generated.yaml` — minimal OpenAPI 3.1 spec derived
-  from the raw YAMLs. Written to a `.generated.` path on purpose: the
-  canonical hand-curated `docs/api-spec/openapi.yaml` is richer (full
-  response schemas, security overrides, error examples). Treat the
-  generated file as a **drift detector**: when it diverges from the
-  canonical file, FatSecret likely shipped a docs change worth reviewing.
+- `docs/api-spec/openapi.generated.yaml` — minimal intermediate OpenAPI 3.1
+  extraction derived directly from the documentation pages.
+- `docs/api-spec/openapi.yaml` — canonical, richer Platform API specification
+  deterministically assembled from `docs/api-spec/raw/*.yaml`. It is generated,
+  not hand-curated, and includes response schemas, security rules, and errors.
+- `docs/api-spec/member-web.openapi.yaml` — separate manually maintained facade
+  contract for unsupported authenticated member-site operations. The scraper
+  never reads or writes this file.
+
+Validate the manual facade contract from the repository root with
+`make oas-contract-check`. Unit tests run the OpenAPI 3.1 validator and enforce
+the integration ownership, retry, idempotency, and write-verification metadata.
 
 ## When the DOM changes
 

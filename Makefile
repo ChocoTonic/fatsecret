@@ -69,7 +69,10 @@ check: lint test  ## Run lint and tests
 # -----------------------------
 # OAS pipeline
 # -----------------------------
-.PHONY: oas-regen-check oasdiff
+.PHONY: oas-contract-check oas-regen-check oasdiff
+
+oas-contract-check:  ## Validate the manual member-web facade contract
+	@uv run pytest tests/unit/test_member_web_oas.py -q
 
 oas-regen-check:  ## Verify pipeline output matches committed files
 	@md5sum docs/api-spec/raw/*.yaml docs/api-spec/openapi.yaml src/fatsecret/resources/_generated/*.py > /tmp/before.md5

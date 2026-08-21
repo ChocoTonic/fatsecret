@@ -1,19 +1,13 @@
+"""Unofficial authenticated FatSecret member-website integration."""
+
+from .client import FatsecretWebClient
 from .errors import (
-    ApplicationError,
-    AuthenticationError,
-    BaseFatsecretError,
-    GeneralError,
-    ParameterError,
-    PremierRequiredError,
-    ScopeRequiredError,
-)
-from .fatsecret import Fatsecret
-from .web import (
     FatsecretWebAuthenticationError,
-    FatsecretWebClient,
     FatsecretWebError,
     FatsecretWebParseError,
     FatsecretWebVerificationError,
+)
+from .models import (
     WebRdiSetting,
     WebRdiUpdate,
     WebRecipeSummary,
@@ -21,19 +15,11 @@ from .web import (
 )
 
 __all__ = [
-    "ApplicationError",
-    "AuthenticationError",
-    "BaseFatsecretError",
-    "Fatsecret",
     "FatsecretWebAuthenticationError",
     "FatsecretWebClient",
     "FatsecretWebError",
     "FatsecretWebParseError",
     "FatsecretWebVerificationError",
-    "GeneralError",
-    "ParameterError",
-    "PremierRequiredError",
-    "ScopeRequiredError",
     "WebRdiSetting",
     "WebRdiUpdate",
     "WebRecipeSummary",

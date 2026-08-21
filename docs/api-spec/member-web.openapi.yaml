@@ -1,0 +1,583 @@
+openapi: 3.1.0
+info:
+  title: FatSecret Member-Web Facade API
+  version: 0.1.0
+  description: |
+    Manually maintained contract for a service that automates one authenticated
+    FatSecret member account. These operations use unsupported HTML/WebForms at
+    foods.fatsecret.com; they are not FatSecret Platform API endpoints and are
+    not affiliated with or supported by FatSecret.
+
+    FatSecret credentials are server-managed secrets and never appear in this
+    API. Each caller identity is bound to one configured member account.
+  x-contract-status: experimental
+servers:
+  - url: http://localhost:8000/v1
+    description: Example local facade
+security:
+  - bearerAuth: []
+tags:
+  - name: RDI
+  - name: Recipes
+  - name: Ingredients
+  - name: Foods
+paths:
+  /member/rdi:
+    get:
+      operationId: getMemberRdi
+      summary: Get the member's saved RDI
+      tags: [RDI]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: safe
+      responses:
+        "200":
+          description: Current saved RDI.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RdiSetting"
+        default:
+          $ref: "#/components/responses/Problem"
+    put:
+      operationId: replaceMemberRdi
+      summary: Replace the member's saved RDI
+      description: |
+        Preserves the member's current goal and physical-activity selections.
+        The facade verifies the write by reading the diary back. A caller must
+        reconcile with GET before retrying an ambiguous failure.
+      tags: [RDI]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: reconcile-before-retry
+      x-write-verification: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RdiReplace"
+      responses:
+        "200":
+          description: Verified replacement result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RdiUpdate"
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/recipes:
+    get:
+      operationId: listMemberRecipes
+      summary: List recipes owned by the member
+      description: Returns summary rows without performing per-recipe hydration.
+      tags: [Recipes]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: safe
+      responses:
+        "200":
+          description: All owned recipe summaries.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, count]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RecipeSummary"
+                  count:
+                    type: integer
+                    minimum: 0
+                additionalProperties: false
+        default:
+          $ref: "#/components/responses/Problem"
+    post:
+      operationId: createMemberRecipe
+      summary: Create a private member recipe
+      tags: [Recipes]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: traced
+      x-upstream-stability: unstable
+      x-retry-policy: idempotency-key-required
+      x-write-verification: required
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipeWrite"
+      responses:
+        "201":
+          description: Recipe created and verified.
+          headers:
+            Location:
+              description: URI of the created recipe.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDetail"
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/recipes/{recipe_id}:
+    parameters:
+      - $ref: "#/components/parameters/RecipeId"
+    get:
+      operationId: getMemberRecipe
+      summary: Get an owned recipe
+      tags: [Recipes]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: traced
+      x-upstream-stability: unstable
+      x-retry-policy: safe
+      responses:
+        "200":
+          description: Hydrated recipe metadata and ingredients.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDetail"
+        "404":
+          $ref: "#/components/responses/Problem"
+        default:
+          $ref: "#/components/responses/Problem"
+    put:
+      operationId: replaceMemberRecipe
+      summary: Replace an owned recipe
+      description: Full replacement. Omitted writable fields are not preserved.
+      tags: [Recipes]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: traced
+      x-upstream-stability: unstable
+      x-retry-policy: reconcile-before-retry
+      x-write-verification: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipeWrite"
+      responses:
+        "200":
+          description: Verified replacement.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDetail"
+        "404":
+          $ref: "#/components/responses/Problem"
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+    delete:
+      operationId: deleteMemberRecipe
+      summary: Delete an owned recipe
+      description: Returns success when the recipe is already absent.
+      tags: [Recipes]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: traced
+      x-upstream-stability: unstable
+      x-retry-policy: reconcile-before-retry
+      x-write-verification: required
+      responses:
+        "204":
+          description: Recipe is verified absent.
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/recipes/{recipe_id}/foods/{food_id}/portions:
+    parameters:
+      - $ref: "#/components/parameters/RecipeId"
+      - $ref: "#/components/parameters/FoodId"
+    get:
+      operationId: listMemberFoodPortions
+      summary: Resolve member-site portions for a known food ID
+      description: |
+        Performs no semantic food-name search. FatSecret resolves portions in
+        the context of the destination recipe, so recipe_id is required.
+      tags: [Foods]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: traced
+      x-upstream-stability: unstable
+      x-retry-policy: safe
+      responses:
+        "200":
+          description: Portion choices currently offered by FatSecret.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FoodPortions"
+        "404":
+          $ref: "#/components/responses/Problem"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/recipes/{recipe_id}/ingredients:
+    parameters:
+      - $ref: "#/components/parameters/RecipeId"
+    post:
+      operationId: addMemberRecipeIngredient
+      summary: Add a known food ID as a recipe ingredient
+      description: V1 resolves and uses the food-specific grams portion.
+      tags: [Ingredients]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: traced
+      x-upstream-stability: unstable
+      x-retry-policy: idempotency-key-required
+      x-write-verification: required
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IngredientWrite"
+      responses:
+        "201":
+          description: Ingredient added and verified.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeIngredient"
+        "422":
+          $ref: "#/components/responses/Problem"
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/recipes/{recipe_id}/ingredients/{entry_id}:
+    parameters:
+      - $ref: "#/components/parameters/RecipeId"
+      - $ref: "#/components/parameters/EntryId"
+    put:
+      operationId: replaceMemberRecipeIngredient
+      summary: Replace a recipe ingredient
+      tags: [Ingredients]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: traced-unverified
+      x-upstream-stability: unstable
+      x-retry-policy: reconcile-before-retry
+      x-write-verification: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IngredientWrite"
+      responses:
+        "200":
+          description: Ingredient replaced and verified.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeIngredient"
+        "404":
+          $ref: "#/components/responses/Problem"
+        "422":
+          $ref: "#/components/responses/Problem"
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+    delete:
+      operationId: deleteMemberRecipeIngredient
+      summary: Delete a recipe ingredient
+      description: Returns success when the ingredient is already absent.
+      tags: [Ingredients]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: traced-unverified
+      x-upstream-stability: unstable
+      x-retry-policy: reconcile-before-retry
+      x-write-verification: required
+      responses:
+        "204":
+          description: Ingredient is verified absent.
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque
+      description: Facade credential; never a FatSecret password or session cookie.
+  parameters:
+    RecipeId:
+      name: recipe_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    FoodId:
+      name: food_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    EntryId:
+      name: entry_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Unique key retained by the facade to prevent duplicate creates.
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 255
+  responses:
+    Problem:
+      description: Request, authentication, state, or upstream integration failure.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    AmbiguousWrite:
+      description: Upstream timed out or changed state without a verifiable result. Reconcile before retrying.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            type: https://example.invalid/problems/upstream-write-ambiguous
+            title: Upstream write outcome is unknown
+            status: 504
+            code: upstream_write_ambiguous
+            retryable: false
+            upstream_outcome: unknown
+  schemas:
+    DecimalString:
+      type: string
+      pattern: "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+      examples: ["15", "123.45"]
+    PositiveDecimalString:
+      type: string
+      pattern: "^(?:[1-9][0-9]*(?:\\.[0-9]+)?|0\\.(?:0*[1-9][0-9]*))$"
+      examples: ["0.5", "15", "123.45"]
+    Nutrition:
+      type: object
+      properties:
+        calories: { $ref: "#/components/schemas/DecimalString" }
+        fat_g: { $ref: "#/components/schemas/DecimalString" }
+        saturated_fat_g: { $ref: "#/components/schemas/DecimalString" }
+        unsaturated_fat_g: { $ref: "#/components/schemas/DecimalString" }
+        carbohydrate_g: { $ref: "#/components/schemas/DecimalString" }
+        fiber_g: { $ref: "#/components/schemas/DecimalString" }
+        sugar_g: { $ref: "#/components/schemas/DecimalString" }
+        protein_g: { $ref: "#/components/schemas/DecimalString" }
+        cholesterol_mg: { $ref: "#/components/schemas/DecimalString" }
+        sodium_mg: { $ref: "#/components/schemas/DecimalString" }
+      additionalProperties: false
+    RecipeSummary:
+      type: object
+      required: [recipe_id, title, description, status, nutrition, preview_url, edit_url]
+      properties:
+        recipe_id: { type: integer, format: int64, minimum: 1 }
+        title: { type: string, minLength: 1 }
+        description: { type: string }
+        status: { type: string, minLength: 1 }
+        nutrition: { $ref: "#/components/schemas/Nutrition" }
+        preview_url: { type: string, format: uri }
+        edit_url: { type: string, format: uri }
+      additionalProperties: false
+    RecipeDetail:
+      type: object
+      required:
+        - recipe_id
+        - title
+        - description
+        - status
+        - nutrition_per_serving
+        - preview_url
+        - edit_url
+        - servings
+        - prep_minutes
+        - cook_minutes
+        - meal_types
+        - directions
+        - sharing
+        - ingredients
+      properties:
+        recipe_id: { type: integer, format: int64, minimum: 1 }
+        title: { type: string, minLength: 1 }
+        description: { type: string }
+        status: { type: string, minLength: 1 }
+        nutrition_per_serving: { $ref: "#/components/schemas/Nutrition" }
+        preview_url: { type: string, format: uri }
+        edit_url: { type: string, format: uri }
+        author: { type: [string, "null"] }
+        date_published: { type: [string, "null"], format: date }
+        servings: { $ref: "#/components/schemas/PositiveDecimalString" }
+        prep_minutes: { type: integer, minimum: 0 }
+        cook_minutes: { type: integer, minimum: 0 }
+        meal_types:
+          type: array
+          uniqueItems: true
+          items: { $ref: "#/components/schemas/MealType" }
+        directions:
+          type: array
+          items: { type: string, minLength: 1 }
+        sharing: { type: boolean }
+        images:
+          type: array
+          items: { type: string, format: uri }
+        ingredients:
+          type: array
+          items: { $ref: "#/components/schemas/RecipeIngredient" }
+      additionalProperties: false
+    RecipeWrite:
+      type: object
+      required: [title, description, servings, prep_minutes, cook_minutes, meal_types, directions]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 255 }
+        description: { type: string, minLength: 1, maxLength: 2000 }
+        servings: { $ref: "#/components/schemas/PositiveDecimalString" }
+        prep_minutes: { type: integer, minimum: 0 }
+        cook_minutes: { type: integer, minimum: 0 }
+        meal_types:
+          type: array
+          uniqueItems: true
+          items: { $ref: "#/components/schemas/MealType" }
+        directions:
+          type: array
+          items: { type: string, minLength: 1 }
+      additionalProperties: false
+    MealType:
+      type: string
+      enum:
+        - appetizers
+        - soups
+        - main_dishes
+        - side_dishes
+        - breads_and_baked_products
+        - salads_and_salad_dressings
+        - sauces_and_condiments
+        - desserts
+        - snacks
+        - beverages
+        - other
+        - breakfast
+        - lunch
+    IngredientWrite:
+      type: object
+      required: [food_id, amount]
+      properties:
+        food_id: { type: integer, format: int64, minimum: 1 }
+        amount: { $ref: "#/components/schemas/PositiveDecimalString" }
+        unit:
+          type: string
+          const: grams
+          default: grams
+      additionalProperties: false
+    RecipeIngredient:
+      type: object
+      required: [entry_id, food_id, name, amount, portion_id, portion_name, display_text, nutrition_total]
+      properties:
+        entry_id: { type: integer, format: int64, minimum: 1 }
+        food_id: { type: integer, format: int64, minimum: 1 }
+        name: { type: string, minLength: 1 }
+        amount: { $ref: "#/components/schemas/PositiveDecimalString" }
+        portion_id: { type: integer, format: int64, minimum: 1 }
+        portion_name: { type: string, minLength: 1 }
+        display_text: { type: string, minLength: 1 }
+        nutrition_total: { $ref: "#/components/schemas/Nutrition" }
+      additionalProperties: false
+    PortionChoice:
+      type: object
+      required: [portion_id, label, is_grams]
+      properties:
+        portion_id: { type: integer, format: int64, minimum: 1 }
+        label: { type: string, minLength: 1 }
+        is_grams: { type: boolean }
+      additionalProperties: false
+    FoodPortions:
+      type: object
+      required: [food_id, food_name, portions]
+      properties:
+        food_id: { type: integer, format: int64, minimum: 1 }
+        food_name: { type: string, minLength: 1 }
+        portions:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/PortionChoice" }
+      additionalProperties: false
+    RdiSetting:
+      type: object
+      required: [calories_per_day, effective_date]
+      properties:
+        calories_per_day: { type: integer, minimum: 1, maximum: 100000 }
+        effective_date: { type: string, format: date }
+      additionalProperties: false
+    RdiReplace:
+      type: object
+      required: [calories_per_day]
+      properties:
+        calories_per_day: { type: integer, minimum: 1, maximum: 100000 }
+      additionalProperties: false
+    RdiUpdate:
+      type: object
+      required: [requested_calories_per_day, previous, current]
+      properties:
+        requested_calories_per_day: { type: integer, minimum: 1, maximum: 100000 }
+        previous: { $ref: "#/components/schemas/RdiSetting" }
+        current: { $ref: "#/components/schemas/RdiSetting" }
+      additionalProperties: false
+    Problem:
+      type: object
+      required: [type, title, status, code, retryable]
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string, minLength: 1 }
+        status: { type: integer, minimum: 400, maximum: 599 }
+        detail: { type: string }
+        instance: { type: string, format: uri-reference }
+        code: { type: string, minLength: 1 }
+        retryable: { type: boolean }
+        upstream_outcome:
+          type: string
+          enum: [not_attempted, known_not_applied, applied, unknown]
+      additionalProperties: false

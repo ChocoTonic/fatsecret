@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - "docs/api-spec/openapi.yaml"
+      - "docs/api-spec/member-web.openapi.yaml"
 
 permissions:
   contents: read
@@ -13,12 +14,20 @@ permissions:
 
 jobs:
   oasdiff:
-    name: oasdiff breaking-change semver gate
+    name: oasdiff (${{ matrix.spec_name }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - spec_name: platform
+            spec_path: docs/api-spec/openapi.yaml
+          - spec_name: member-web
+            spec_path: docs/api-spec/member-web.openapi.yaml
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       OASDIFF_VERSION: "1.11.7"
-      SPEC_PATH: "docs/api-spec/openapi.yaml"
+      SPEC_PATH: ${{ matrix.spec_path }}
     steps:
       - name: Checkout PR head
         uses: actions/checkout@v7
@@ -46,6 +55,13 @@ jobs:
         id: diff
         run: |
           set -euo pipefail
+          if [ ! -f "master/${SPEC_PATH}" ]; then
+            echo "base_exists=false" >>"$GITHUB_OUTPUT"
+            echo "changed=true" >>"$GITHUB_OUTPUT"
+            echo "New OAS specification."
+            exit 0
+          fi
+          echo "base_exists=true" >>"$GITHUB_OUTPUT"
           if diff -q "master/${SPEC_PATH}" "head/${SPEC_PATH}" >/dev/null 2>&1; then
             echo "changed=false" >>"$GITHUB_OUTPUT"
             echo "No OAS diff detected."
@@ -56,7 +72,7 @@ jobs:
 
       - name: Run oasdiff breaking
         id: breaking
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.diff.outputs.changed == 'true' && steps.diff.outputs.base_exists == 'true'
         run: |
           set +e
           oasdiff breaking "master/${SPEC_PATH}" "head/${SPEC_PATH}" --fail-on ERR
@@ -67,6 +83,44 @@ jobs:
             echo "breaking=false" >>"$GITHUB_OUTPUT"
           else
             echo "breaking=true" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Require member-web contract version change
+        if: steps.diff.outputs.changed == 'true' && steps.diff.outputs.base_exists == 'true' && matrix.spec_name == 'member-web'
+        run: |
+          set -euo pipefail
+          read_version() {
+            awk '/^info:/{in_info=1; next} in_info && /^  version:/{gsub(/[ '\''"]/, "", $2); print $2; exit}' "$1"
+          }
+          base_version=$(read_version "master/${SPEC_PATH}")
+          head_version=$(read_version "head/${SPEC_PATH}")
+          if [ -z "${base_version}" ] || [ -z "${head_version}" ]; then
+            echo "::error::Could not read info.version from ${SPEC_PATH}."
+            exit 1
+          fi
+          if [ "${base_version}" = "${head_version}" ]; then
+            echo "::error::${SPEC_PATH} changed without an info.version change (${head_version})."
+            exit 1
+          fi
+
+      - name: Require member-web major bump for breaking changes
+        if: steps.breaking.outputs.breaking == 'true' && matrix.spec_name == 'member-web'
+        run: |
+          set -euo pipefail
+          read_version() {
+            awk '/^info:/{in_info=1; next} in_info && /^  version:/{gsub(/[ '\''"]/, "", $2); print $2; exit}' "$1"
+          }
+          base_version=$(read_version "master/${SPEC_PATH}")
+          head_version=$(read_version "head/${SPEC_PATH}")
+          base_major=${base_version%%.*}
+          head_major=${head_version%%.*}
+          if ! [[ "${base_major}" =~ ^[0-9]+$ && "${head_major}" =~ ^[0-9]+$ ]]; then
+            echo "::error::member-web info.version must use semantic versioning."
+            exit 1
+          fi
+          if [ "${head_major}" -le "${base_major}" ]; then
+            echo "::error::Breaking member-web change requires a major version bump (${base_version} -> ${head_version})."
+            exit 1
           fi
 
       - name: Inspect PR for breaking-change signal
@@ -122,3 +176,8 @@ jobs:
         if: steps.diff.outputs.changed == 'true' && steps.breaking.outputs.breaking == 'false'
         run: |
           echo "::warning title=OAS changed::OAS changed; consider whether semver impact is captured."
+
+      - name: Report new specification
+        if: steps.diff.outputs.base_exists == 'false'
+        run: |
+          echo "::notice title=New OAS specification::${SPEC_PATH} has no base version; future changes will be checked for breaking changes."
