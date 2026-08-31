@@ -8,6 +8,7 @@ resources and verifies every account-setting write by reading it back.
 from __future__ import annotations
 
 import re
+import time
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from typing import Optional
@@ -16,17 +17,35 @@ from urllib.parse import parse_qs, urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup, Tag
 
+from .._retry import RetryPolicy, parse_retry_after, resolve_retry_policy
 from ..fatsecret import _user_agent
 from .errors import (
     FatsecretWebAuthenticationError,
+    FatsecretWebNotFoundError,
     FatsecretWebParseError,
+    FatsecretWebRateLimitError,
     FatsecretWebVerificationError,
 )
+
 from .models import (
+    WebFoodPortions,
+    WebIngredientWrite,
     WebRdiSetting,
     WebRdiUpdate,
+    WebRecipeDeleteResult,
+    WebRecipeDetail,
+    WebRecipeIngredient,
     WebRecipeSummary,
     WebRecipeSummaryNutrition,
+    WebRecipeWrite,
+)
+from .recipe_parser import (
+    RecipeEditPage,
+    metadata_matches,
+    parse_food_portions,
+    parse_ingredient_detail,
+    parse_recipe_edit_page,
+    recipe_form_payload,
 )
 
 
@@ -41,6 +60,8 @@ class FatsecretWebClient:
     BASE_URL = "https://foods.fatsecret.com"
     COOKBOOK_PATH = "/Default.aspx?pa=memc"
     DIARY_PATH = "/Diary.aspx?pa=fj"
+    RECIPE_EDIT_PATH = "/Diary.aspx?pa=mrece&recipeid={recipe_id}"
+    PORTION_OPTIONS_PATH = "/ajax/RecipePortionOptions.aspx"
     RDI_SETTINGS_PATH = (
         "/Default.aspx?pa=cmrdi"
         "&ReturnUrl=https%3a%2f%2ffoods.fatsecret.com%2fDiary.aspx%3fpa%3dfj"
@@ -69,6 +90,9 @@ class FatsecretWebClient:
         *,
         session: Optional[requests.Session] = None,
         timeout: float = 30,
+        retries: RetryPolicy = True,
+        wait_on_rate_limit: bool = True,
+        default_retry_after: int = 300,
     ) -> None:
         if not username:
             raise ValueError("username must not be empty")
@@ -76,12 +100,17 @@ class FatsecretWebClient:
             raise ValueError("password must not be empty")
         if timeout <= 0:
             raise ValueError("timeout must be greater than zero")
+        if default_retry_after <= 0:
+            raise ValueError("default_retry_after must be greater than zero")
 
         self._username = username
         self._password = password
         self._session = session or requests.Session()
         self._session.headers.setdefault("User-Agent", _user_agent())
         self._timeout = timeout
+        self._retries = resolve_retry_policy(retries)
+        self._wait_on_rate_limit = wait_on_rate_limit
+        self._default_retry_after = default_retry_after
         self._authenticated = False
 
     @property
@@ -108,8 +137,7 @@ class FatsecretWebClient:
     def login(self) -> None:
         """Authenticate against the ASP.NET member-site login form."""
 
-        login_page = self._session.get(self.cookbook_url, timeout=self._timeout)
-        login_page.raise_for_status()
+        login_page = self._get(self.cookbook_url)
         if self._is_authenticated(login_page.text):
             self._authenticated = True
             return
@@ -128,7 +156,7 @@ class FatsecretWebClient:
             data=payload,
             timeout=self._timeout,
         )
-        response.raise_for_status()
+        self._raise_for_status(response)
         if not self._is_authenticated(response.text):
             raise FatsecretWebAuthenticationError(
                 "FatSecret member login failed; credentials or login form may have changed"
@@ -140,6 +168,278 @@ class FatsecretWebClient:
 
         response = self._get_authenticated(self.cookbook_url)
         return self._parse_recipe_summaries(response.text)
+
+    def get_recipe(self, recipe_id: int) -> WebRecipeDetail:
+        """Return fully hydrated metadata and ingredients for an owned recipe."""
+
+        recipe_id = self._positive_id(recipe_id, "recipe_id")
+        summary = self._find_recipe_summary(recipe_id)
+        edit_response, edit_page = self._get_recipe_edit(recipe_id)
+        ingredients = []
+        for row in edit_page.ingredient_rows:
+            response = self._get_authenticated(row.edit_url)
+            ingredients.append(
+                parse_ingredient_detail(
+                    response.text,
+                    display_text=row.display_text,
+                    nutrition_total=row.nutrition_total,
+                )
+            )
+        metadata = edit_page.metadata
+        return WebRecipeDetail(
+            recipe_id=recipe_id,
+            title=metadata.title,
+            description=metadata.description,
+            status=summary.status,
+            nutrition_per_serving=summary.nutrition,
+            preview_url=summary.preview_url,
+            edit_url=edit_response.url,
+            servings=metadata.servings,
+            prep_minutes=metadata.prep_minutes,
+            cook_minutes=metadata.cook_minutes,
+            meal_types=metadata.meal_types,
+            directions=metadata.directions,
+            sharing=edit_page.sharing,
+            ingredients=ingredients,
+        )
+
+    def create_recipe(self, recipe: WebRecipeWrite) -> WebRecipeDetail:
+        """Create private recipe metadata and verify the assigned recipe."""
+
+        recipe = WebRecipeWrite.model_validate(recipe)
+        self._ensure_authenticated()
+        create_url = self._recipe_edit_url(0) + "&action=save"
+        response = self._post_mutation(
+            create_url,
+            data=recipe_form_payload(recipe),
+            referer=self._recipe_edit_url(0),
+            operation="creating recipe",
+        )
+        query = parse_qs(urlparse(response.url).query)
+        values = query.get("recipeid", [])
+        if not values or not values[0].isdigit() or values[0] == "0":
+            raise FatsecretWebVerificationError(
+                f"recipe create outcome is unknown; final URL was {response.url!r}"
+            )
+        created = self._read_after_write(
+            lambda: self.get_recipe(int(values[0])), operation="creating recipe"
+        )
+        if not metadata_matches(created, recipe) or created.ingredients:
+            raise FatsecretWebVerificationError(
+                f"created recipe {created.recipe_id} did not match the requested metadata"
+            )
+        return created
+
+    def replace_recipe(self, recipe_id: int, recipe: WebRecipeWrite) -> WebRecipeDetail:
+        """Replace recipe metadata while preserving ingredients and sharing state."""
+
+        recipe_id = self._positive_id(recipe_id, "recipe_id")
+        recipe = WebRecipeWrite.model_validate(recipe)
+        _, before = self._get_recipe_edit(recipe_id)
+        before_ids = [row.entry_id for row in before.ingredient_rows]
+        target_url = self._recipe_edit_url(recipe_id) + "&action=save"
+        self._post_mutation(
+            target_url,
+            data=recipe_form_payload(recipe, sharing=before.sharing),
+            referer=self._recipe_edit_url(recipe_id),
+            operation=f"replacing recipe {recipe_id}",
+        )
+        current = self._read_after_write(
+            lambda: self.get_recipe(recipe_id),
+            operation=f"replacing recipe {recipe_id}",
+        )
+        if not metadata_matches(current, recipe):
+            raise FatsecretWebVerificationError(
+                f"recipe {recipe_id} replacement did not match the requested metadata"
+            )
+        if [ingredient.entry_id for ingredient in current.ingredients] != before_ids:
+            raise FatsecretWebVerificationError(
+                f"recipe {recipe_id} replacement unexpectedly changed ingredients"
+            )
+        return current
+
+    def delete_recipe(self, recipe_id: int) -> WebRecipeDeleteResult:
+        """Delete an owned recipe and verify it is absent; already absent is success."""
+
+        recipe_id = self._positive_id(recipe_id, "recipe_id")
+        response = self._get_authenticated(self.cookbook_url)
+        soup = BeautifulSoup(response.text, "lxml")
+        row = self._cookbook_recipe_row(soup, recipe_id)
+        if row is None:
+            return WebRecipeDeleteResult(recipe_id=recipe_id, deleted=False)
+
+        target = self._delete_postback_target(row, recipe_id)
+        payload = {
+            **self._hidden_fields(soup),
+            "__EVENTTARGET": target,
+            "__EVENTARGUMENT": "",
+        }
+        self._post_mutation(
+            self.cookbook_url,
+            data=payload,
+            referer=self.cookbook_url,
+            operation=f"deleting recipe {recipe_id}",
+        )
+        remaining = self._read_after_write(
+            self.list_recipes, operation=f"deleting recipe {recipe_id}"
+        )
+        if any(recipe.recipe_id == recipe_id for recipe in remaining):
+            raise FatsecretWebVerificationError(
+                f"recipe {recipe_id} remained in the cookbook after deletion"
+            )
+        return WebRecipeDeleteResult(recipe_id=recipe_id, deleted=True)
+
+    def list_food_portions(self, recipe_id: int, food_id: int) -> WebFoodPortions:
+        """Resolve portion IDs directly for a known food ID in a recipe."""
+
+        recipe_id = self._positive_id(recipe_id, "recipe_id")
+        food_id = self._positive_id(food_id, "food_id")
+        self._find_recipe_summary(recipe_id)
+        return self._resolve_food_portions(recipe_id, food_id)
+
+    def _resolve_food_portions(self, recipe_id: int, food_id: int) -> WebFoodPortions:
+        url = urljoin(self.BASE_URL, self.PORTION_OPTIONS_PATH)
+        params = {"rid": food_id, "prid": recipe_id, "exp": ""}
+        self._ensure_authenticated()
+        response = self._get(url, params=params)
+        if self._looks_like_login(response.text):
+            self._authenticated = False
+            self.login()
+            response = self._get(url, params=params)
+            if self._looks_like_login(response.text):
+                raise FatsecretWebAuthenticationError(
+                    "FatSecret member session expired while resolving food portions"
+                )
+        return parse_food_portions(response.text, food_id=food_id)
+
+    def add_recipe_ingredient(
+        self, recipe_id: int, ingredient: WebIngredientWrite
+    ) -> WebRecipeIngredient:
+        """Add one known food ID and verify exactly one new ingredient row."""
+
+        recipe_id = self._positive_id(recipe_id, "recipe_id")
+        ingredient = WebIngredientWrite.model_validate(ingredient)
+        _, before = self._get_recipe_edit(recipe_id)
+        portions = self._resolve_food_portions(recipe_id, ingredient.food_id)
+        portion = self._select_portion(portions, ingredient.portion_id)
+        before_ids = {row.entry_id for row in before.ingredient_rows}
+        target_url = urljoin(
+            self.BASE_URL,
+            f"/Diary.aspx?pa=mrece&action=addentry&recipeid={recipe_id}",
+        )
+        self._post_mutation(
+            target_url,
+            data={
+                "entryname": portions.food_name,
+                "portionamount": format(ingredient.amount, "f"),
+                "portionid": str(portion.portion_id),
+                "recipeid": str(ingredient.food_id),
+                "asrecipeid": str(ingredient.food_id),
+            },
+            referer=self._recipe_edit_url(recipe_id),
+            operation=f"adding ingredient to recipe {recipe_id}",
+        )
+        _, after = self._read_after_write(
+            lambda: self._get_recipe_edit(recipe_id),
+            operation=f"adding ingredient to recipe {recipe_id}",
+        )
+        new_rows = [
+            row for row in after.ingredient_rows if row.entry_id not in before_ids
+        ]
+        if len(new_rows) != 1:
+            raise FatsecretWebVerificationError(
+                f"ingredient add to recipe {recipe_id} produced {len(new_rows)} new rows"
+            )
+        added = self._read_after_write(
+            lambda: self._hydrate_ingredient(new_rows[0]),
+            operation=f"adding ingredient to recipe {recipe_id}",
+        )
+        self._verify_ingredient(added, ingredient, portion.portion_id)
+        return added
+
+    def replace_recipe_ingredient(
+        self,
+        recipe_id: int,
+        entry_id: int,
+        ingredient: WebIngredientWrite,
+    ) -> WebRecipeIngredient:
+        """Replace one ingredient and verify its food, portion, and quantity."""
+
+        recipe_id = self._positive_id(recipe_id, "recipe_id")
+        entry_id = self._positive_id(entry_id, "entry_id")
+        ingredient = WebIngredientWrite.model_validate(ingredient)
+        _, edit_page = self._get_recipe_edit(recipe_id)
+        row = next(
+            (row for row in edit_page.ingredient_rows if row.entry_id == entry_id), None
+        )
+        if row is None:
+            raise FatsecretWebNotFoundError(
+                f"ingredient {entry_id} is not in recipe {recipe_id}"
+            )
+        portions = self._resolve_food_portions(recipe_id, ingredient.food_id)
+        portion = self._select_portion(portions, ingredient.portion_id)
+        target_url = urljoin(
+            self.BASE_URL,
+            "/Diary.aspx?pa=fjrd"
+            f"&rid={ingredient.food_id}&prid={recipe_id}&iid={entry_id}",
+        )
+        self._post_mutation(
+            target_url,
+            data={
+                "entryname": portions.food_name,
+                "portionamount": format(ingredient.amount, "f"),
+                "portionid": str(portion.portion_id),
+                "action": "Save",
+            },
+            referer=row.edit_url,
+            operation=f"replacing ingredient {entry_id}",
+        )
+        _, current_page = self._read_after_write(
+            lambda: self._get_recipe_edit(recipe_id),
+            operation=f"replacing ingredient {entry_id}",
+        )
+        current_row = next(
+            (row for row in current_page.ingredient_rows if row.entry_id == entry_id),
+            None,
+        )
+        if current_row is None:
+            raise FatsecretWebVerificationError(
+                f"ingredient {entry_id} disappeared while replacing it"
+            )
+        current = self._read_after_write(
+            lambda: self._hydrate_ingredient(current_row),
+            operation=f"replacing ingredient {entry_id}",
+        )
+        self._verify_ingredient(current, ingredient, portion.portion_id)
+        return current
+
+    def delete_recipe_ingredient(self, recipe_id: int, entry_id: int) -> bool:
+        """Delete an ingredient and verify absence; already absent is success."""
+
+        recipe_id = self._positive_id(recipe_id, "recipe_id")
+        entry_id = self._positive_id(entry_id, "entry_id")
+        _, before = self._get_recipe_edit(recipe_id)
+        if not any(row.entry_id == entry_id for row in before.ingredient_rows):
+            return False
+        delete_url = urljoin(
+            self.BASE_URL,
+            "/Diary.aspx?pa=mrece&action=deleteentry"
+            f"&iid={entry_id}&recipeid={recipe_id}",
+        )
+        response = self._get_authenticated(delete_url)
+        if f"recipeid={recipe_id}" not in response.url:
+            raise FatsecretWebVerificationError(
+                f"ingredient {entry_id} delete outcome is unknown"
+            )
+        _, after = self._read_after_write(
+            lambda: self._get_recipe_edit(recipe_id),
+            operation=f"deleting ingredient {entry_id}",
+        )
+        if any(row.entry_id == entry_id for row in after.ingredient_rows):
+            raise FatsecretWebVerificationError(
+                f"ingredient {entry_id} remained after deletion"
+            )
+        return True
 
     def get_rdi(self) -> WebRdiSetting:
         """Return the RDI currently saved to the member account."""
@@ -192,19 +492,12 @@ class FatsecretWebClient:
             "ctl00$ctl11$Goal": goal,
             "ctl00$ctl11$PhysicalLevel": physical_level,
         }
-        calculated_response = self._session.post(
+        calculated_response = self._post_mutation(
             self.rdi_settings_url,
             data=calculate_payload,
-            headers={"Referer": self.rdi_settings_url},
-            timeout=self._timeout,
+            referer=self.rdi_settings_url,
+            operation="calculating RDI",
         )
-        calculated_response.raise_for_status()
-        if not self._is_authenticated(calculated_response.text):
-            self._authenticated = False
-            raise FatsecretWebAuthenticationError(
-                "FatSecret member session expired during the RDI calculator transition"
-            )
-
         calculated = BeautifulSoup(calculated_response.text, "lxml")
         if calculated.select_one('input[name$="$RDI"]') is None:
             raise FatsecretWebParseError(
@@ -216,24 +509,18 @@ class FatsecretWebClient:
             "__EVENTARGUMENT": "",
             "ctl00$ctl11$RDI": str(calories_per_day),
         }
-        save_response = self._session.post(
+        save_response = self._post_mutation(
             self.rdi_settings_url,
             data=save_payload,
-            headers={"Referer": self.rdi_settings_url},
-            timeout=self._timeout,
+            referer=self.rdi_settings_url,
+            operation="saving RDI",
         )
-        save_response.raise_for_status()
-        if not self._is_authenticated(save_response.text):
-            self._authenticated = False
-            raise FatsecretWebAuthenticationError(
-                "FatSecret member session expired while saving the RDI"
-            )
         if "Diary.aspx" not in save_response.url:
             raise FatsecretWebVerificationError(
                 "FatSecret RDI save did not return to the diary; outcome is unknown"
             )
 
-        current = self.get_rdi()
+        current = self._read_after_write(self.get_rdi, operation="saving RDI")
         if current.calories_per_day != calories_per_day:
             raise FatsecretWebVerificationError(
                 "FatSecret RDI save could not be verified: requested "
@@ -245,23 +532,229 @@ class FatsecretWebClient:
             current=current,
         )
 
-    def _get_authenticated(self, url: str) -> requests.Response:
+    def _get_authenticated(
+        self, url: str, *, params: dict[str, int | str] | None = None
+    ) -> requests.Response:
         if not self._authenticated:
             self.login()
-        response = self._session.get(url, timeout=self._timeout)
-        response.raise_for_status()
+        response = self._get(url, params=params)
         if self._is_authenticated(response.text):
             return response
 
         self._authenticated = False
         self.login()
-        response = self._session.get(url, timeout=self._timeout)
-        response.raise_for_status()
+        response = self._get(url, params=params)
         if not self._is_authenticated(response.text):
             raise FatsecretWebAuthenticationError(
                 "FatSecret member session expired during page retrieval"
             )
         return response
+
+    def _get(
+        self, url: str, *, params: dict[str, int | str] | None = None
+    ) -> requests.Response:
+        """Perform a safe GET using the configured transient retry policy."""
+
+        def request() -> requests.Response:
+            response = self._session.get(url, params=params, timeout=self._timeout)
+            response.raise_for_status()
+            return response
+
+        try:
+            return self._retries(request) if self._retries is not None else request()
+        except requests.HTTPError as error:
+            if error.response is not None:
+                self._raise_for_status(error.response)
+            raise
+
+    def _ensure_authenticated(self) -> None:
+        if not self._authenticated:
+            self.login()
+
+    def _post_mutation(
+        self,
+        url: str,
+        *,
+        data: dict[str, str],
+        referer: str,
+        operation: str,
+    ) -> requests.Response:
+        """Post a mutation, honoring explicit rate limits between attempts."""
+
+        self._ensure_authenticated()
+        while True:
+            try:
+                response = self._session.post(
+                    url,
+                    data=data,
+                    headers={
+                        "Origin": self.BASE_URL,
+                        "Referer": referer,
+                    },
+                    timeout=self._timeout,
+                )
+            except (requests.Timeout, requests.ConnectionError) as error:
+                raise FatsecretWebVerificationError(
+                    f"FatSecret connection failed while {operation}; outcome is unknown"
+                ) from error
+            try:
+                self._raise_for_status(response)
+            except FatsecretWebRateLimitError as error:
+                if not self._wait_on_rate_limit:
+                    raise
+                delay = (
+                    error.retry_after
+                    if error.retry_after is not None
+                    else self._default_retry_after
+                )
+                time.sleep(delay)
+                continue
+            break
+        if not self._is_authenticated(response.text):
+            self._authenticated = False
+            raise FatsecretWebVerificationError(
+                f"FatSecret session expired while {operation}; outcome is unknown"
+            )
+        return response
+
+    @staticmethod
+    def _read_after_write(callback, *, operation: str):
+        """Map post-write read failures to an explicitly ambiguous outcome."""
+
+        try:
+            return callback()
+        except FatsecretWebRateLimitError as error:
+            raise FatsecretWebVerificationError(
+                f"FatSecret rate-limited verification after {operation}; outcome is unknown",
+                retry_after=error.retry_after,
+            ) from error
+        except requests.RequestException as error:
+            raise FatsecretWebVerificationError(
+                f"FatSecret verification failed after {operation}; outcome is unknown"
+            ) from error
+
+    def _find_recipe_summary(self, recipe_id: int) -> WebRecipeSummary:
+        for recipe in self.list_recipes():
+            if recipe.recipe_id == recipe_id:
+                return recipe
+        raise FatsecretWebNotFoundError(f"member recipe {recipe_id} was not found")
+
+    def _get_recipe_edit(
+        self, recipe_id: int
+    ) -> tuple[requests.Response, RecipeEditPage]:
+        response = self._get_authenticated(self._recipe_edit_url(recipe_id))
+        try:
+            parsed = parse_recipe_edit_page(response.text, base_url=response.url)
+        except FatsecretWebParseError as error:
+            if not any(recipe.recipe_id == recipe_id for recipe in self.list_recipes()):
+                raise FatsecretWebNotFoundError(
+                    f"member recipe {recipe_id} was not found"
+                ) from error
+            raise
+        return response, parsed
+
+    def _hydrate_ingredient(self, row: object) -> WebRecipeIngredient:
+        response = self._get_authenticated(getattr(row, "edit_url"))
+        return parse_ingredient_detail(
+            response.text,
+            display_text=getattr(row, "display_text"),
+            nutrition_total=getattr(row, "nutrition_total"),
+        )
+
+    @staticmethod
+    def _select_portion(portions: WebFoodPortions, portion_id: int | None):
+        if portion_id is not None:
+            selected = next(
+                (
+                    portion
+                    for portion in portions.portions
+                    if portion.portion_id == portion_id
+                ),
+                None,
+            )
+            if selected is None:
+                raise ValueError(
+                    f"portion_id {portion_id} is not valid for food {portions.food_id}"
+                )
+            return selected
+        grams = next(
+            (portion for portion in portions.portions if portion.is_grams), None
+        )
+        if grams is None:
+            raise ValueError(f"food {portions.food_id} has no grams portion")
+        return grams
+
+    @staticmethod
+    def _verify_ingredient(
+        actual: WebRecipeIngredient,
+        requested: WebIngredientWrite,
+        portion_id: int,
+    ) -> None:
+        if (
+            actual.food_id != requested.food_id
+            or actual.amount != requested.amount
+            or actual.portion_id != portion_id
+        ):
+            raise FatsecretWebVerificationError(
+                "ingredient write did not match the requested food, amount, and portion"
+            )
+
+    def _recipe_edit_url(self, recipe_id: int) -> str:
+        return urljoin(self.BASE_URL, self.RECIPE_EDIT_PATH.format(recipe_id=recipe_id))
+
+    @classmethod
+    def _cookbook_recipe_row(cls, soup: BeautifulSoup, recipe_id: int) -> Tag | None:
+        for row in soup.select("td.borderBottom"):
+            link = row.select_one('a[href*="Diary.aspx?pa=mrece"][href*="recipeid="]')
+            if link is not None and cls._recipe_id_from_edit_link(link) == recipe_id:
+                return row
+        return None
+
+    @classmethod
+    def _delete_postback_target(cls, row: Tag, recipe_id: int) -> str:
+        for link in row.select("a"):
+            marker = " ".join(
+                (
+                    link.get_text(" ", strip=True),
+                    str(link.get("title", "")),
+                    str(link.get("href", "")),
+                    str(link.get("onclick", "")),
+                    " ".join(str(image.get("src", "")) for image in link.select("img")),
+                )
+            )
+            if "delete" not in marker.casefold():
+                continue
+            match = cls._POSTBACK_RE.search(marker)
+            if match:
+                return match.group("target")
+        raise FatsecretWebParseError(
+            f"cookbook row for recipe {recipe_id} has no delete postback"
+        )
+
+    @staticmethod
+    def _positive_id(value: int, name: str) -> int:
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise TypeError(f"{name} must be an integer")
+        if value <= 0:
+            raise ValueError(f"{name} must be greater than zero")
+        return value
+
+    @staticmethod
+    def _looks_like_login(html: str) -> bool:
+        return (
+            BeautifulSoup(html, "lxml").select_one('input[name$="Logincontrol1$Name"]')
+            is not None
+        )
+
+    @staticmethod
+    def _raise_for_status(response: requests.Response) -> None:
+        if response.status_code == 429:
+            parsed = parse_retry_after(response.headers.get("Retry-After"))
+            retry_after = int(parsed) if parsed is not None else None
+            raise FatsecretWebRateLimitError(
+                "FatSecret rate limit exceeded", retry_after=retry_after
+            )
+        response.raise_for_status()
 
     @classmethod
     def _parse_recipe_summaries(cls, html: str) -> list[WebRecipeSummary]:

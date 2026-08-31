@@ -68,6 +68,7 @@ full API reference.
     migration-v4
     migration-v3
     examples
+    member-web
 
 .. toctree::
     :maxdepth: 2

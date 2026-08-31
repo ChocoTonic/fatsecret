@@ -17,6 +17,11 @@ pip install fatsecret
 
 Requires Python 3.11+.
 
+Unofficial member-website recipe CRUD, recipe copying, and RDI operations are
+available through ``FatsecretWebClient``. To run the optional authenticated
+HTTP facade, install ``fatsecret[facade]``. These operations automate unstable
+member HTML forms and are not part of the supported FatSecret Platform API.
+
 ## Config
 
 Register for a developer account at [Fatsecret](https://platform.fatsecret.com/api/). You will need your Consumer Key and Consumer Secret key for your application.
@@ -50,6 +55,10 @@ For OAuth2 client-credentials (required for Premier / Native endpoints):
 ```py
 fs = Fatsecret(client_id, client_secret, auth="oauth2", scopes=["basic", "premier"])
 ```
+
+Both `Fatsecret` and `FatsecretWebClient` accept `timeout` and `retries`
+configuration. The default retry policy applies only to safe GET requests;
+mutations are never retried automatically.
 
 Refer to the [documentation](https://fatsecret.readthedocs.io/en/stable/) for further examples and detail.
 

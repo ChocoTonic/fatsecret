@@ -8,6 +8,7 @@ the JSON-error-envelope passthrough). They do not test tenacity itself.
 from __future__ import annotations
 
 import time
+from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -16,7 +17,12 @@ import tenacity
 from requests.exceptions import ConnectionError, HTTPError, Timeout
 
 from fatsecret import Fatsecret
-from fatsecret._retry import _is_transient, default_policy
+from fatsecret._retry import (
+    _is_transient,
+    default_policy,
+    parse_retry_after,
+    resolve_retry_policy,
+)
 from fatsecret.errors import AuthenticationError
 
 
@@ -110,6 +116,24 @@ def test_get_429_honors_numeric_retry_after():
     assert any(abs(d - 0.05) < 1e-6 for d in delays), delays
 
 
+def test_large_retry_after_is_authoritative():
+    fs = _client()
+    limited = _make_response(status=429, headers={"Retry-After": "120"})
+    success = _make_response(json_body={"ok": True})
+    fs.session.request.side_effect = [limited, success]
+
+    with patch("time.sleep") as sleep_mock:
+        assert fs._call({"method": "foods.search"}) == {"ok": True}
+
+    sleep_mock.assert_called_once_with(120.0)
+    assert fs.session.request.call_count == 2
+
+
+def test_http_date_retry_after_is_authoritative():
+    now = datetime(2026, 8, 30, 12, 0, tzinfo=UTC)
+    assert parse_retry_after("Sun, 30 Aug 2026 12:02:00 GMT", now=now) == 120
+
+
 def test_post_does_not_retry_on_connection_error():
     fs = _client()
     fs.session.request.side_effect = ConnectionError("net")
@@ -178,3 +202,11 @@ def test_default_policy_caps_at_three_attempts_then_reraises():
 def test_default_policy_factory_is_a_retrying_instance():
     pol = default_policy()
     assert isinstance(pol, tenacity.Retrying)
+
+
+def test_retry_policy_resolver_is_shared_configuration_boundary():
+    custom = tenacity.Retrying(stop=tenacity.stop_after_attempt(1))
+
+    assert resolve_retry_policy(False) is None
+    assert resolve_retry_policy(custom) is custom
+    assert isinstance(resolve_retry_policy(True), tenacity.Retrying)
