@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: FatSecret Member-Web Facade API
-  version: 0.2.0
+  version: 1.0.0
   description: |
     Manually maintained contract for a service that automates one authenticated
     FatSecret member account. These operations use unsupported HTML/WebForms at

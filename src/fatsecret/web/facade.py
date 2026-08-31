@@ -212,7 +212,7 @@ def create_app(
     bearer = HTTPBearer(auto_error=False)
     app = FastAPI(
         title="FatSecret Member-Web Facade API",
-        version="0.2.0",
+        version="1.0.0",
         docs_url="/docs",
         openapi_url="/openapi.json",
     )
