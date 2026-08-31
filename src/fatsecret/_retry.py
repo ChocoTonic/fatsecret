@@ -14,9 +14,13 @@ This module is intentionally self-contained: it does not import from
 from __future__ import annotations
 
 import sys
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 
 import tenacity
 from requests.exceptions import ConnectionError, HTTPError, Timeout
+
+RetryPolicy = bool | tenacity.Retrying
 
 # HTTP status codes treated as transient. Other 5xx (notably 500/501)
 # are NOT retried because they often reflect a server-side bug or
@@ -34,22 +38,34 @@ def _is_transient(exc: BaseException) -> bool:
     return False
 
 
-def _wait_with_retry_after(retry_state: tenacity.RetryCallState) -> float:
-    """Honor a numeric `Retry-After` header when present, else exponential jitter.
+def parse_retry_after(
+    value: str | None, *, now: datetime | None = None
+) -> float | None:
+    """Parse delta-seconds or an HTTP-date without capping the server delay."""
 
-    HTTP-date forms of `Retry-After` are intentionally not parsed here —
-    in practice FatSecret's gateways send numeric seconds, and date
-    parsing introduces timezone edge cases that aren't worth the surface
-    area for a retry path.
-    """
+    if not value:
+        return None
+    try:
+        return max(0.0, float(value))
+    except ValueError:
+        pass
+    try:
+        deadline = parsedate_to_datetime(value)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if deadline.tzinfo is None:
+        deadline = deadline.replace(tzinfo=UTC)
+    current = now or datetime.now(UTC)
+    return max(0.0, (deadline - current).total_seconds())
+
+
+def _wait_with_retry_after(retry_state: tenacity.RetryCallState) -> float:
+    """Honor `Retry-After` when present, else use exponential jitter."""
     exc = retry_state.outcome.exception() if retry_state.outcome else None
     if isinstance(exc, HTTPError) and getattr(exc, "response", None) is not None:
-        ra = exc.response.headers.get("Retry-After")
-        if ra:
-            try:
-                return float(ra)
-            except ValueError:
-                pass
+        delay = parse_retry_after(exc.response.headers.get("Retry-After"))
+        if delay is not None:
+            return delay
     return tenacity.wait_exponential_jitter(initial=1, max=10, jitter=2)(retry_state)
 
 
@@ -71,11 +87,24 @@ def _log_retry(retry_state: tenacity.RetryCallState) -> None:
 
 
 def default_policy() -> tenacity.Retrying:
-    """Build the default retry policy: 3 attempts, 30s total cap, full jitter."""
+    """Build the default policy: 3 attempts and authoritative Retry-After."""
     return tenacity.Retrying(
         retry=tenacity.retry_if_exception(_is_transient),
         wait=_wait_with_retry_after,
-        stop=tenacity.stop_after_attempt(3) | tenacity.stop_after_delay(30),
+        stop=tenacity.stop_after_attempt(3),
         before_sleep=_log_retry,
         reraise=True,
     )
+
+
+def resolve_retry_policy(retries: RetryPolicy) -> tenacity.Retrying | None:
+    """Normalize the public retry setting used by both HTTP clients."""
+
+    if retries is False:
+        return None
+    if isinstance(retries, tenacity.Retrying):
+        return retries
+    return default_policy()
+
+
+__all__ = ["RetryPolicy", "default_policy", "parse_retry_after", "resolve_retry_policy"]

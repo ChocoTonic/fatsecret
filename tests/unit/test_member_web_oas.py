@@ -57,15 +57,19 @@ def test_every_mutation_requires_verification_and_declares_ambiguous_failure():
     for path, method, operation in _operations(_load_spec()):
         if method not in {"post", "put", "delete", "patch"}:
             continue
-        assert (
-            operation.get("x-write-verification") == "required"
-        ), f"{method.upper()} {path}"
+        assert operation.get("x-write-verification") == "required", (
+            f"{method.upper()} {path}"
+        )
         assert "504" in operation["responses"], f"{method.upper()} {path}"
 
 
 def test_create_operations_require_idempotency_keys():
     spec = _load_spec()
-    for path in ["/member/recipes", "/member/recipes/{recipe_id}/ingredients"]:
+    for path in [
+        "/member/recipes",
+        "/member/recipes/{recipe_id}/ingredients",
+        "/member/recipes/{recipe_id}/copies",
+    ]:
         operation = spec["paths"][path]["post"]
         assert operation["x-retry-policy"] == "idempotency-key-required"
         assert {"$ref": "#/components/parameters/IdempotencyKey"} in operation[

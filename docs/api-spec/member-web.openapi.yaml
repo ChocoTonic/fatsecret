@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: FatSecret Member-Web Facade API
-  version: 0.1.0
+  version: 1.0.0
   description: |
     Manually maintained contract for a service that automates one authenticated
     FatSecret member account. These operations use unsupported HTML/WebForms at
@@ -21,6 +21,7 @@ tags:
   - name: Recipes
   - name: Ingredients
   - name: Foods
+  - name: Operations
 paths:
   /member/rdi:
     get:
@@ -109,7 +110,7 @@ paths:
       tags: [Recipes]
       x-fatsecret-interface: member-website
       x-support-status: unofficial
-      x-implementation-status: traced
+      x-implementation-status: adapter-implemented
       x-upstream-stability: unstable
       x-retry-policy: idempotency-key-required
       x-write-verification: required
@@ -147,7 +148,7 @@ paths:
       tags: [Recipes]
       x-fatsecret-interface: member-website
       x-support-status: unofficial
-      x-implementation-status: traced
+      x-implementation-status: adapter-implemented
       x-upstream-stability: unstable
       x-retry-policy: safe
       responses:
@@ -168,7 +169,7 @@ paths:
       tags: [Recipes]
       x-fatsecret-interface: member-website
       x-support-status: unofficial
-      x-implementation-status: traced
+      x-implementation-status: adapter-implemented
       x-upstream-stability: unstable
       x-retry-policy: reconcile-before-retry
       x-write-verification: required
@@ -198,7 +199,7 @@ paths:
       tags: [Recipes]
       x-fatsecret-interface: member-website
       x-support-status: unofficial
-      x-implementation-status: traced
+      x-implementation-status: adapter-implemented
       x-upstream-stability: unstable
       x-retry-policy: reconcile-before-retry
       x-write-verification: required
@@ -223,7 +224,7 @@ paths:
       tags: [Foods]
       x-fatsecret-interface: member-website
       x-support-status: unofficial
-      x-implementation-status: traced
+      x-implementation-status: adapter-implemented
       x-upstream-stability: unstable
       x-retry-policy: safe
       responses:
@@ -248,7 +249,7 @@ paths:
       tags: [Ingredients]
       x-fatsecret-interface: member-website
       x-support-status: unofficial
-      x-implementation-status: traced
+      x-implementation-status: adapter-implemented
       x-upstream-stability: unstable
       x-retry-policy: idempotency-key-required
       x-write-verification: required
@@ -284,7 +285,7 @@ paths:
       tags: [Ingredients]
       x-fatsecret-interface: member-website
       x-support-status: unofficial
-      x-implementation-status: traced-unverified
+      x-implementation-status: adapter-implemented
       x-upstream-stability: unstable
       x-retry-policy: reconcile-before-retry
       x-write-verification: required
@@ -316,13 +317,106 @@ paths:
       tags: [Ingredients]
       x-fatsecret-interface: member-website
       x-support-status: unofficial
-      x-implementation-status: traced-unverified
+      x-implementation-status: adapter-implemented
       x-upstream-stability: unstable
       x-retry-policy: reconcile-before-retry
       x-write-verification: required
       responses:
         "204":
           description: Ingredient is verified absent.
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/recipes/{recipe_id}/copies:
+    parameters:
+      - $ref: "#/components/parameters/RecipeId"
+    post:
+      operationId: copyMemberRecipe
+      summary: Start a durable copy of an owned recipe
+      description: |
+        Copies metadata and exact ingredient food, amount, and portion IDs.
+        The operation is asynchronous because FatSecret can rate-limit the
+        multi-request workflow. Reusing the same idempotency key and request
+        returns the original operation.
+      tags: [Recipes]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: idempotency-key-required
+      x-write-verification: required
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipeCopyRequest"
+      responses:
+        "202":
+          description: Copy operation accepted or previously accepted.
+          headers:
+            Location:
+              description: URI of the durable copy operation.
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeCopyOperation"
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/operations/{operation_id}:
+    parameters:
+      - $ref: "#/components/parameters/OperationId"
+    get:
+      operationId: getMemberOperation
+      summary: Get a durable member operation
+      tags: [Operations]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: safe
+      responses:
+        "200":
+          description: Current operation status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeCopyOperation"
+        "404":
+          $ref: "#/components/responses/Problem"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/operations/{operation_id}/resume:
+    parameters:
+      - $ref: "#/components/parameters/OperationId"
+    post:
+      operationId: resumeMemberOperation
+      summary: Resume a waiting or reconciled member operation
+      tags: [Operations]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: reconcile-before-retry
+      x-write-verification: required
+      responses:
+        "202":
+          description: Resume accepted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeCopyOperation"
+        "404":
+          $ref: "#/components/responses/Problem"
         "504":
           $ref: "#/components/responses/AmbiguousWrite"
         default:
@@ -360,6 +454,13 @@ components:
         type: integer
         format: int64
         minimum: 1
+    OperationId:
+      name: operation_id
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
     IdempotencyKey:
       name: Idempotency-Key
       in: header
@@ -509,9 +610,14 @@ components:
         food_id: { type: integer, format: int64, minimum: 1 }
         amount: { $ref: "#/components/schemas/PositiveDecimalString" }
         unit:
-          type: string
-          const: grams
-          default: grams
+          type: [string, "null"]
+          enum: [grams, null]
+          description: Omit to use grams by default; incompatible with portion_id.
+        portion_id:
+          type: integer
+          format: int64
+          not: { const: 0 }
+          description: Exact opaque portion ID; omitted values resolve to grams.
       additionalProperties: false
     RecipeIngredient:
       type: object
@@ -521,7 +627,7 @@ components:
         food_id: { type: integer, format: int64, minimum: 1 }
         name: { type: string, minLength: 1 }
         amount: { $ref: "#/components/schemas/PositiveDecimalString" }
-        portion_id: { type: integer, format: int64, minimum: 1 }
+        portion_id: { type: integer, format: int64, not: { const: 0 } }
         portion_name: { type: string, minLength: 1 }
         display_text: { type: string, minLength: 1 }
         nutrition_total: { $ref: "#/components/schemas/Nutrition" }
@@ -530,7 +636,7 @@ components:
       type: object
       required: [portion_id, label, is_grams]
       properties:
-        portion_id: { type: integer, format: int64, minimum: 1 }
+        portion_id: { type: integer, format: int64, not: { const: 0 } }
         label: { type: string, minLength: 1 }
         is_grams: { type: boolean }
       additionalProperties: false
@@ -544,6 +650,41 @@ components:
           type: array
           minItems: 1
           items: { $ref: "#/components/schemas/PortionChoice" }
+      additionalProperties: false
+    RecipeCopyRequest:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 255 }
+      additionalProperties: false
+    RecipeCopyOperation:
+      type: object
+      required:
+        - operation_id
+        - status
+        - source_recipe_id
+        - target_title
+        - completed_ingredient_count
+        - created_at
+        - updated_at
+      properties:
+        operation_id: { type: string, minLength: 1 }
+        status:
+          type: string
+          enum: [pending, running, waiting, completed, failed, unknown]
+        source_recipe_id: { type: integer, format: int64, minimum: 1 }
+        target_title: { type: string, minLength: 1 }
+        target_recipe_id: { type: [integer, "null"], format: int64, minimum: 1 }
+        completed_ingredient_count: { type: integer, minimum: 0 }
+        total_ingredient_count: { type: [integer, "null"], minimum: 0 }
+        retry_after: { type: [string, "null"], format: date-time }
+        result:
+          oneOf:
+            - $ref: "#/components/schemas/RecipeDetail"
+            - type: "null"
+        error: { type: [string, "null"] }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
       additionalProperties: false
     RdiSetting:
       type: object

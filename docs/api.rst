@@ -99,6 +99,12 @@ Client utilities
 
 .. automethod:: fatsecret.Fatsecret.valid_response
 
+Member website client
+---------------------
+
+.. autoclass:: fatsecret.FatsecretWebClient
+   :members:
+
 Models
 ------
 

@@ -14,8 +14,12 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from fatsecret import Fatsecret
-from fatsecret.errors import (ApplicationError, AuthenticationError,
-                              GeneralError, ParameterError)
+from fatsecret.errors import (
+    ApplicationError,
+    AuthenticationError,
+    GeneralError,
+    ParameterError,
+)
 
 # --------------------------- helpers ---------------------------
 
@@ -138,6 +142,17 @@ class TestCallHttpBody:
         fs._call({"method": "foo.get"})
         assert fs.session.request.call_args.args[0] == "GET"
 
+    def test_configured_timeout_is_used(self):
+        fs = Fatsecret("ck", "cs", auth="oauth2", timeout=12)
+        fs.session = MagicMock()
+        fs.session.request.return_value = _fake_resp({"ok": True})
+        fs._oauth2_token = "token"
+        fs._oauth2_token_expires_at = float("inf")
+
+        fs._call({"method": "foo.get"})
+
+        assert fs.session.request.call_args.kwargs["timeout"] == 12
+
     def test_error_envelope_triggers_exception(self):
         fs = _make_oauth1_fs()
         fs.session = MagicMock()
@@ -160,6 +175,21 @@ class TestApiUrlFallback:
     def test_oauth1_api_url_returns_base_url(self):
         fs = _make_oauth1_fs()
         assert fs.api_url == Fatsecret.BASE_URL
+
+
+def test_constructor_rejects_nonpositive_timeout():
+    with pytest.raises(ValueError, match="timeout"):
+        Fatsecret("ck", "cs", timeout=0)
+
+
+def test_official_client_supports_context_manager_cleanup():
+    fs = _make_oauth1_fs()
+    fs.session = MagicMock()
+
+    with fs as entered:
+        assert entered is fs
+
+    fs.session.close.assert_called_once_with()
 
 
 # --------------------------- _unwrap else branch ---------------------------

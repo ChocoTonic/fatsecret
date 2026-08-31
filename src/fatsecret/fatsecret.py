@@ -14,14 +14,19 @@ from typing import Any, List, Literal, Optional, Tuple, Union
 from urllib.parse import parse_qs
 
 import requests
-import tenacity
 from bs4 import BeautifulSoup
 from oauthlib.oauth1 import SIGNATURE_TYPE_QUERY
 from requests_oauthlib import OAuth1Session
 
-from ._retry import default_policy
-from .errors import (ApplicationError, AuthenticationError, GeneralError,
-                     ParameterError, PremierRequiredError, ScopeRequiredError)
+from ._retry import RetryPolicy, resolve_retry_policy
+from .errors import (
+    ApplicationError,
+    AuthenticationError,
+    GeneralError,
+    ParameterError,
+    PremierRequiredError,
+    ScopeRequiredError,
+)
 
 
 def _user_agent() -> str:
@@ -33,7 +38,6 @@ def _user_agent() -> str:
 
 
 class Fatsecret:
-
     # ========================= CORE =========================
 
     """Core FatSecret API client logic (auth, request handling, utilities)."""
@@ -51,7 +55,8 @@ class Fatsecret:
         session_token: Optional[Tuple[str, str]] = None,
         auth: Literal["oauth1", "oauth2"] = "oauth1",
         scopes: Optional[List[str]] = None,
-        retries: Union[bool, tenacity.Retrying] = True,
+        retries: RetryPolicy = True,
+        timeout: float = 30,
     ):
         """Initialize the FatSecret API session.
 
@@ -67,20 +72,21 @@ class Fatsecret:
                     client has access to.
             retries: Retry policy for transient GET failures. ``True`` (default)
                 installs the SDK's exponential-backoff + full-jitter policy
-                (3 attempts, 30s total cap, honors numeric ``Retry-After``).
+                (3 attempts and honors numeric ``Retry-After`` without capping
+                the server-provided delay).
                 ``False`` disables retries entirely. Pass a configured
                 ``tenacity.Retrying`` instance for full custom control.
                 Mutating requests (POST/PUT/DELETE) are never retried.
+            timeout: Per-request timeout in seconds.
         """
+        if timeout <= 0:
+            raise ValueError("timeout must be greater than zero")
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.auth_mode: Literal["oauth1", "oauth2"] = auth
         self.scopes = scopes
-        self._retries: Optional[tenacity.Retrying] = (
-            None
-            if retries is False
-            else retries if isinstance(retries, tenacity.Retrying) else default_policy()
-        )
+        self._retries = resolve_retry_policy(retries)
+        self._timeout = timeout
 
         self.request_token = None
         self.request_token_secret = None
@@ -119,11 +125,19 @@ class Fatsecret:
 
         # v2.0 resource-namespaced surface. Each resource exposes the
         # OAS-tag's endpoints via short names (e.g. fs.foods.search_v5).
-        from .resources import (ClassificationResource, DiaryResource,
-                                ExercisesResource, FeedbackResource,
-                                FoodsResource, MealsResource, NativeResource,
-                                ProfileFoodsResource, ProfileResource,
-                                RecipesResource, WeightResource)
+        from .resources import (
+            ClassificationResource,
+            DiaryResource,
+            ExercisesResource,
+            FeedbackResource,
+            FoodsResource,
+            MealsResource,
+            NativeResource,
+            ProfileFoodsResource,
+            ProfileResource,
+            RecipesResource,
+            WeightResource,
+        )
 
         self.foods = FoodsResource(self)
         self.classification = ClassificationResource(self)
@@ -153,7 +167,7 @@ class Fatsecret:
             self.OAUTH2_TOKEN_URL,
             data=data,
             auth=(self.consumer_key, self.consumer_secret),
-            timeout=30,
+            timeout=self._timeout,
         )
         resp.raise_for_status()
         payload = resp.json()
@@ -191,7 +205,7 @@ class Fatsecret:
                 params=params,
                 json=json_body,
                 headers=headers,
-                timeout=30,
+                timeout=self._timeout,
             )
             # Surface transport-level HTTP failures (5xx, 429, etc.) as
             # `HTTPError` so the retry policy can classify them. FatSecret's
@@ -305,7 +319,7 @@ class Fatsecret:
 
         # FatSecret's request-token endpoint only accepts GET. requests-oauthlib's
         # fetch_request_token() forces POST, so issue the signed GET ourselves.
-        resp = self.session.get(self.REQUEST_TOKEN_URL)
+        resp = self.session.get(self.REQUEST_TOKEN_URL, timeout=self._timeout)
         resp.raise_for_status()
         token = {k: v[0] for k, v in parse_qs(resp.text).items()}
         if "oauth_token" not in token:
@@ -340,7 +354,7 @@ class Fatsecret:
             signature_type=SIGNATURE_TYPE_QUERY,
         )
         self.session.headers["User-Agent"] = _user_agent()
-        resp = self.session.get(self.ACCESS_TOKEN_URL)
+        resp = self.session.get(self.ACCESS_TOKEN_URL, timeout=self._timeout)
         resp.raise_for_status()
         token = {k: v[0] for k, v in parse_qs(resp.text).items()}
         if "oauth_token" not in token:
@@ -365,6 +379,12 @@ class Fatsecret:
     def close(self) -> None:
         """Close the current HTTP session."""
         self.session.close()
+
+    def __enter__(self) -> "Fatsecret":
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        self.close()
 
     @staticmethod
     def unix_time(dt: datetime.datetime) -> int:
@@ -411,9 +431,7 @@ class Fatsecret:
     def valid_response(response: requests.Response):
         """Validate a JSON API response and extract its data or raise an error."""
         if response.json():
-
             for key in response.json():
-
                 # Error Code Handling
                 if key == "error":
                     code = response.json()[key]["code"]
@@ -533,13 +551,9 @@ class Fatsecret:
                     "Failed to find PIN in response. Login may have failed."
                 )
             verifier_pin = verifier_tag.text.strip()
-            print(f"Obtained verifier PIN. {len(verifier_pin) = }")
             fatsecret_client.authenticate(verifier_pin)
-            print("Authentication successful.")
             return fatsecret_client
-        except Exception as error:
-            message = f"Failed to authenticate:\n{error}"
-            print(message)
+        except Exception:
             return None
 
     # ========================= HELPERS =========================

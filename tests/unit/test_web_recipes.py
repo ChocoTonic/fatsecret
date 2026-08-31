@@ -6,6 +6,8 @@ from decimal import Decimal
 from unittest.mock import Mock
 
 import pytest
+import tenacity
+from requests.exceptions import ConnectionError
 
 from fatsecret import (
     FatsecretWebAuthenticationError,
@@ -108,6 +110,46 @@ def test_list_recipes_logs_in_and_fetches_cookbook():
     assert payload["ctl00$ctl11$Logincontrol1$Name"] == "member"
     assert payload["ctl00$ctl11$Logincontrol1$Password"] == "secret"
     assert session.get.call_count == 2
+
+
+def test_safe_get_uses_same_configurable_retry_shape_as_official_client():
+    session = Mock()
+    session.headers = {}
+    session.get.side_effect = [
+        ConnectionError("temporary"),
+        _response(
+            _cookbook_html(),
+            "https://foods.fatsecret.com/Default.aspx?pa=memc",
+        ),
+    ]
+    retries = tenacity.Retrying(
+        retry=tenacity.retry_if_exception_type(ConnectionError),
+        stop=tenacity.stop_after_attempt(2),
+        wait=tenacity.wait_none(),
+        reraise=True,
+    )
+    client = FatsecretWebClient(
+        "member", "secret", session=session, retries=retries, timeout=12
+    )
+    client._authenticated = True
+
+    assert len(client.list_recipes()) == 2
+    assert session.get.call_count == 2
+    assert session.get.call_args.kwargs["timeout"] == 12
+
+
+def test_safe_get_retry_can_be_disabled():
+    session = Mock()
+    session.headers = {}
+    session.get.side_effect = ConnectionError("temporary")
+    client = FatsecretWebClient("member", "secret", session=session, retries=False)
+    client._authenticated = True
+
+    with pytest.raises(ConnectionError):
+        client.list_recipes()
+
+    assert session.get.call_count == 1
+    assert client._retries is None
 
 
 def test_login_rejects_unsuccessful_response():

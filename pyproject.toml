@@ -1,6 +1,6 @@
 [project]
 name = "fatsecret"
-version = "4.1.0"
+version = "4.2.0"
 description = "Python wrapper for the Fatsecret API"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -13,6 +13,15 @@ dependencies = [
     "requests-oauthlib>=2.0.0",
     "tenacity>=9.0",
 ]
+
+[project.optional-dependencies]
+facade = [
+    "fastapi>=0.116,<1",
+    "uvicorn>=0.35,<1",
+]
+
+[project.scripts]
+fatsecret-member-api = "fatsecret.web.facade_cli:main"
 
 [project.urls]
 Documentation = "https://fatsecret.readthedocs.io/"
@@ -43,5 +52,7 @@ dev = [
     "sphinx>=7.4.7",
     "pyyaml>=6.0",
     "autodoc-pydantic>=2.0",
+    "fastapi>=0.116,<1",
+    "httpx>=0.28,<1",
     "readthedocs-sphinx-search>=0.3.2",
 ]

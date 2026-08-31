@@ -8,7 +8,6 @@ from unittest.mock import Mock
 import pytest
 
 from fatsecret import (
-    FatsecretWebAuthenticationError,
     FatsecretWebClient,
     FatsecretWebParseError,
     FatsecretWebVerificationError,
@@ -141,7 +140,7 @@ def test_set_rdi_raises_when_readback_does_not_match():
     assert session.post.call_count == 2
 
 
-def test_set_rdi_does_not_accept_an_unauthenticated_save_response():
+def test_set_rdi_marks_an_unauthenticated_save_response_as_ambiguous():
     client, session = _rdi_client(readback_rdi=1676)
     session.post.side_effect = [
         _response(
@@ -153,7 +152,7 @@ def test_set_rdi_does_not_accept_an_unauthenticated_save_response():
         ),
     ]
 
-    with pytest.raises(FatsecretWebAuthenticationError, match="while saving"):
+    with pytest.raises(FatsecretWebVerificationError, match="outcome is unknown"):
         client.set_rdi(1676)
 
     assert session.get.call_count == 3
