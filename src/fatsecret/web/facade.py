@@ -26,6 +26,7 @@ from .errors import (
     FatsecretWebVerificationError,
 )
 from .models import (
+    WebDiaryEntryWrite,
     WebIngredientWrite,
     WebRecipeCopyRequest,
     WebRecipeWrite,
@@ -212,7 +213,7 @@ def create_app(
     bearer = HTTPBearer(auto_error=False)
     app = FastAPI(
         title="FatSecret Member-Web Facade API",
-        version="1.0.0",
+        version="1.1.0",
         docs_url="/docs",
         openapi_url="/openapi.json",
     )
@@ -374,6 +375,63 @@ def create_app(
     def replace_rdi(body: RdiReplace):
         with mutation_lock, client_factory() as client:
             return client.set_rdi(body.calories_per_day)
+
+    @app.get("/v1/member/diary/entries", dependencies=secured)
+    def list_diary_entries(date: int):
+        with client_factory() as client:
+            items = client.list_diary_entries(date)
+        return {"items": items, "count": len(items)}
+
+    @app.post("/v1/member/diary/entries", dependencies=secured, status_code=201)
+    def create_diary_entry(
+        body: WebDiaryEntryWrite,
+        idempotency_key: str = Header(alias="Idempotency-Key"),
+    ):
+        scope = "POST /v1/member/diary/entries"
+        existing = idempotency_store.begin(
+            scope, idempotency_key, body.model_dump(mode="json")
+        )
+        if existing is not None:
+            return _stored_response(existing)
+        try:
+            with mutation_lock, client_factory() as client:
+                result = client.add_diary_entry(body)
+        except Exception as error:
+            idempotency_store.mark_unknown(scope, idempotency_key, error)
+            raise
+        location = f"/v1/member/diary/entries/{result.entry_id}?date={result.date}"
+        idempotency_store.complete(
+            scope,
+            idempotency_key,
+            status_code=201,
+            response=result,
+            location=location,
+        )
+        return JSONResponse(
+            status_code=201,
+            content=result.model_dump(mode="json"),
+            headers={"Location": location},
+        )
+
+    @app.get("/v1/member/diary/entries/{entry_id}", dependencies=secured)
+    def get_diary_entry(entry_id: int, date: int):
+        with client_factory() as client:
+            return client.get_diary_entry(entry_id, date)
+
+    @app.delete(
+        "/v1/member/diary/entries/{entry_id}",
+        dependencies=secured,
+        status_code=204,
+    )
+    def delete_diary_entry(entry_id: int, date: int) -> Response:
+        with mutation_lock, client_factory() as client:
+            client.delete_diary_entry(entry_id, date)
+        return Response(status_code=204)
+
+    @app.get("/v1/member/diary/items/{item_id}/portions", dependencies=secured)
+    def list_diary_item_portions(item_id: int, date: int):
+        with client_factory() as client:
+            return client.list_diary_item_portions(item_id, date)
 
     @app.get("/v1/member/recipes", dependencies=secured)
     def list_recipes():

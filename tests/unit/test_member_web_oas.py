@@ -66,6 +66,7 @@ def test_every_mutation_requires_verification_and_declares_ambiguous_failure():
 def test_create_operations_require_idempotency_keys():
     spec = _load_spec()
     for path in [
+        "/member/diary/entries",
         "/member/recipes",
         "/member/recipes/{recipe_id}/ingredients",
         "/member/recipes/{recipe_id}/copies",

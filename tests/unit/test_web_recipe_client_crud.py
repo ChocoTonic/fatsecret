@@ -166,6 +166,27 @@ def test_add_ingredient_resolves_grams_and_verifies_new_entry():
     assert payload["portionid"] == "301"
 
 
+def test_add_ingredient_rejects_fractional_grams_before_post():
+    session = Mock()
+    session.headers = {}
+    session.get.side_effect = [
+        _response(
+            _edit(), "https://foods.fatsecret.com/Diary.aspx?pa=mrece&recipeid=101"
+        ),
+        _response(
+            '<input name="entryname" value="Beans"><select name="portionid"><option value="-1">g</option></select>',
+            "https://foods.fatsecret.com/ajax/RecipePortionOptions.aspx",
+        ),
+    ]
+
+    with pytest.raises(ValueError, match="whole numbers"):
+        _client(session).add_recipe_ingredient(
+            101, WebIngredientWrite(food_id=201, amount=Decimal("15.5"))
+        )
+
+    session.post.assert_not_called()
+
+
 def test_delete_recipe_posts_row_specific_target_and_verifies_absence():
     session = Mock()
     session.headers = {}

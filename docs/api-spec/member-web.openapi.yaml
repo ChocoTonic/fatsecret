@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: FatSecret Member-Web Facade API
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Manually maintained contract for a service that automates one authenticated
     FatSecret member account. These operations use unsupported HTML/WebForms at
@@ -18,6 +18,7 @@ security:
   - bearerAuth: []
 tags:
   - name: RDI
+  - name: Diary
   - name: Recipes
   - name: Ingredients
   - name: Foods
@@ -71,6 +72,130 @@ paths:
                 $ref: "#/components/schemas/RdiUpdate"
         "504":
           $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/diary/entries:
+    get:
+      operationId: listMemberDiaryEntries
+      summary: List member diary entries for one epoch-day
+      tags: [Diary]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: safe
+      parameters:
+        - $ref: "#/components/parameters/Date"
+      responses:
+        "200":
+          description: Fully hydrated diary entries.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, count]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/DiaryEntry" }
+                  count: { type: integer, minimum: 0 }
+                additionalProperties: false
+        default:
+          $ref: "#/components/responses/Problem"
+    post:
+      operationId: createMemberDiaryEntry
+      summary: Add a food or owned recipe to the member diary
+      description: |
+        Omit portion_id to select grams when available, or the sole portion for
+        an owned recipe. The member website persists gram amounts as integers.
+      tags: [Diary]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: idempotency-key-required
+      x-write-verification: required
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DiaryEntryWrite" }
+      responses:
+        "201":
+          description: Created and verified diary entry.
+          headers:
+            Location:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DiaryEntry" }
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/diary/entries/{entry_id}:
+    parameters:
+      - $ref: "#/components/parameters/EntryId"
+      - $ref: "#/components/parameters/Date"
+    get:
+      operationId: getMemberDiaryEntry
+      summary: Get one member diary entry
+      tags: [Diary]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: safe
+      responses:
+        "200":
+          description: Diary entry.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DiaryEntry" }
+        "404":
+          $ref: "#/components/responses/Problem"
+        default:
+          $ref: "#/components/responses/Problem"
+    delete:
+      operationId: deleteMemberDiaryEntry
+      summary: Delete one member diary entry
+      tags: [Diary]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: reconcile-before-retry
+      x-write-verification: required
+      responses:
+        "204": { description: Entry is absent. }
+        "504":
+          $ref: "#/components/responses/AmbiguousWrite"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /member/diary/items/{item_id}/portions:
+    parameters:
+      - $ref: "#/components/parameters/ItemId"
+      - $ref: "#/components/parameters/Date"
+    get:
+      operationId: listMemberDiaryItemPortions
+      summary: List diary portions for a food or owned recipe
+      tags: [Diary]
+      x-fatsecret-interface: member-website
+      x-support-status: unofficial
+      x-implementation-status: adapter-implemented
+      x-upstream-stability: unstable
+      x-retry-policy: safe
+      responses:
+        "200":
+          description: Available member-diary portions.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DiaryItemPortions" }
         default:
           $ref: "#/components/responses/Problem"
 
@@ -454,6 +579,23 @@ components:
         type: integer
         format: int64
         minimum: 1
+    ItemId:
+      name: item_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    Date:
+      name: date
+      in: query
+      required: true
+      description: Whole days since 1970-01-01.
+      schema:
+        type: integer
+        format: int64
+        minimum: 0
     OperationId:
       name: operation_id
       in: path
@@ -512,6 +654,75 @@ components:
         protein_g: { $ref: "#/components/schemas/DecimalString" }
         cholesterol_mg: { $ref: "#/components/schemas/DecimalString" }
         sodium_mg: { $ref: "#/components/schemas/DecimalString" }
+      additionalProperties: false
+    DiaryMeal:
+      type: string
+      enum: [breakfast, lunch, dinner, other]
+    DiaryPortion:
+      type: object
+      required: [portion_id, label, is_grams]
+      properties:
+        portion_id:
+          type: integer
+          format: int64
+          description: May be 0 for an owned recipe or -1 for grams.
+        label: { type: string, minLength: 1 }
+        is_grams: { type: boolean }
+      additionalProperties: false
+    DiaryItemPortions:
+      type: object
+      required: [item_id, item_name, portions]
+      properties:
+        item_id: { type: integer, format: int64, minimum: 1 }
+        item_name: { type: string, minLength: 1 }
+        portions:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/DiaryPortion" }
+      additionalProperties: false
+    DiaryEntryWrite:
+      type: object
+      required: [item_id, entry_name, amount, meal, date]
+      properties:
+        item_id: { type: integer, format: int64, minimum: 1 }
+        entry_name: { type: string, minLength: 1, maxLength: 255 }
+        amount: { $ref: "#/components/schemas/PositiveDecimalString" }
+        meal: { $ref: "#/components/schemas/DiaryMeal" }
+        date:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Whole days since 1970-01-01.
+        portion_id:
+          type: [integer, "null"]
+          format: int64
+          description: Omit for grams or the sole owned-recipe serving.
+      additionalProperties: false
+    DiaryEntry:
+      type: object
+      required:
+        - entry_id
+        - item_id
+        - entry_name
+        - amount
+        - portion_id
+        - portion_name
+        - meal
+        - date
+        - edit_url
+      properties:
+        entry_id: { type: integer, format: int64, minimum: 1 }
+        item_id: { type: integer, format: int64, minimum: 1 }
+        entry_name: { type: string, minLength: 1 }
+        amount: { $ref: "#/components/schemas/PositiveDecimalString" }
+        portion_id:
+          type: integer
+          format: int64
+          description: May be 0 for an owned recipe or -1 for grams.
+        portion_name: { type: string, minLength: 1 }
+        meal: { $ref: "#/components/schemas/DiaryMeal" }
+        date: { type: integer, format: int64, minimum: 0 }
+        edit_url: { type: string, format: uri }
       additionalProperties: false
     RecipeSummary:
       type: object
