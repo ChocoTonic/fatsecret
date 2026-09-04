@@ -7,9 +7,10 @@ Member Website API
    ``foods.fatsecret.com``. It is separate from the supported FatSecret
    Platform API and can break when the member website changes.
 
-The member-web client supports account recipe CRUD and RDI operations that the
-official API does not expose. Credentials remain in process memory and should
-come from environment variables or an operating-system secret store.
+The member-web client supports account recipe CRUD, diary entries, and RDI
+operations that the official API does not expose for owned pending recipes.
+Credentials remain in process memory and should come from environment
+variables or an operating-system secret store.
 
 Python client
 -------------
@@ -47,6 +48,36 @@ opaque nonzero ``portion_id`` returned by ``list_food_portions`` when an exact
 non-grams serving is required. The client does not perform semantic food-name
 searches. FatSecret uses ``-1`` as the grams portion for some foods, so callers
 must not assume portion IDs are positive.
+
+Member diary
+------------
+
+Owned recipes and ordinary foods use one member-diary interface. Omit
+``portion_id`` to choose grams when available or the sole serving for an owned
+recipe::
+
+   from fatsecret import WebDiaryEntryWrite
+
+   entry = client.add_diary_entry(
+       WebDiaryEntryWrite(
+           item_id=136925003,
+           entry_name="spaghetti - 09/03/2026",
+           amount="259",
+           meal="dinner",
+           date=20699,
+       )
+   )
+
+Use ``list_diary_item_portions`` when an item has multiple non-gram portions.
+Owned recipe servings use portion ID ``0`` and grams can use ``-1``; these are
+valid website sentinels and are intentionally separate from official API
+serving IDs. The website stores gram quantities as whole numbers, so the
+client rejects fractional grams before writing instead of silently rounding.
+
+Diary entries snapshot recipe nutrition. Updating a recipe does not update
+existing diary entries. To refresh nutrition, list affected entries, delete
+them, and create replacements after the recipe mutation has been verified.
+This is an explicit two-step workflow, not an atomic operation.
 
 ``timeout`` and ``retries`` have the same meaning as on the official
 ``Fatsecret`` client. Safe GET requests use the shared transient retry policy:

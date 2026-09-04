@@ -26,8 +26,19 @@ from .errors import (
     FatsecretWebRateLimitError,
     FatsecretWebVerificationError,
 )
-
+from .diary_parser import (
+    DIARY_MEAL_ID,
+    DiaryEntryReference,
+    parse_diary_entry,
+    parse_diary_entry_references,
+    parse_diary_item_portions,
+)
 from .models import (
+    WebDiaryEntry,
+    WebDiaryEntryDeleteResult,
+    WebDiaryEntryWrite,
+    WebDiaryItemPortions,
+    WebDiaryPortion,
     WebFoodPortions,
     WebIngredientWrite,
     WebRdiSetting,
@@ -60,6 +71,7 @@ class FatsecretWebClient:
     BASE_URL = "https://foods.fatsecret.com"
     COOKBOOK_PATH = "/Default.aspx?pa=memc"
     DIARY_PATH = "/Diary.aspx?pa=fj"
+    DIARY_ENTRY_PATH = "/Diary.aspx?pa=fjrd"
     RECIPE_EDIT_PATH = "/Diary.aspx?pa=mrece&recipeid={recipe_id}"
     PORTION_OPTIONS_PATH = "/ajax/RecipePortionOptions.aspx"
     RDI_SETTINGS_PATH = (
@@ -168,6 +180,116 @@ class FatsecretWebClient:
 
         response = self._get_authenticated(self.cookbook_url)
         return self._parse_recipe_summaries(response.text)
+
+    def list_diary_entries(self, date: int) -> list[WebDiaryEntry]:
+        """Return fully hydrated member food-diary entries for one epoch-day."""
+
+        date = self._nonnegative_id(date, "date")
+        return [
+            self._hydrate_diary_entry(reference)
+            for reference in self._get_diary_references(date)
+        ]
+
+    def get_diary_entry(self, entry_id: int, date: int) -> WebDiaryEntry:
+        """Return one member food-diary entry and verify its requested date."""
+
+        entry_id = self._positive_id(entry_id, "entry_id")
+        date = self._nonnegative_id(date, "date")
+        reference = next(
+            (
+                item
+                for item in self._get_diary_references(date)
+                if item.entry_id == entry_id
+            ),
+            None,
+        )
+        if reference is None:
+            raise FatsecretWebNotFoundError(
+                f"member diary entry {entry_id} was not found on date {date}"
+            )
+        return self._hydrate_diary_entry(reference)
+
+    def list_diary_item_portions(self, item_id: int, date: int) -> WebDiaryItemPortions:
+        """Return diary portions for a known food or owned member recipe ID."""
+
+        item_id = self._positive_id(item_id, "item_id")
+        date = self._nonnegative_id(date, "date")
+        response = self._get_authenticated(self._diary_item_url(item_id, date))
+        portions = parse_diary_item_portions(response.text)
+        if portions.item_id != item_id:
+            raise FatsecretWebVerificationError(
+                f"diary portion form resolved item {portions.item_id}, expected {item_id}"
+            )
+        return portions
+
+    def add_diary_entry(self, entry: WebDiaryEntryWrite) -> WebDiaryEntry:
+        """Add one food or owned recipe to the member diary and verify it."""
+
+        entry = WebDiaryEntryWrite.model_validate(entry)
+        before = self._get_diary_references(entry.date)
+        portions = self.list_diary_item_portions(entry.item_id, entry.date)
+        portion = self._select_diary_portion(portions, entry.portion_id)
+        self._require_supported_diary_amount(entry.amount, portion)
+        referer = self._diary_item_url(entry.item_id, entry.date)
+        data = {
+            "dtb": str(entry.date),
+            "meal": str(DIARY_MEAL_ID[entry.meal]),
+            "entryname": entry.entry_name,
+            "portionamount": format(entry.amount, "f"),
+            "action": "Save",
+        }
+        if portion.portion_id != 0:
+            data["portionid"] = str(portion.portion_id)
+        self._post_mutation(
+            referer,
+            data=data,
+            referer=referer,
+            operation=f"adding diary entry on date {entry.date}",
+        )
+        before_ids = {item.entry_id for item in before}
+        after = self._read_after_write(
+            lambda: self._get_diary_references(entry.date),
+            operation=f"adding diary entry on date {entry.date}",
+        )
+        added = [item for item in after if item.entry_id not in before_ids]
+        if len(added) != 1:
+            raise FatsecretWebVerificationError(
+                f"diary add on date {entry.date} produced {len(added)} new entries"
+            )
+        result = self._read_after_write(
+            lambda: self._hydrate_diary_entry(added[0]),
+            operation=f"adding diary entry on date {entry.date}",
+        )
+        if not self._diary_entry_matches(result, entry, portion.portion_id):
+            raise FatsecretWebVerificationError(
+                "diary write did not match the requested item, amount, portion, meal, and date"
+            )
+        return result
+
+    def delete_diary_entry(self, entry_id: int, date: int) -> WebDiaryEntryDeleteResult:
+        """Delete one diary entry and verify absence; already absent is success."""
+
+        entry_id = self._positive_id(entry_id, "entry_id")
+        date = self._nonnegative_id(date, "date")
+        before = self._get_diary_references(date)
+        if not any(item.entry_id == entry_id for item in before):
+            return WebDiaryEntryDeleteResult(
+                entry_id=entry_id, date=date, deleted=False
+            )
+        delete_url = urljoin(
+            self.BASE_URL,
+            f"{self.DIARY_PATH}&action=deleteentry&eid={entry_id}&dt={date}",
+        )
+        self._get_authenticated(delete_url)
+        after = self._read_after_write(
+            lambda: self._get_diary_references(date),
+            operation=f"deleting diary entry {entry_id}",
+        )
+        if any(item.entry_id == entry_id for item in after):
+            raise FatsecretWebVerificationError(
+                f"diary entry {entry_id} remained after deletion"
+            )
+        return WebDiaryEntryDeleteResult(entry_id=entry_id, date=date, deleted=True)
 
     def get_recipe(self, recipe_id: int) -> WebRecipeDetail:
         """Return fully hydrated metadata and ingredients for an owned recipe."""
@@ -322,6 +444,7 @@ class FatsecretWebClient:
         _, before = self._get_recipe_edit(recipe_id)
         portions = self._resolve_food_portions(recipe_id, ingredient.food_id)
         portion = self._select_portion(portions, ingredient.portion_id)
+        self._require_whole_grams(ingredient.amount, portion.is_grams)
         before_ids = {row.entry_id for row in before.ingredient_rows}
         target_url = urljoin(
             self.BASE_URL,
@@ -378,6 +501,7 @@ class FatsecretWebClient:
             )
         portions = self._resolve_food_portions(recipe_id, ingredient.food_id)
         portion = self._select_portion(portions, ingredient.portion_id)
+        self._require_whole_grams(ingredient.amount, portion.is_grams)
         target_url = urljoin(
             self.BASE_URL,
             "/Diary.aspx?pa=fjrd"
@@ -661,6 +785,21 @@ class FatsecretWebClient:
             nutrition_total=getattr(row, "nutrition_total"),
         )
 
+    def _get_diary_references(self, date: int) -> list[DiaryEntryReference]:
+        response = self._get_authenticated(self._diary_date_url(date))
+        return parse_diary_entry_references(
+            response.text, base_url=response.url, expected_date=date
+        )
+
+    def _hydrate_diary_entry(self, reference: DiaryEntryReference) -> WebDiaryEntry:
+        response = self._get_authenticated(reference.edit_url)
+        result = parse_diary_entry(response.text, edit_url=response.url)
+        if result.entry_id != reference.entry_id or result.date != reference.date:
+            raise FatsecretWebVerificationError(
+                f"diary entry {reference.entry_id} detail did not match its index link"
+            )
+        return result
+
     @staticmethod
     def _select_portion(portions: WebFoodPortions, portion_id: int | None):
         if portion_id is not None:
@@ -685,6 +824,57 @@ class FatsecretWebClient:
         return grams
 
     @staticmethod
+    def _select_diary_portion(
+        portions: WebDiaryItemPortions, portion_id: int | None
+    ) -> WebDiaryPortion:
+        if portion_id is not None:
+            selected = next(
+                (item for item in portions.portions if item.portion_id == portion_id),
+                None,
+            )
+            if selected is None:
+                raise ValueError(
+                    f"portion_id {portion_id} is not valid for diary item {portions.item_id}"
+                )
+            return selected
+        grams = next((item for item in portions.portions if item.is_grams), None)
+        if grams is not None:
+            return grams
+        if len(portions.portions) == 1:
+            return portions.portions[0]
+        raise ValueError(
+            f"diary item {portions.item_id} requires an explicit portion_id"
+        )
+
+    @staticmethod
+    def _require_supported_diary_amount(
+        amount: Decimal, portion: WebDiaryPortion
+    ) -> None:
+        FatsecretWebClient._require_whole_grams(amount, portion.is_grams)
+
+    @staticmethod
+    def _require_whole_grams(amount: Decimal, is_grams: bool) -> None:
+        if is_grams and amount != amount.to_integral_value():
+            raise ValueError(
+                "FatSecret member website stores gram portions as whole numbers"
+            )
+
+    @staticmethod
+    def _diary_entry_matches(
+        actual: WebDiaryEntry, requested: WebDiaryEntryWrite, portion_id: int
+    ) -> bool:
+        return all(
+            (
+                actual.item_id == requested.item_id,
+                actual.entry_name == requested.entry_name,
+                actual.amount == requested.amount,
+                actual.portion_id == portion_id,
+                actual.meal == requested.meal,
+                actual.date == requested.date,
+            )
+        )
+
+    @staticmethod
     def _verify_ingredient(
         actual: WebRecipeIngredient,
         requested: WebIngredientWrite,
@@ -701,6 +891,15 @@ class FatsecretWebClient:
 
     def _recipe_edit_url(self, recipe_id: int) -> str:
         return urljoin(self.BASE_URL, self.RECIPE_EDIT_PATH.format(recipe_id=recipe_id))
+
+    def _diary_date_url(self, date: int) -> str:
+        return urljoin(self.BASE_URL, f"{self.DIARY_PATH}&dt={date}")
+
+    def _diary_item_url(self, item_id: int, date: int) -> str:
+        return urljoin(
+            self.BASE_URL,
+            f"{self.DIARY_ENTRY_PATH}&rid={item_id}&dt={date}",
+        )
 
     @classmethod
     def _cookbook_recipe_row(cls, soup: BeautifulSoup, recipe_id: int) -> Tag | None:
@@ -737,6 +936,14 @@ class FatsecretWebClient:
             raise TypeError(f"{name} must be an integer")
         if value <= 0:
             raise ValueError(f"{name} must be greater than zero")
+        return value
+
+    @staticmethod
+    def _nonnegative_id(value: int, name: str) -> int:
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise TypeError(f"{name} must be an integer")
+        if value < 0:
+            raise ValueError(f"{name} must not be negative")
         return value
 
     @staticmethod

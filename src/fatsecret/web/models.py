@@ -30,6 +30,15 @@ class WebMealType(str, Enum):
     LUNCH = "lunch"
 
 
+class WebDiaryMeal(str, Enum):
+    """Meal buckets supported by the member food diary."""
+
+    BREAKFAST = "breakfast"
+    LUNCH = "lunch"
+    DINNER = "dinner"
+    OTHER = "other"
+
+
 class WebNutrition(_FS_Base):
     """Nutrition values parsed from a recipe or ingredient row."""
 
@@ -84,6 +93,22 @@ class WebFoodPortions(_FS_Base):
     portions: list[WebFoodPortion] = Field(min_length=1)
 
 
+class WebDiaryPortion(_FS_Base):
+    """One member-diary portion, including website sentinel IDs."""
+
+    portion_id: int
+    label: str = Field(min_length=1)
+    is_grams: bool
+
+
+class WebDiaryItemPortions(_FS_Base):
+    """Portions offered for a food or owned recipe in the member diary."""
+
+    item_id: int = Field(gt=0)
+    item_name: str = Field(min_length=1)
+    portions: list[WebDiaryPortion] = Field(min_length=1)
+
+
 class _WebWriteModel(_FS_Base):
     model_config = ConfigDict(
         extra="forbid",
@@ -109,6 +134,39 @@ class WebIngredientWrite(_WebWriteModel):
         if self.portion_id is None:
             self.unit = "grams"
         return self
+
+
+class WebDiaryEntryWrite(_WebWriteModel):
+    """Input for adding a food or owned recipe to the member diary."""
+
+    item_id: int = Field(gt=0)
+    entry_name: str = Field(min_length=1, max_length=255)
+    amount: Decimal = Field(gt=0)
+    meal: WebDiaryMeal
+    date: int = Field(ge=0)
+    portion_id: Optional[int] = None
+
+
+class WebDiaryEntry(_FS_Base):
+    """One fully hydrated member food-diary entry."""
+
+    entry_id: int = Field(gt=0)
+    item_id: int = Field(gt=0)
+    entry_name: str = Field(min_length=1)
+    amount: Decimal = Field(gt=0)
+    portion_id: int
+    portion_name: str = Field(min_length=1)
+    meal: WebDiaryMeal
+    date: int = Field(ge=0)
+    edit_url: str = Field(min_length=1)
+
+
+class WebDiaryEntryDeleteResult(_FS_Base):
+    """Verified idempotent member-diary deletion result."""
+
+    entry_id: int = Field(gt=0)
+    date: int = Field(ge=0)
+    deleted: bool
 
 
 class WebRecipeIngredient(_FS_Base):

@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 import pytest
 import yaml
 
-from fatsecret import WebNutrition, WebRecipeDetail
+from fatsecret import WebDiaryEntry, WebDiaryMeal, WebNutrition, WebRecipeDetail
 from fatsecret.web.facade import MemberWebFacadeSettings, create_app
 
 
@@ -35,6 +35,7 @@ def _recipe(recipe_id: int = 42) -> WebRecipeDetail:
 
 class FakeClient:
     create_calls = 0
+    diary_create_calls = 0
 
     def __enter__(self):
         return self
@@ -52,6 +53,20 @@ class FakeClient:
 
     def get_recipe(self, recipe_id):
         return deepcopy(_recipe(recipe_id))
+
+    def add_diary_entry(self, entry):
+        type(self).diary_create_calls += 1
+        return WebDiaryEntry(
+            entry_id=501,
+            item_id=entry.item_id,
+            entry_name=entry.entry_name,
+            amount=entry.amount,
+            portion_id=0,
+            portion_name="serving",
+            meal=entry.meal,
+            date=entry.date,
+            edit_url="https://example.test/diary/501",
+        )
 
 
 def test_facade_requires_bearer_token(tmp_path):
@@ -97,6 +112,35 @@ def test_facade_replays_idempotent_recipe_create(tmp_path):
     assert second.status_code == 201
     assert second.headers["idempotent-replayed"] == "true"
     assert FakeClient.create_calls == 1
+
+
+def test_facade_replays_idempotent_member_diary_create(tmp_path):
+    FakeClient.diary_create_calls = 0
+    app = create_app(
+        client_factory=FakeClient,
+        bearer_token="test-token",
+        database_path=tmp_path / "facade.sqlite3",
+    )
+    client = TestClient(app)
+    headers = {
+        "Authorization": "Bearer test-token",
+        "Idempotency-Key": "diary-key-123",
+    }
+    body = {
+        "item_id": 42,
+        "entry_name": "Bean Stew",
+        "amount": "10",
+        "meal": WebDiaryMeal.DINNER.value,
+        "date": 20699,
+    }
+
+    first = client.post("/v1/member/diary/entries", headers=headers, json=body)
+    second = client.post("/v1/member/diary/entries", headers=headers, json=body)
+
+    assert first.status_code == 201
+    assert first.headers["location"] == "/v1/member/diary/entries/501?date=20699"
+    assert second.headers["idempotent-replayed"] == "true"
+    assert FakeClient.diary_create_calls == 1
 
 
 def test_facade_routes_cover_every_manual_contract_operation(tmp_path):
