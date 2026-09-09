@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - master
+    # Branch pushes only release when package inputs change. Path filters are
+    # ignored for tag pushes, so version tags still publish normally.
+    paths:
+      - "src/**"
+      - "pyproject.toml"
+      - "uv.lock"
     # Glob syntax (not regex). `*` matches any chars except `/`; `.` is
     # literal. `v*.*.*` matches v1.0.0, v1.10.3, etc. The previous pattern
     # `v[0-9]+.[0-9]+.[0-9]+` used regex syntax in a glob filter and never
@@ -30,7 +36,10 @@ jobs:
   test:
     # Skip on tag pushes and manual republishes — the tag points at a
     # green-CI'd master commit, re-running tests just burns minutes.
-    if: github.ref_type != 'tag' && github.event_name != 'workflow_dispatch'
+    if: >-
+      github.ref_type != 'tag' &&
+      github.event_name != 'workflow_dispatch' &&
+      !contains(github.event.head_commit.message, '[skip release]')
     uses: ./.github/workflows/test.yml
     secrets: inherit
     with:
@@ -42,7 +51,8 @@ jobs:
       always() &&
       (github.ref_type == 'tag'
        || github.event_name == 'workflow_dispatch'
-       || needs.test.result == 'success')
+       || (needs.test.result == 'success'
+           && !contains(github.event.head_commit.message, '[skip release]')))
     runs-on: ubuntu-latest
 
     permissions:
