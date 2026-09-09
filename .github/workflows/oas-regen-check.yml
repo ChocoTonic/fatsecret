@@ -3,8 +3,18 @@ name: OAS Regen Check
 on:
   pull_request:
     branches: [master]
+    paths:
+      - "scripts/oas-sync/**"
+      - "docs/api-spec/**"
+      - "src/fatsecret/resources/_generated/**"
+      - ".github/workflows/oas-regen-check.yml"
   push:
     branches: [master]
+    paths:
+      - "scripts/oas-sync/**"
+      - "docs/api-spec/**"
+      - "src/fatsecret/resources/_generated/**"
+      - ".github/workflows/oas-regen-check.yml"
 
 jobs:
   oas-regen-check:

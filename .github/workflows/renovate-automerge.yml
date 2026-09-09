@@ -2,7 +2,9 @@ name: renovate-automerge
 
 on:
   schedule:
-    - cron: "17 9 * * *"
+    # Renovate creates routine updates Friday morning; one merge sweep is
+    # enough and avoids burning a runner every day when there are no PRs.
+    - cron: "17 17 * * 5"
   workflow_dispatch:
     inputs:
       dry_run:

@@ -31,6 +31,8 @@
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["security"],
+    "groupName": "all security updates",
+    "groupSlug": "all-security-updates",
     "minimumReleaseAge": null,
     "schedule": ["at any time"]
   },
@@ -52,6 +54,12 @@
       "matchDepTypes": ["dev-dependencies", "devDependencies"],
       "matchPackageNames": ["black", "isort", "ruff", "pytest", "pytest-cov", "mypy", "coverage"],
       "groupName": "dev-tooling"
+    },
+    {
+      "description": "Group routine non-major updates to minimize CI fan-out.",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest", "lockFileMaintenance"],
+      "groupName": "all routine non-major dependencies",
+      "groupSlug": "all-routine-non-major-dependencies"
     }
   ]
 }
