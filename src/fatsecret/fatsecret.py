@@ -211,7 +211,7 @@ class Fatsecret:
             # `HTTPError` so the retry policy can classify them. FatSecret's
             # own error envelopes are served with HTTP 200 and handled below
             # by `_check_errors`, so this does not regress that path. A
-            # non-transient 4xx (e.g. 401) propagates straight out — the
+            # non-transient 4xx (e.g. 401) propagates straight out â€” the
             # retry classifier only matches the transient set.
             r.raise_for_status()
             return r
@@ -516,45 +516,46 @@ class Fatsecret:
         Note:
         This uses HTML form emulation against FatSecret's login flow and may break if the website changes.
         It is provided for convenience and developer testing, not production OAuth flows.
+
+        Authentication and HTTP errors propagate to the caller; failures do not return None.
         """
-        try:
-            session = requests.Session()
-            fatsecret_client = Fatsecret(consumer_key, consumer_secret)
-            authorize_url = fatsecret_client.get_authorize_url().replace(
-                "authorize", "authorize.aspx"
+        session = requests.Session()
+        fatsecret_client = Fatsecret(consumer_key, consumer_secret)
+        authorize_url = fatsecret_client.get_authorize_url().replace(
+            "authorize", "authorize.aspx"
+        )
+
+        # Fetch viewstate and generator dynamically
+        login_page_response = session.get(url=authorize_url)
+        login_page_response.raise_for_status()
+        login_page_soup = BeautifulSoup(login_page_response.text, "lxml")
+        viewstate_value = login_page_soup.find("input", {"name": "__VIEWSTATE"})[
+            "value"
+        ]
+        viewstate_generator_value = login_page_soup.find(
+            "input", {"name": "__VIEWSTATEGENERATOR"}
+        )["value"]
+
+        payload = {
+            "__VIEWSTATE": viewstate_value,
+            "__VIEWSTATEGENERATOR": viewstate_generator_value,
+            "Name": username,
+            "Password": password,
+            "Login.x": 0,
+            "Login.y": 0,
+        }
+
+        pin_response = session.post(url=authorize_url, data=payload)
+        pin_response.raise_for_status()
+        pin_soup = BeautifulSoup(pin_response.content, "lxml")
+        verifier_tag = pin_soup.find("b")
+        if not verifier_tag:
+            raise RuntimeError(
+                "Failed to find PIN in response. Login may have failed."
             )
-
-            # Fetch viewstate and generator dynamically
-            login_page_response = session.get(url=authorize_url)
-            login_page_soup = BeautifulSoup(login_page_response.text, "lxml")
-            viewstate_value = login_page_soup.find("input", {"name": "__VIEWSTATE"})[
-                "value"
-            ]
-            viewstate_generator_value = login_page_soup.find(
-                "input", {"name": "__VIEWSTATEGENERATOR"}
-            )["value"]
-
-            payload = {
-                "__VIEWSTATE": viewstate_value,
-                "__VIEWSTATEGENERATOR": viewstate_generator_value,
-                "Name": username,
-                "Password": password,
-                "Login.x": 0,
-                "Login.y": 0,
-            }
-
-            pin_response = session.post(url=authorize_url, data=payload)
-            pin_soup = BeautifulSoup(pin_response.content, "lxml")
-            verifier_tag = pin_soup.find("b")
-            if not verifier_tag:
-                raise RuntimeError(
-                    "Failed to find PIN in response. Login may have failed."
-                )
-            verifier_pin = verifier_tag.text.strip()
-            fatsecret_client.authenticate(verifier_pin)
-            return fatsecret_client
-        except Exception:
-            return None
+        verifier_pin = verifier_tag.text.strip()
+        fatsecret_client.authenticate(verifier_pin)
+        return fatsecret_client
 
     # ========================= HELPERS =========================
     # Shared helpers used by the namespaced resource implementations.
