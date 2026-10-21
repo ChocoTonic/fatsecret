@@ -494,10 +494,11 @@ wheels = [
 
 [[package]]
 name = "fatsecret"
-version = "5.1.1"
+version = "6.0.1"
 source = { virtual = "." }
 dependencies = [
     { name = "bs4" },
+    { name = "certifi" },
     { name = "lxml" },
     { name = "pydantic" },
     { name = "python-dotenv" },
@@ -534,6 +535,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "bs4" },
+    { name = "certifi", specifier = ">=2026.10.19" },
     { name = "fastapi", marker = "extra == 'facade'", specifier = ">=0.116,<1" },
     { name = "lxml" },
     { name = "pydantic", specifier = ">=2.7" },
