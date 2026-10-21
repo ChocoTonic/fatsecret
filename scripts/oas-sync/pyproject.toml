@@ -5,7 +5,8 @@ description = "Deterministic crawler that derives an OpenAPI spec from FatSecret
 requires-python = ">=3.11"
 dependencies = [
     "httpx>=0.27",
-    "selectolax>=0.3.21",
+    # The crawler uses the Modest parser API removed in selectolax 1.0.
+    "selectolax>=0.3.21,<1",
     "pyyaml>=6.0",
     "tenacity>=8.2",
     "typer>=0.12",

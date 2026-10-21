@@ -46,7 +46,7 @@ dev = [
     "isort",
     "pytest-cov",
     "pytest",
-    "ruff",
+    "ruff>=0.15.18,<0.16",
     "openapi-spec-validator>=0.7.2,<0.10",
     "furo>=2024.8.6",
     "sphinx>=7.4.7",
