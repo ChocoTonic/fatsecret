@@ -68,6 +68,10 @@ recipe::
        )
    )
 
+Existing diary entries may have a zero amount. Read models preserve these
+entries so one placeholder does not prevent listing the rest of a day. New
+``WebDiaryEntryWrite`` requests still require a strictly positive amount.
+
 Use ``list_diary_item_portions`` when an item has multiple non-gram portions.
 Owned recipe servings use portion ID ``0`` and grams can use ``-1``; these are
 valid website sentinels and are intentionally separate from official API
