@@ -191,3 +191,52 @@ def test_delete_diary_entry_is_verified_and_idempotent():
     assert first.deleted is True
     assert second.deleted is False
     assert "action=deleteentry" in session.get.call_args_list[1].args[0]
+
+
+def test_diary_parser_preserves_existing_zero_amount_entry():
+    entry = parse_diary_entry(
+        _entry_form(amount="0"),
+        edit_url=f"{BASE}/Diary.aspx?pa=fjrd&eid=501&dt=20699",
+    )
+    assert entry.amount == Decimal("0")
+    assert entry.entry_id == 501
+
+
+@pytest.mark.parametrize("amount", ["0", "-1"])
+def test_diary_write_still_requires_positive_amount(amount):
+    with pytest.raises(ValueError):
+        WebDiaryEntryWrite(
+            item_id=201,
+            entry_name="Chicken",
+            amount=Decimal(amount),
+            meal=WebDiaryMeal.LUNCH,
+            date=20699,
+        )
+
+
+def test_diary_parser_rejects_negative_existing_amount():
+    with pytest.raises(ValueError):
+        parse_diary_entry(
+            _entry_form(amount="-1"),
+            edit_url=f"{BASE}/Diary.aspx?pa=fjrd&eid=501&dt=20699",
+        )
+
+
+def test_list_diary_entries_keeps_zero_and_positive_entries():
+    session = Mock()
+    session.get.side_effect = [
+        _response(_diary(501, 502), f"{BASE}/Diary.aspx?pa=fj&dt=20699"),
+        _response(
+            _entry_form(entry_id=501, amount="0"),
+            f"{BASE}/Diary.aspx?pa=fjrd&eid=501&dt=20699",
+        ),
+        _response(
+            _entry_form(entry_id=502, amount="63"),
+            f"{BASE}/Diary.aspx?pa=fjrd&eid=502&dt=20699",
+        ),
+    ]
+    entries = _client(session).list_diary_entries(20699)
+    assert [(entry.entry_id, entry.amount) for entry in entries] == [
+        (501, Decimal("0")),
+        (502, Decimal("63")),
+    ]

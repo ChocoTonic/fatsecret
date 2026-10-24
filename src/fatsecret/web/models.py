@@ -148,12 +148,12 @@ class WebDiaryEntryWrite(_WebWriteModel):
 
 
 class WebDiaryEntry(_FS_Base):
-    """One fully hydrated member food-diary entry."""
+    """One existing diary entry, including zero-amount placeholders."""
 
     entry_id: int = Field(gt=0)
     item_id: int = Field(gt=0)
     entry_name: str = Field(min_length=1)
-    amount: Decimal = Field(gt=0)
+    amount: Decimal = Field(ge=0)
     portion_id: int
     portion_name: str = Field(min_length=1)
     meal: WebDiaryMeal
